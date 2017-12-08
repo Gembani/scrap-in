@@ -1,10 +1,11 @@
 module Salesnavot
 class Invite
   attr_reader :error
-  def initialize(sales_nav_url,session)
+  def initialize(sales_nav_url,session, content)
       @sales_nav_url = sales_nav_url
       @session = session
       @error = ""
+      @content = content
   end
   def  is_friend
        '1st' ==  @session.find('.profile-info .degree-icon').text
@@ -27,8 +28,7 @@ class Invite
       @session.click_on('Connect')
 
     end
-    content = File.read(File.join(File.dirname(__FILE__),'txt','invite.txt'))
-    @session.fill_in('connect-message-content', with: content)
+    @session.fill_in('connect-message-content', with: @content)
     @session.click_button('Send Invitation')
     while (@session.all(".alert").count == 0)
       sleep(0.1)

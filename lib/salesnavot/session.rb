@@ -26,8 +26,8 @@ module Salesnavot
       Salesnavot::Lead.new(config, @capybara)
     end
 
-    def invite(sales_nav_profile_link)
-      Salesnavot::Invite.new(sales_nav_profile_link, @capybara)
+    def invite(sales_nav_profile_link, content)
+      Salesnavot::Invite.new(sales_nav_profile_link, @capybara, content)
     end
 
     def sent_invites
