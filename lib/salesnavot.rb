@@ -1,5 +1,7 @@
-require "capybara/dsl"
 require "salesnavot/version"
+
+
+require "capybara/dsl"
 require "salesnavot/search"
 require "salesnavot/lead"
 require "salesnavot/invite"

@@ -1,12 +1,23 @@
 require "spec_helper"
 RSpec.describe Salesnavot do
-  let (:session) {Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))}
+  let (:session) {}
   after(:each) do
-    session.driver.quit
+  #  session.driver.quit
   end
 
   it "has a version number" do
     expect(Salesnavot::VERSION).not_to be nil
+  end
+
+  it "asd"do
+    session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
+    session.driver.save_screenshot('logging.png')
+    session.search('test_one_200').execute do |link|
+      puts link
+    end
+    session.driver.save_screenshot('search')
+
+    session.driver.quit
   end
 
   it "get search from links" do
