@@ -4,19 +4,11 @@ module Salesnavot
       @session = session
     end
 
-    def execute(end_at = 50)
+    def execute
       init_list
-      count = 0
       loop do
         one_page_links do |link|
           yield link
-          if (count == end_at)
-            return
-          else
-            count ++
-          end
-
-
         end
         break if next_page == false
       end
