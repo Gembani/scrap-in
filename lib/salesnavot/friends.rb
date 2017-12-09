@@ -20,6 +20,7 @@ module Salesnavot
         puts "block == nil: #{count}"
         scroll_to(@session.all(:css, css(count - 1)).first)
         while (@session.all(:css, css(count)).first == nil)
+          puts "sleeping"
           sleep(0.1)
         end
         block = @session.all(:css, css(count)).first
@@ -30,6 +31,7 @@ module Salesnavot
     def execute(num_times = 40)
       init_list
       count = 0
+      puts "execute find friends"
       num_times.times do
         block = get_next_block(count)
         name = block.find("a.mn-person-info__link").find(".mn-person-info__name").text
@@ -40,8 +42,12 @@ module Salesnavot
     end
 
     def init_list
+      puts "init list"
       @session.visit("https://www.linkedin.com/mynetwork/invite-connect/connections/")
+      @session.driver.browser.save_screenshot 'invite_connect.png'
+
       while (@session.all('.mn-person-card').count == 0)
+        puts "sleeping"
         sleep(0.1)
       end
 
