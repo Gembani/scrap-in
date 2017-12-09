@@ -30,8 +30,11 @@ class Invite
     end
     @session.fill_in('connect-message-content', with: @content)
     @session.click_button('Send Invitation')
+    count = 0
     while (@session.all(".alert").count == 0)
       sleep(0.1)
+      count = count + 1
+      break if count == 200
     end
     if (@session.all(".alert.success").count == 1)
       return true
