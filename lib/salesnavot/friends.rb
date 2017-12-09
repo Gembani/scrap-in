@@ -44,8 +44,7 @@ module Salesnavot
     def init_list
       puts "init list"
       @session.visit("https://www.linkedin.com/mynetwork/invite-connect/connections/")
-      @session.driver.browser.save_screenshot 'invite_connect.png'
-
+      
       while (@session.all('.mn-person-card').count == 0)
         puts "sleeping"
         sleep(0.1)
