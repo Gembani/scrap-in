@@ -20,7 +20,8 @@ module Salesnavot
         puts "block == nil: #{count}"
         scroll_to(@session.all(:css, css(count - 1)).first)
         while (@session.all(:css, css(count)).first == nil)
-          sleep(0.1)
+          puts "sleeping"
+          sleep(0.2)
         end
         block = @session.all(:css, css(count)).first
       end
@@ -32,6 +33,7 @@ module Salesnavot
       count = 0
       num_times.times do
         block = get_next_block(count)
+
         if  block.all(".actor-name-with-distance span:nth-child(1)").count == 0
           puts "No name found for #{block.text}"
         else
@@ -40,7 +42,7 @@ module Salesnavot
           yield time_ago, name
         end
         count = count + 1
-    
+
       end
     end
 
