@@ -10,6 +10,7 @@ require "salesnavot/friends"
 require "salesnavot/profile_views"
 require "salesnavot/session"
 require "salesnavot/auth"
+require "salesnavot/driver"
 
 module Salesnavot
   def self.setup
