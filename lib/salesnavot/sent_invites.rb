@@ -14,13 +14,14 @@ module Salesnavot
     def css(count)
       ".mn-invitation-list li:nth-child(#{count+1})"
     end
-    def execute
+    def execute(num_times = 50)
       init_list
       count = 0
 
-      loop do
+      num_times.each do
         item = @session.all(css(count)).first
         if item == nil
+          puts "item = nil"
           count = 0
           break if next_page == false
         else
@@ -43,7 +44,7 @@ module Salesnavot
         puts "sleeping"
         sleep(0.2)
       end
-
+      puts "visited invitations sent"
     end
 
     def one_page_links
