@@ -18,7 +18,7 @@ module Salesnavot
       init_list
       count = 0
 
-      num_times.each do
+      num_times.times.each do
         item = @session.all(css(count)).first
         if item == nil
           puts "item = nil"
