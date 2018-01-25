@@ -52,6 +52,12 @@ RSpec.describe Salesnavot do
     end
   end
 
+
+  it 'from linkedin profile send message' do
+    session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
+    session.send_message.execute('https://www.linkedin.com/in/scebula/', 'hello - this is nick! wassup with you!')
+  end
+
   it 'scrap friends' do
     session.sent_invites.execute(200) do |time_str, name|
       puts time_str, name
