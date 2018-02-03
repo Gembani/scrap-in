@@ -5,6 +5,7 @@ module Salesnavot
       @identifier = identifier
       @links = []
     end
+
     def visit_start(root_url, start_number)
       @session.visit("#{root_url}&start=#{start_number}")
       while (@session.all("ul#results-list li.result:first-child  div:first-child").count == 0)
@@ -12,6 +13,7 @@ module Salesnavot
         sleep(1)
       end
     end
+
     def is_page_populated(root_url, start_number)
       visit_start(root_url, start_number)
       result_item_class = @session.all("ul#results-list li.result:first-child  div:first-child").first.native.attribute(:class)
@@ -21,6 +23,7 @@ module Salesnavot
         return true
       end
     end
+
     def bound(root_url, lower_bound, upper_bound)
       if (lower_bound + 25 == upper_bound )
         puts "last page is #{lower_bound}"
@@ -36,7 +39,6 @@ module Salesnavot
         puts "page #{current} not populated"
         current = bound(root_url, lower_bound, current)
       end
-
     end
 
     def execute(page = 0)
@@ -50,7 +52,7 @@ module Salesnavot
       nun_pages = last_page / 25
       if (page > nun_pages )
         page = 0
-
+      end
       start_number = page * 25
       puts "start_number = #{start_number}"
       visit_start(root_url, start_number)
@@ -59,6 +61,7 @@ module Salesnavot
         href = item.native.property(:href)
         yield href.split("?")[0]
       end
+
       return page + 1
 
     end
@@ -72,9 +75,6 @@ module Salesnavot
       @session.click_on(@identifier)
       sleep(5)
     end
-
-    
-
 
   end
 end
