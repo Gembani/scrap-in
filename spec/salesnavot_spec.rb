@@ -1,6 +1,12 @@
 require "spec_helper"
 RSpec.describe Salesnavot do
-  let (:session) {}
+  let (:session) {
+    Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
+  }
+
+  before(:each) do
+  end
+
   after(:each) do
   #  session.driver.quit
   end
@@ -9,67 +15,47 @@ RSpec.describe Salesnavot do
     expect(Salesnavot::VERSION).not_to be nil
   end
 
-  it "asd"do
-    session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
+  it "gets search from links" do
+    # session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
+    session.driver.save_screenshot('logging.png')
     session.search('test_one_200').execute do |link|
       puts link
     end
+    session.driver.save_screenshot('search.png')
 
     session.driver.quit
   end
 
-  it "get search from links" do
-    session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
-
-    session.search('test_four').execute do |link|
-      puts link
-    end
-  end
-
-
-
-
-
-
-
-  it "create lead" do
+  xit "creates lead" do
     lead = session.new_lead({sales_nav_url: "https://www.linkedin.com/sales/profile/568261266,esdT,NAME_SEARCH?"})
     lead.scrap
   end
 
-
-
-  it 'create invite already connected' do
+  xit 'create invite already connected' do
     invite = session.invite("https://www.linkedin.com/sales/profile/230110692,mp07,NAME_SEARCH?")
     if invite.execute
-      puts "inivte sent"
+      puts "invite sent"
     else
       puts invite.error
     end
   end
 
-
-
-
-
-  it 'checks linkedin for sent invites' do
-    session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
+  it 'create sent invites' do
     session.sent_invites.execute do |invite|
       puts invite
     end
   end
 
-
   it 'from linkedin profile send message' do
-    session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
-    session.send_message.execute('https://www.linkedin.com/in/scebula/', 'hello - this is nick! wassup with you!')
+    session.send_message('https://www.linkedin.com/in/scebula/',
+      'Hi, this is a test message at ' + Time.now.strftime("%H:%M:%S").to_s + ". Thanks!")
   end
 
-  it 'scrap friends' do
-    session.sent_invites.execute(200) do |time_str, name|
-      puts time_str, name
-    end
-  end
+  # it 'scrap friends' do
+  #   session.sent_invites.execute(200) do |time_str, name|
+  #     puts time_str, name
+  #   end
+  # end
 
   it 'scrap profile views' do
     session.sent_invites.execute(200) do |time_str, name|

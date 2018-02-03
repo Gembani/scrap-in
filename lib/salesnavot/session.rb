@@ -18,6 +18,23 @@ module Salesnavot
       Salesnavot::SentInvites.new(@capybara)
     end
 
+    def send_message(profile, message)
+      puts 'Visiting profile...'
+
+      @capybara.visit(profile)
+      @capybara.click_button 'Message'
+
+      puts 'Writing message...'
+
+      @capybara.fill_in 'message', with: message
+
+      puts 'Sending message ...'
+
+      @capybara.find_field('message').send_keys :enter
+      
+      puts 'Message has beed sent !'
+    end
+
     def profile_views
       Salesnavot::ProfileViews.new(@capybara)
     end
