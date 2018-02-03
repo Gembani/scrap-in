@@ -11,26 +11,32 @@ RSpec.describe Salesnavot do
 
   it "asd"do
     session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
-    session.driver.save_screenshot('logging.png')
     session.search('test_one_200').execute do |link|
       puts link
     end
-    session.driver.save_screenshot('search')
 
     session.driver.quit
   end
 
   it "get search from links" do
+    session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
 
-    session.search('test_one_200').execute do |link|
+    session.search('test_four').execute do |link|
       puts link
     end
   end
+
+
+
+
+
+
 
   it "create lead" do
     lead = session.new_lead({sales_nav_url: "https://www.linkedin.com/sales/profile/568261266,esdT,NAME_SEARCH?"})
     lead.scrap
   end
+
 
 
   it 'create invite already connected' do
@@ -46,7 +52,8 @@ RSpec.describe Salesnavot do
 
 
 
-  it 'create sent invites' do
+  it 'checks linkedin for sent invites' do
+    session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
     session.sent_invites.execute do |invite|
       puts invite
     end
