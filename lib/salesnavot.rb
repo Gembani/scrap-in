@@ -11,6 +11,7 @@ require "salesnavot/profile_views"
 require "salesnavot/session"
 require "salesnavot/auth"
 require "salesnavot/driver"
+require "salesnavot/send_message"
 
 module Salesnavot
   def self.setup

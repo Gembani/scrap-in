@@ -15,7 +15,7 @@ RSpec.describe Salesnavot do
     expect(Salesnavot::VERSION).not_to be nil
   end
 
-  it "gets search from links" do
+  xit "gets search from links" do
     # session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
     session.driver.save_screenshot('logging.png')
     session.search('test_one_200').execute do |link|
@@ -40,24 +40,21 @@ RSpec.describe Salesnavot do
     end
   end
 
-  it 'create sent invites' do
+  xit 'create sent invites' do
     session.sent_invites.execute do |invite|
       puts invite
     end
   end
 
-  it 'from linkedin profile send message' do
-    session.send_message('https://www.linkedin.com/in/scebula/',
-      'Hi, this is a test message at ' + Time.now.strftime("%H:%M:%S").to_s + ". Thanks!")
+  xit 'from linkedin profile send message' do
+    send_message = session.send_message('https://www.linkedin.com/in/nicholasstock/', 
+      'Test message at : ' + Time.now.strftime("%H:%M:%S").to_s + ".")
+    unless send_message.execute
+      puts send_message.error
+    end
   end
 
-  # it 'scrap friends' do
-  #   session.sent_invites.execute(200) do |time_str, name|
-  #     puts time_str, name
-  #   end
-  # end
-
-  it 'scrap profile views' do
+  xit 'scrap profile views' do
     session.sent_invites.execute(200) do |time_str, name|
       puts time_str, name
     end

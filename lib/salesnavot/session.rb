@@ -19,20 +19,7 @@ module Salesnavot
     end
 
     def send_message(profile, message)
-      puts 'Visiting profile...'
-
-      @capybara.visit(profile)
-      @capybara.click_button 'Message'
-
-      puts 'Writing message...'
-
-      @capybara.fill_in 'message', with: message
-
-      puts 'Sending message ...'
-
-      @capybara.find_field('message').send_keys :enter
-      
-      puts 'Message has beed sent !'
+      Salesnavot::SendMessage.new(@capybara, profile, message)
     end
 
     def profile_views

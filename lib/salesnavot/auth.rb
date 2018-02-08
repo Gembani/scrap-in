@@ -3,6 +3,7 @@ module Salesnavot
     def initialize(session)
       @session = session
     end
+
     def login!(username, password)
       puts "visiting login screen"
       @session.visit("https://www.linkedin.com/sales")
@@ -13,7 +14,7 @@ module Salesnavot
       puts "click login"
 
       @session.find('.btn-primary').click
-      while @session.all('#stream-container').count == 0
+      while @session.all('#session_key-login') == 1
         puts "waiting for login"
         sleep(0.2)
       end
