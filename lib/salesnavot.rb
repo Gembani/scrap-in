@@ -12,11 +12,11 @@ require "salesnavot/session"
 require "salesnavot/auth"
 require "salesnavot/driver"
 require "salesnavot/send_message"
+require "salesnavot/threads"
 
 module Salesnavot
   def self.setup
     Capybara.run_server = false
-
 
   end
 end

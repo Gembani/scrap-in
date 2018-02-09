@@ -60,4 +60,10 @@ RSpec.describe Salesnavot do
     end
   end
 
+  it 'scrap threads' do
+    threads = session.threads
+    threads.execute(14)
+    threads.display_names_and_thread_links
+  end
+
 end

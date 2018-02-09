@@ -22,6 +22,10 @@ module Salesnavot
       Salesnavot::SendMessage.new(@capybara, profile, message)
     end
 
+    def threads
+      Salesnavot::Threads.new(@capybara)
+    end
+
     def profile_views
       Salesnavot::ProfileViews.new(@capybara)
     end
