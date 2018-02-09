@@ -37,9 +37,9 @@ module Salesnavot
       elements = @session.all('.msg-conversation-listitem__link').first(threads_number)
       while elements.count < threads_number
         puts "Searching for messages ..."
+        scroll_to(elements.last)
         sleep(1)
         #only 20 threads are loaded at the beginning
-        scroll_to(elements.last)
         elements = @session.all('.msg-conversation-listitem__link').first(threads_number)
         time = time + 1
         if (time > 20)
@@ -53,14 +53,14 @@ module Salesnavot
       elements.each do |element|
         thread_link = element[:href]
         name = element.find('.msg-conversation-listitem__participant-names').text
-        hash = { "name" => name, "thread_link" => thread_link }
+        hash = { :name => name, :thread_link => thread_link }
         @names_and_thread_links.push(hash)
       end
     end
 
     def display_names_and_thread_links
       @names_and_thread_links.each do |element|
-        puts element['name'] + ' : ' + element['thread_link']
+        puts element[:name] + ' : ' + element[:thread_link]
       end
     end
 
