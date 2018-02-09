@@ -13,6 +13,7 @@ require "salesnavot/auth"
 require "salesnavot/driver"
 require "salesnavot/send_message"
 require "salesnavot/threads"
+require "salesnavot/messages"
 
 module Salesnavot
   def self.setup
