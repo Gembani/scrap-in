@@ -24,22 +24,6 @@ module Salesnavot
       end
     end
 
-    def bound(root_url, lower_bound, upper_bound)
-      if (lower_bound + 25 == upper_bound )
-        puts "last page is #{lower_bound}"
-        return lower_bound
-      end
-      require "rounding"
-      current = lower_bound + ((upper_bound - lower_bound) / 2).round_to(25)
-      puts "trying page #{current}"
-      if (is_page_populated(root_url, current))
-        puts "page #{current} populated"
-        current = bound(root_url, current, upper_bound)
-      else
-        puts "page #{current} not populated"
-        current = bound(root_url, lower_bound, current)
-      end
-    end
 
     def execute(page = 0)
       init_list
@@ -48,14 +32,11 @@ module Salesnavot
       root_url = @session.current_url
 
 
-      last_page = bound(root_url, 0, last_page)
-      nun_pages = last_page / 25
-      if (page > nun_pages )
-        page = 0
-      end
       start_number = page * 25
-      puts "start_number = #{start_number}"
-      visit_start(root_url, start_number)
+      if (!is_page_populated(root_url, start_number))
+        page = 0
+        visit_start(root_url, 0)
+      end
       sleep(4)
       @session.all('a.image-wrapper.profile-link').each do |item|
         href = item.native.property(:href)
