@@ -26,8 +26,8 @@ module Salesnavot
       Salesnavot::Threads.new(@capybara)
     end
 
-    def messages(thread_link, number_of_messages)
-      Salesnavot::Messages.new(@capybara, thread_link, number_of_messages)
+    def messages(thread_link)
+      Salesnavot::Messages.new(@capybara, thread_link)
     end
 
     def profile_views

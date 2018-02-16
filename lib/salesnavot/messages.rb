@@ -1,13 +1,14 @@
 module Salesnavot
   class Messages
-    def initialize(session, thread_link, number_of_messages)
+    def initialize(session, thread_link)
       @session = session
       @thread_link = thread_link
-      @number_of_messages = number_of_messages
+
       @all_messages = []
     end
 
-    def execute
+    def execute(number_of_messages = 10)
+      @number_of_messages = number_of_messages
       visit_thread_link
       messages_blocks = get_messages_blocks
       parse(messages_blocks)
