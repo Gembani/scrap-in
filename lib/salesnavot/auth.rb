@@ -16,9 +16,12 @@ module Salesnavot
       @session.find('.btn-primary').click
 
       #We wait until de navbar appears
-      while @session.all('.nav-item').count != 8
+      count = 0
+      while @session.all('#stream-container').count == 0
         puts "waiting for login"
-        sleep(0.2)
+        count = count + 1
+        raise "Failed on login" if count > 30
+        sleep(1)
       end
     end
 

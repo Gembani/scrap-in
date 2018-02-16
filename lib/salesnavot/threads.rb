@@ -2,13 +2,40 @@ module Salesnavot
   class Threads
     def initialize(session)
       @session = session
-      @names_and_thread_links = []
+
     end
 
-    def execute(threads_number)
-      visit_messages_link
-      get_threads_links(threads_number)
+    def css(count)
+      ".msg-conversations-container__conversations-list li:nth-child(#{count+2})"
     end
+
+    def execute(num_times = 500)
+      visit_messages_link
+      count = 0
+
+      num_times.times.each do
+        item = @session.all(css(count)).first
+        if item == nil
+          puts "item = nil"
+          count = 0
+          break
+        else
+          name = item.find(".msg-conversation-listitem__participant-names").text
+          thread_link =  item.find("a")[:href]
+          yield name, thread_link
+          scroll_to(item)
+          count = count + 1
+        end
+        sleep(0.5)
+
+
+      end
+    end
+
+
+
+
+
 
     def visit_messages_link
       @session.visit("https://www.linkedin.com/messaging/")
@@ -23,46 +50,6 @@ module Salesnavot
       end
     end
 
-    def get_threads_links(threads_number)
-      elements = get_the_right_number_of_elements(threads_number)
-      get_names_and_thread_links(elements)
-    end
-    
-    #When we get to the message page, the first thread in loaded very fast
-    #but the other are a bit slower. So we wait until we have more threads
-    #with a limit of 20 secondes.
-
-    def get_the_right_number_of_elements(threads_number)
-      time = 0
-      elements = @session.all('.msg-conversation-listitem__link').first(threads_number)
-      while elements.count < threads_number
-        puts "Searching for messages ..."
-        scroll_to(elements.last)
-        sleep(1)
-        #only 20 threads are loaded at the beginning
-        elements = @session.all('.msg-conversation-listitem__link').first(threads_number)
-        time = time + 1
-        if (time > 20)
-          break
-        end
-      end
-      elements
-    end
-
-    def get_names_and_thread_links(elements)
-      elements.each do |element|
-        thread_link = element[:href]
-        name = element.find('.msg-conversation-listitem__participant-names').text
-        hash = { :name => name, :thread_link => thread_link }
-        @names_and_thread_links.push(hash)
-      end
-    end
-
-    def display_names_and_thread_links
-      @names_and_thread_links.each do |element|
-        puts element[:name] + ' : ' + element[:thread_link]
-      end
-    end
 
     def scroll_to(element)
       script = <<-JS
