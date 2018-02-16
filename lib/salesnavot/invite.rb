@@ -25,7 +25,8 @@ class Invite
       @session.all('.connect-button').first.click
     else
       @session.find('.more-options').hover
-      @session.click_on('Connect')
+      @session.all('button.connect-button').first.click
+
 
     end
     @session.fill_in('connect-message-content', with: @content)
