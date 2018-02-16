@@ -1,4 +1,5 @@
 require "spec_helper"
+
 RSpec.describe Salesnavot do
   let (:session) {
     Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
@@ -9,6 +10,7 @@ RSpec.describe Salesnavot do
 
   after(:each) do
   #  session.driver.quit
+  #
   end
 
   it "has a version number" do
@@ -31,8 +33,8 @@ RSpec.describe Salesnavot do
     lead.scrap
   end
 
-  xit 'create invite already connected' do
-    invite = session.invite("https://www.linkedin.com/sales/profile/230110692,mp07,NAME_SEARCH?")
+  it 'create invite already connected' do
+    invite = session.invite("https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name")
     if invite.execute
       puts "invite sent"
     else
@@ -62,5 +64,28 @@ RSpec.describe Salesnavot do
       puts time_str, name
     end
   end
+
+  it 'scrap threads' do
+    session.threads.execute(1) do |name, thread|
+      puts "#{name}, #{thread}"
+    end
+
+
+  end
+
+  it 'scrap messages' do
+
+    messages = session.messages('https://www.linkedin.com/messaging/thread/6260168385326256128/')
+
+    messages.execute(100) do | message, direction|
+      if direction == :incoming
+        print "CONTACT ->  "
+      else
+        print "YOU ->  "
+      end
+      puts message
+    end
+  end
+
 
 end
