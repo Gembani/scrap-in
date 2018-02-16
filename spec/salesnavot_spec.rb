@@ -66,21 +66,26 @@ RSpec.describe Salesnavot do
   end
 
   it 'scrap threads' do
-       session.threads.execute(500) do |name, thread|
-        puts "#{name}, #{thread}"
-      end
-
-
+    session.threads.execute(1) do |name, thread|
+      puts "#{name}, #{thread}"
     end
+
+
+  end
 
   it 'scrap messages' do
 
-    session.threads.execute(1) do | name, thread_link|
-      puts "#{name}"
-      byebug
-      messages = session.messages(thread_link).execute(10)
+    messages = session.messages('https://www.linkedin.com/messaging/thread/6260168385326256128/')
+
+    messages.execute(100) do | message, direction|
+      if direction == :incoming
+        print "CONTACT ->  "
+      else
+        print "YOU ->  "
+      end
+      puts message
     end
+  end
 
 
- end
 end
