@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "capybara", "~> 2.16"
   spec.add_dependency "rake", "~> 12.3"
   spec.add_dependency "rounding", "~> 1.0.1"
-  spec.add_dependency "selenium-webdriver", "~> 3.7"
+  spec.add_dependency "selenium-webdriver", "~> 3.9"
   spec.add_development_dependency "bundler", "~> 1.14"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "dotenv", "~> 2.2.1"
