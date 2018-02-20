@@ -8,7 +8,24 @@ module Salesnavot
     def css(count)
       ".msg-s-message-list li:nth-child(#{count + 2}) .msg-s-event-listitem"
     end
+    def can_send_greeting_message
+      number_of_messages = 0
+      execute(2) do |message, direction|
+        number_of_messages = number_of_messages + 1
+      end
+      return number_of_messages == 1
+    end
 
+    def send_greeting_message(msg)
+      if (can_send_greeting_message)
+        @session.fill_in("message", :with=>msg)
+        @session.find(".button-primary-small").click
+        return true
+      else
+        return false
+      end
+
+    end
     def execute(number_of_messages = 20)
       visit_thread_link
       count = 0
@@ -31,7 +48,7 @@ module Salesnavot
           next unless item.all('.msg-s-event-listitem__message-bubble').count == 1
           message = item.find(".msg-s-event-listitem__body").text
           item[:class].include?("msg-s-event-listitem--other") ?
-          direction = :incoming : direction = :outcoming
+          direction = :incoming : direction = :outgoing
         end
         yield  message, direction
        # scroll_to(item)
@@ -83,7 +100,7 @@ module Salesnavot
         if block[:class].include?("msg-s-event-listitem--other")
           hash = { :direction => :incoming, :message => message }
         else
-          hash = { :direction => :outcoming, :message => message }
+          hash = { :direction => :outgoing, :message => message }
         end
 
         @all_messages.push(hash)

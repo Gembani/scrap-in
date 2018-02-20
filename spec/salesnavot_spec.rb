@@ -12,7 +12,6 @@ RSpec.describe Salesnavot do
   #  session.driver.quit
   #
   end
-
   it "has a version number" do
     expect(Salesnavot::VERSION).not_to be nil
   end
@@ -75,16 +74,18 @@ RSpec.describe Salesnavot do
 
   it 'scrap messages' do
 
-    messages = session.messages('https://www.linkedin.com/messaging/thread/6260168385326256128/')
-
-    messages.execute(100) do | message, direction|
-      if direction == :incoming
-        print "CONTACT ->  "
-      else
-        print "YOU ->  "
-      end
-      puts message
-    end
+    messages = session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
+    did_send = messages.send_greeting_message("hello world\n This message is long and blah blah blah")
+    byebug
+    puts "hello"
+    # messages.execute(100) do | message, direction|
+    #   if direction == :incoming
+    #     print "CONTACT ->  "
+    #   else
+    #     print "YOU ->  "
+    #   end
+    #   puts message
+    # end
   end
 
 
