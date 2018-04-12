@@ -32,6 +32,17 @@ RSpec.describe Salesnavot do
     lead.scrap
   end
 
+  it 'sent_invites ' do
+    session.sent_invites.execute(40) do |invite|
+      puts invite
+    end
+  end
+
+  xit 'profile views' do
+    session.profile_views.execute do |invite|
+      puts invite
+    end
+  end
   xit 'create invite already connected' do
     invite = session.invite("https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name")
     if invite.execute
