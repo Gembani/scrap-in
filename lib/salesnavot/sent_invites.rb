@@ -25,7 +25,7 @@ module Salesnavot
           count = 0
           break if next_page == false
         else
-          name = item.find("a.mn-person-info__link").find(".mn-person-info__name").text
+          name = item.find(".invitation-card__name").text
           yield name
           scroll_to(item)
           count = count + 1
