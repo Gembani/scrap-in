@@ -40,7 +40,7 @@ module Salesnavot
 
     def send_message
       puts 'Sending message...'
-      @session.find_field('message').send_keys :enter
+      @session.find('.msg-form__send-button').click
       puts 'Message has been sent.'
       #check, for now we suppose the message has been sent correctly 
       true

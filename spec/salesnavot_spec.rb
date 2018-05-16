@@ -9,8 +9,8 @@ RSpec.describe Salesnavot do
   end
 
   after(:each) do
-  #  session.driver.quit
-  #
+    #  session.driver.quit
+    #
   end
   it "has a version number" do
     expect(Salesnavot::VERSION).not_to be nil
@@ -64,7 +64,8 @@ RSpec.describe Salesnavot do
   end
 
   it 'create invite already connected' do
-    invite = session.invite("https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name", "Hello.")
+    message = "Hello, this is a test"
+    invite = session.invite("https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name", message)
     if invite.execute
       puts "invite sent"
     else
@@ -78,9 +79,10 @@ RSpec.describe Salesnavot do
     end
   end
 
-  xit 'from linkedin profile send message' do
-    session.send_message('https://www.linkedin.com/in/scebula/',
-      'Hi, this is a test message at ' + Time.now.strftime("%H:%M:%S").to_s + ". Thanks!")
+  it 'from linkedin profile send message' do
+    send_message = session.send_message('https://www.linkedin.com/in/scebula/',
+                         'Hi, this is a test message at ' + Time.now.strftime("%H:%M:%S").to_s + ". Thanks!")
+    send_message.execute
   end
 
   it 'scrap friends' do
