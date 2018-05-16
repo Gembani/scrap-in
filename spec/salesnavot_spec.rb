@@ -45,7 +45,7 @@ RSpec.describe Salesnavot do
 
   it 'sent_invites up to 230 (more than one page)' do
     count = 1
-    session.sent_invites.execute(230) do |invite|
+    session.sent_invites.execute(101) do |invite|
       puts count.to_s + " -> " + invite.to_s
       count = count + 1
     end
@@ -57,13 +57,8 @@ RSpec.describe Salesnavot do
     end
   end
 
-  it 'profile views up to 200' do
-    session.profile_views.execute(200) do |time_ago, name|
-      puts name + " -> " + time_ago
-    end
-  end
 
-  it 'create invite already connected' do
+  xit 'create invite already connected' do
     message = "Hello, this is a test"
     invite = session.invite("https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name", message)
     if invite.execute
@@ -86,13 +81,13 @@ RSpec.describe Salesnavot do
   end
 
   it 'scrap friends' do
-    session.friends.execute(200) do |time_ago, name|
+    session.friends.execute(30) do |time_ago, name|
       puts name + " -> " + time_ago
     end
   end
 
   it 'scrap profile views' do
-    session.sent_invites.execute(200) do |time_str, name|
+    session.sent_invites.execute(30) do |time_str, name|
       puts time_str, name
     end
   end
@@ -102,15 +97,14 @@ RSpec.describe Salesnavot do
       puts "#{name}, #{thread}"
     end
 
-
   end
 
-  it 'scrap messages' do
+  xit 'scrap messages' do
 
     messages = session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
     did_send = messages.send_greeting_message("hello world\n This message is long and blah blah blah")
-    puts "hello"
     # messages.execute(100) do | message, direction|
+    #
     #   if direction == :incoming
     #     print "CONTACT ->  "
     #   else
