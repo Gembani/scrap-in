@@ -44,9 +44,15 @@ module Salesnavot
     end
 
     def wait_messages_page_to_load
-      while @session.all('.msg-conversations-container__conversations-list').count != 1
+      time = 0
+      # Linkedin display first a first li with a text inside and the last perso we have talked to. The other conversation are loaded a the same time, or nearly almost.
+      while @session.all('.msg-conversations-container__conversations-list li').count < 2
         puts "waiting messages to appear"
         sleep(0.2)
+        time = time + 0.2
+        if time > 60
+          raise "Cannot scrap conversation. Timeout !"
+        end
       end
     end
 

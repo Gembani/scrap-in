@@ -86,8 +86,8 @@ RSpec.describe Salesnavot do
   end
 
   it 'scrap friends' do
-    session.friends.execute(200) do | name|
-      puts  name
+    session.friends.execute(200) do |time_ago, name|
+      puts name + " -> " + time_ago
     end
   end
 
@@ -98,7 +98,7 @@ RSpec.describe Salesnavot do
   end
 
   it 'scrap threads' do
-    session.threads.execute(1) do |name, thread|
+    session.threads.execute(70) do |name, thread|
       puts "#{name}, #{thread}"
     end
 
