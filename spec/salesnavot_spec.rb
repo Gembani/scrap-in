@@ -21,6 +21,8 @@ RSpec.describe Salesnavot do
     session.driver.save_screenshot('logging.png')
     session.search('test_one_200').execute do |link|
       puts link
+      expect(link).to start_with("https://www.linkedin.com/sales/profile/")
+      expect(link).to end_with("NAME_SEARCH")
     end
     session.driver.save_screenshot('search.png')
 
@@ -87,7 +89,6 @@ RSpec.describe Salesnavot do
 
     messages = session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
     did_send = messages.send_greeting_message("hello world\n This message is long and blah blah blah")
-    byebug
     puts "hello"
     # messages.execute(100) do | message, direction|
     #   if direction == :incoming
