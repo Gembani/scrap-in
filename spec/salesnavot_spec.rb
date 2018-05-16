@@ -32,6 +32,9 @@ RSpec.describe Salesnavot do
   it "creates lead" do
     lead = session.new_lead({sales_nav_url: "https://www.linkedin.com/sales/profile/568261266,esdT,NAME_SEARCH?"})
     lead.scrap
+    expect(lead.sales_nav_url).not_to be_nil
+    expect(lead.name).not_to be_nil
+    expect(lead.linkedin_url).not_to be_nil
   end
 
   it 'sent_invites ' do
