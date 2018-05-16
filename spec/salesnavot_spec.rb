@@ -51,7 +51,7 @@ RSpec.describe Salesnavot do
     end
   end
 
-  xit 'profile views' do
+  it 'profile views' do
     session.profile_views.execute do |invite|
       puts invite
     end

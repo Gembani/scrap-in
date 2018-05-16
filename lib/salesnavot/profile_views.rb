@@ -11,7 +11,7 @@ module Salesnavot
       @session.driver.browser.execute_script(script, element.native)
     end
     def css(count)
-      "section.me-wvmp-overview__viewers-list article:nth-child(#{count+1})"
+      "section.me-wvmp-viewers-list article:nth-child(#{count+1})"
     end
 
     def get_next_block(count)
@@ -33,12 +33,11 @@ module Salesnavot
       count = 0
       num_times.times do
         block = get_next_block(count)
-
         if  block.all(".actor-name-with-distance span:nth-child(1)").count == 0
           puts "No name found for #{block.text}"
         else
           name = block.find(".actor-name-with-distance span:nth-child(1)").text
-          time_ago = block.find(".me-wvmp-profile-view-card__time-ago").text
+          time_ago = block.find(".me-wvmp-viewer-card__time-ago").text
           yield time_ago, name
         end
         count = count + 1
@@ -50,6 +49,7 @@ module Salesnavot
       @session.visit("https://www.linkedin.com/me/profile-views/")
       while (@session.all(:css, css(0)).first == nil)
         sleep(0.1)
+        puts 'Searching for css...'
       end
 
     end
