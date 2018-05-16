@@ -54,6 +54,15 @@ RSpec.describe Salesnavot do
   it 'profile views' do
     session.profile_views.execute do |invite|
       puts invite
+  it 'profile views up to 40' do
+    session.profile_views.execute(40) do |time_ago, name|
+      puts name + " -> " + time_ago
+    end
+  end
+
+  it 'profile views up to 200' do
+    session.profile_views.execute(200) do |time_ago, name|
+      puts name + " -> " + time_ago
     end
   end
 
