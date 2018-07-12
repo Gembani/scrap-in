@@ -25,8 +25,9 @@ module Salesnavot
     def scrap
       @session.visit @sales_nav_url
       sleep(4)
-      @name = @session.find(".member-name").text
-      @first_degree = ('1st' ==  @session.find('.profile-info .degree-icon').text)
+      @name = @session.find(".profile-topcard-person-entity__name").text
+      byebug
+      @first_degree = ('1st' ==  @session.find('.m-type--degree').text)
       if @session.all(".contact-info-button").count == 0
         puts "No contact info button"
         return

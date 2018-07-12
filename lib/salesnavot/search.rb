@@ -51,9 +51,7 @@ module Salesnavot
       @session.visit("https://www.linkedin.com/sales")
       sleep(5)
       @session.find(".global-nav-saved-searches-button").hover
-
-
-      @session.click_on(@identifier)
+      @session.find('.global-nav-dropdown-list').click_on(@identifier)
       sleep(5)
     end
 

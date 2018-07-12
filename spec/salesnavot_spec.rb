@@ -2,6 +2,7 @@ require "spec_helper"
 
 RSpec.describe Salesnavot do
   let (:session) {
+    puts 'NEW SESSION CREATED'
     Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
   }
 
@@ -9,7 +10,7 @@ RSpec.describe Salesnavot do
   end
 
   after(:each) do
-    #  session.driver.quit
+      session.driver.quit
     #
   end
   it "has a version number" do
@@ -35,6 +36,7 @@ RSpec.describe Salesnavot do
     expect(lead.sales_nav_url).not_to be_nil
     expect(lead.name).not_to be_nil
     expect(lead.linkedin_url).not_to be_nil
+    byebug
   end
 
   it 'sent_invites up to 40 (less than one page)' do
