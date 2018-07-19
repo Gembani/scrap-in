@@ -1,28 +1,50 @@
+#Class to Log in into Linkedin
 module Salesnavot
   class Auth
     def initialize(session)
       @session = session
     end
 
+    def email_input(type = :selector)
+      type.to_sym
+      if type == :id
+        return 'session_key-login'
+      end
+      return '#session_key-login'
+    end
+
+    def password_input(type = :selector)
+      if type == :id
+        return 'session_password-login'
+      end
+      return '#session_password-login'
+    end
+    
+    def login_button(type = :selector)
+      if type == :id
+        return 'btn-primary'
+      end
+      return '#btn-primary'
+    end
+
+    def homepage
+      "https://www.linkedin.com/sales"
+    end
+    
     def login!(username, password)
       puts "visiting login screen"
-      @session.visit("https://www.linkedin.com/sales")
+      @session.visit(homepage)
 
-      puts "adding email & password"
-      @session.fill_in "Email", with: username
-      @session.fill_in "Password", with: password
+      puts "Filling in email..."
+      @session.fill_in id: email_input(:id), with: username
 
-      puts "click login"
-      @session.find('.btn-primary').click
+      puts "Filling in password..."
+      @session.fill_in id: password_input(:id), with: password
 
-      #We wait until de navbar appears
-      count = 0
-      while @session.all('#stream-container').count == 0
-        puts "waiting for login"
-        count = count + 1
-        raise "Failed on login" if count > 30
-        sleep(1)
-      end
+      puts "Clicking on login button"
+      @session.find(login_button).click
+
+      # We just need to log in. No need to wait for a css to appear
     end
 
   end
