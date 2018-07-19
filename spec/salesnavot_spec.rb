@@ -1,109 +1,98 @@
-require "spec_helper"
+require 'spec_helper'
 
 RSpec.describe Salesnavot do
-  let (:session) {
-    puts 'NEW SESSION CREATED'
-    Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
-  }
-
-  before(:each) do
+  before(:all) do
+    puts 'Capybara is creating a session ...'
+    @session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
   end
 
-  after(:each) do
-      session.driver.quit
-    #
+  after(:all) do
+    @session.driver.quit
   end
-  it "has a version number" do
+  it 'has a version number' do
     expect(Salesnavot::VERSION).not_to be nil
   end
 
-  it "gets search from links" do
-    # session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
-    session.driver.save_screenshot('logging.png')
-    session.search('test_one_200').execute do |link|
-      puts link
-      expect(link).to start_with("https://www.linkedin.com/sales/profile/")
-      expect(link).to end_with("NAME_SEARCH")
+  it 'gets search from links' do
+    puts "Loading ...".blue
+    @session.search('test_one_200').execute() do |link, image|
+      unless link
+        puts "NOT OK".red
+      end
+      expect(link).to start_with('https://www.linkedin.com/sales/profile/')
     end
-    session.driver.save_screenshot('search.png')
-
-    session.driver.quit
   end
 
-  it "creates lead" do
-    lead = session.new_lead({sales_nav_url: "https://www.linkedin.com/sales/profile/568261266,esdT,NAME_SEARCH?"})
+  xit 'creates lead' do
+    lead = @session.new_lead(sales_nav_url: 'https://www.linkedin.com/sales/profile/568261266,esdT,NAME_SEARCH?')
     lead.scrap
     expect(lead.sales_nav_url).not_to be_nil
     expect(lead.name).not_to be_nil
     expect(lead.linkedin_url).not_to be_nil
-    byebug
   end
 
-  it 'sent_invites up to 40 (less than one page)' do
-    session.sent_invites.execute(40) do |invite|
+  xit 'sent_invites up to 40 (less than one page)' do
+    @session.sent_invites.execute(40) do |invite|
       puts invite
     end
   end
 
-  it 'sent_invites up to 230 (more than one page)' do
+  xit 'sent_invites up to 230 (more than one page)' do
     count = 1
-    session.sent_invites.execute(101) do |invite|
-      puts count.to_s + " -> " + invite.to_s
-      count = count + 1
+    @session.sent_invites.execute(101) do |invite|
+      puts count.to_s + ' -> ' + invite.to_s
+      count += 1
     end
   end
 
-  it 'profile views up to 40' do
-    session.profile_views.execute(40) do |time_ago, name|
-      puts name + " -> " + time_ago
+  xit 'profile views up to 40' do
+    @session.profile_views.execute(40) do |time_ago, name|
+      puts name + ' -> ' + time_ago
     end
   end
-
 
   xit 'create invite already connected' do
-    message = "Hello, this is a test"
-    invite = session.invite("https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name", message)
+    message = 'Hello, this is a test'
+    invite = @session.invite('https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name', message)
     if invite.execute
-      puts "invite sent"
+      puts 'invite sent'
     else
       puts invite.error
     end
   end
 
-  it 'create sent invites' do
-    session.sent_invites.execute do |invite|
+  xit 'create sent invites' do
+    @session.sent_invites.execute do |invite|
       puts invite
     end
   end
 
-  it 'from linkedin profile send message' do
-    send_message = session.send_message('https://www.linkedin.com/in/scebula/',
-                         'Hi, this is a test message at ' + Time.now.strftime("%H:%M:%S").to_s + ". Thanks!")
+  xit 'from linkedin profile send message' do
+    send_message = @session.send_message('https://www.linkedin.com/in/scebula/',
+                                         'Hi, this is a test message at ' + Time.now.strftime('%H:%M:%S').to_s + '. Thanks!')
     send_message.execute
   end
 
-  it 'scrap friends' do
-    session.friends.execute(30) do |time_ago, name|
-      puts name + " -> " + time_ago
+  xit 'scrap friends' do
+    @session.friends.execute(30) do |time_ago, name|
+      puts name + ' -> ' + time_ago
     end
   end
 
-  it 'scrap profile views' do
-    session.sent_invites.execute(30) do |time_str, name|
+  xit 'scrap profile views' do
+    @session.sent_invites.execute(30) do |time_str, name|
       puts time_str, name
     end
   end
 
-  it 'scrap threads' do
-    session.threads.execute(70) do |name, thread|
+  xit 'scrap threads' do
+    @session.threads.execute(70) do |name, thread|
       puts "#{name}, #{thread}"
     end
-
   end
 
   xit 'scrap messages' do
-
-    messages = session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
+    messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
     did_send = messages.send_greeting_message("hello world\n This message is long and blah blah blah")
     # messages.execute(100) do | message, direction|
     #
@@ -115,6 +104,4 @@ RSpec.describe Salesnavot do
     #   puts message
     # end
   end
-
-
 end

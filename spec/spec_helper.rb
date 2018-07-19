@@ -1,3 +1,4 @@
+require 'colorize'
 require "byebug"
 require "bundler/setup"
 require "salesnavot"
