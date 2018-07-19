@@ -5,6 +5,9 @@
 @session.click_on("Submit")
 
 
+#Very Important link about methods that wait and do not wait (Capybara_)
+
+http://stefan.haflidason.com/testing-with-rails-and-capybara-methods-that-wait-method-that-wont/
 
 ## Important thing to know about Capybara and find / fill_in methods
 
