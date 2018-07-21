@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Salesnavot do
   before(:all) do
-    puts 'Capybara is creating a session ...'
+    puts 'Capybara is creating a session for all tests...'
     @session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
   end
 
@@ -13,7 +13,7 @@ RSpec.describe Salesnavot do
     expect(Salesnavot::VERSION).not_to be nil
   end
 
-  it 'gets search from links' do
+  xit 'gets profile and image links from all leads of the list' do
     puts "Loading ...".blue
     @session.search('test_one_200').execute() do |link, image|
       unless link
@@ -23,12 +23,17 @@ RSpec.describe Salesnavot do
     end
   end
 
-  xit 'creates lead' do
-    lead = @session.new_lead(sales_nav_url: 'https://www.linkedin.com/sales/profile/568261266,esdT,NAME_SEARCH?')
+  xit 'scraps phones, emails and website links for a lead' do
+    seb_link = 'https://www.linkedin.com/sales/people/ACwAAB2tnsMBfAVq-L4xuYiXAzrugszqNs7Sg1o,NAME_SEARCH'
+    lead = @session.new_lead(sales_nav_url: seb_link)
     lead.scrap
     expect(lead.sales_nav_url).not_to be_nil
     expect(lead.name).not_to be_nil
     expect(lead.linkedin_url).not_to be_nil
+    expect(lead.emails.count).to be > 0
+    expect(lead.phones.count).to be > 0
+    expect(lead.links.count).to eq(0)
+    expect(lead.linkedin_url).to eq("https://www.linkedin.com/in/scebula")
   end
 
   xit 'sent_invites up to 40 (less than one page)' do
