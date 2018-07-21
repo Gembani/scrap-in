@@ -43,7 +43,7 @@ module Salesnavot
 
       puts "Clicking on login button"
       @session.find(login_button).click
-
+      @session.has_selector?('#insights-list')
       # We just need to log in. No need to wait for a css to appear
     end
 
