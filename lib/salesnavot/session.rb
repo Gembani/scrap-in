@@ -7,8 +7,8 @@ module Salesnavot
       auth.login!(username, password)
     end
 
-    def new_lead(config)
-      Salesnavot::Lead.new(config, @capybara)
+    def scrap_lead(config)
+      Salesnavot::ScrapLead.new(config, @capybara)
     end
 
     def invite(sales_nav_profile_link, content)

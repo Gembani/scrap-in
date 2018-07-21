@@ -1,6 +1,6 @@
 module Salesnavot
   # Goes to lead profile and scrap his phones, emails and websites
-  class Lead
+  class ScrapLead
     attr_reader :name, :emails,
                 :phone_number, :url, :linkedin_url,
                 :sales_nav_url, :links, :phones
@@ -69,7 +69,7 @@ module Salesnavot
       end
     end
 
-    def scrap
+    def execute
       @session.visit @sales_nav_url
       @name = @session.find('.profile-topcard-person-entity__name').text
       @first_degree = (@session.find('.m-type--degree').text == '1st')

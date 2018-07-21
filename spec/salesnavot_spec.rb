@@ -23,17 +23,17 @@ RSpec.describe Salesnavot do
     end
   end
 
-  xit 'scraps phones, emails and website links for a lead' do
+  it 'scraps phones, emails and website links for a lead' do
     seb_link = 'https://www.linkedin.com/sales/people/ACwAAB2tnsMBfAVq-L4xuYiXAzrugszqNs7Sg1o,NAME_SEARCH'
-    lead = @session.new_lead(sales_nav_url: seb_link)
-    lead.scrap
-    expect(lead.sales_nav_url).not_to be_nil
-    expect(lead.name).not_to be_nil
-    expect(lead.linkedin_url).not_to be_nil
-    expect(lead.emails.count).to be > 0
-    expect(lead.phones.count).to be > 0
-    expect(lead.links.count).to eq(0)
-    expect(lead.linkedin_url).to eq("https://www.linkedin.com/in/scebula")
+    scrap = @session.scrap_lead(sales_nav_url: seb_link)
+    scrap.execute
+    expect(scrap.sales_nav_url).not_to be_nil
+    expect(scrap.name).not_to be_nil
+    expect(scrap.linkedin_url).not_to be_nil
+    expect(scrap.emails.count).to be > 0
+    expect(scrap.phones.count).to be > 0
+    expect(scrap.links.count).to eq(0)
+    expect(scrap.linkedin_url).to eq("https://www.linkedin.com/in/scebula")
   end
 
   xit 'sent_invites up to 40 (less than one page)' do
