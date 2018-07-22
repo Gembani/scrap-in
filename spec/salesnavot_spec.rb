@@ -9,7 +9,7 @@ RSpec.describe Salesnavot do
   after(:all) do
     @session.driver.quit
   end
-  it 'has a version number' do
+  it 'has a version number_of_invites' do
     expect(Salesnavot::VERSION).not_to be nil
   end
 
@@ -23,7 +23,7 @@ RSpec.describe Salesnavot do
     end
   end
 
-  it 'scraps phones, emails and website links for a lead' do
+  xit 'scraps phones, emails and website links for a lead' do
     seb_link = 'https://www.linkedin.com/sales/people/ACwAAB2tnsMBfAVq-L4xuYiXAzrugszqNs7Sg1o,NAME_SEARCH'
     scrap = @session.scrap_lead(sales_nav_url: seb_link)
     scrap.execute
@@ -36,18 +36,23 @@ RSpec.describe Salesnavot do
     expect(scrap.linkedin_url).to eq("https://www.linkedin.com/in/scebula")
   end
 
-  xit 'sent_invites up to 40 (less than one page)' do
-    @session.sent_invites.execute(40) do |invite|
-      puts invite
+  xit 'scrap up to 40 leads with pending invites' do
+    invites = @session.sent_invites
+    invites.execute(40) do |invited_lead|
+      puts invited_lead
     end
+    expect(invites.invited_leads.length).to be <= 40
   end
 
-  xit 'sent_invites up to 230 (more than one page)' do
+  xit 'scrap up to 10000 leads with pending invites' do
     count = 1
-    @session.sent_invites.execute(101) do |invite|
+    number_of_invites = 10000
+    invites = @session.sent_invites
+    invites.execute(number_of_invites) do |invite|
       puts count.to_s + ' -> ' + invite.to_s
       count += 1
     end
+    expect(invites.invited_leads.length).to be <= number_of_invites
   end
 
   xit 'profile views up to 40' do
