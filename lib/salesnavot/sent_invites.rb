@@ -1,7 +1,14 @@
 module Salesnavot
+  # Goes to "Sent invitations" page, and scrap all leads that were invited
   class SentInvites
+    attr_reader :invited_leads
     def initialize(session)
       @session = session
+      @invited_leads = []
+    end
+
+    def target_page
+      'https://www.linkedin.com/mynetwork/invitation-manager/sent/'
     end
 
     def scroll_to(element)
@@ -9,58 +16,64 @@ module Salesnavot
         arguments[0].scrollIntoView(true);
       JS
 
-      @session.driver.browser.execute_script(script, element.native)
+      @session.driver.execute_script(script, element.native)
     end
-    def css(count)
-      ".mn-invitation-list li:nth-child(#{count+1})"
+
+    def nth_invited_lead_css(count)
+      ".mn-invitation-list li:nth-child(#{count + 1}) .invitation-card__name"
     end
+
+    def find_lead_name(count)
+      item = @session.find(nth_invited_lead_css(count))
+      scroll_to(item)
+      name = item.text
+      @invited_leads.push name
+      yield name
+    end
+
     def execute(num_times = 50)
-      init_list
+      return unless init_list(target_page)
+
       count = 0
 
       num_times.times.each do
-        item = @session.all(css(count)).first
-        if item == nil
-          puts "item = nil"
+        unless @session.has_selector?(nth_invited_lead_css(count), wait: 15)
           count = 0
-          break if next_page == false
-        else
-          name = item.find(".invitation-card__name").text
-          yield name
-          scroll_to(item)
-          count = count + 1
+          break unless next_page
         end
-        sleep(0.5)
-
-
+        find_lead_name(count) { |name| yield name }
+        count += 1
       end
     end
 
-    def init_list
-      puts "visiting invitations sent"
-      @session.visit("https://www.linkedin.com/mynetwork/invitation-manager/sent/")
-
-      while (@session.all('.mn-invitation-list li:nth-child(1)').count == 0)
-        puts "sleeping"
-        sleep(0.2)
-      end
-      puts "visited invitations sent"
+    def init_list(link)
+      @session.visit(link)
+      return false unless @session.has_selector?('.mn-invitation-list')
+      true
     end
 
-    def one_page_links
-      puts @session.all('.mn-invitation-list li').count
-      @session.all('.mn-invitation-list li').each do |block|
-        name = block.find("a.mn-person-info__link").find(".mn-person-info__name").text
-        yield name
-      end
+    def pagination_selector
+      'a.mn-invitation-pagination__control-btn'
+    end
 
+    def find_next_button
+      pagination_buttons = @session.all(pagination_selector)
+      pagination_buttons.each do |button|
+        next unless button.has_selector?(
+          'li-icon[aria-label="Next item"]',
+          wait: 1
+        )
+        return button
+      end
+      nil
     end
 
     def next_page
-      return false if @session.all("a.mn-invitation-pagination__control-btn").last.native.attribute("class").include?("disabled")
-      @session.all("a.mn-invitation-pagination__control-btn").last.click
-      sleep(4)
-      return true
+      return false unless @session.has_selector?(pagination_selector)
+      next_button = find_next_button
+      return false if next_button[:class].include?('disabled')
+      init_list(next_button[:href])
+      true
     end
   end
 end
