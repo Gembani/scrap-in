@@ -55,10 +55,15 @@ RSpec.describe Salesnavot do
     expect(invites.invited_leads.length).to be <= number_of_invites
   end
 
-  xit 'profile views up to 40' do
-    @session.profile_views.execute(40) do |time_ago, name|
-      puts name + ' -> ' + time_ago
+  it 'profile views up to 40' do
+    count = 1
+    n = 500
+    profile_views = @session.profile_views
+    profile_views.execute(n) do |name, time_ago|
+      puts "#{count} -> #{name} , #{time_ago} ago."
+      count += 1
     end
+    expect(profile_views.profile_viewed_by.length).to be <= n
   end
 
   xit 'create invite already connected' do
@@ -79,7 +84,9 @@ RSpec.describe Salesnavot do
 
   xit 'from linkedin profile send message' do
     send_message = @session.send_message('https://www.linkedin.com/in/scebula/',
-                                         'Hi, this is a test message at ' + Time.now.strftime('%H:%M:%S').to_s + '. Thanks!')
+                                         'Hi, this is a test message at ' +
+                                             Time.now.strftime('%H:%M:%S').to_s +
+                                             '. Thanks!')
     send_message.execute
   end
 
