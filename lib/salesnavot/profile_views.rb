@@ -29,8 +29,10 @@ module Salesnavot
       scroll_to(item)
       name = item.find('.me-wvmp-viewer-card__name-text').text
       time_ago = item.find('.me-wvmp-viewer-card__time-ago').text
-      yield name, time_ago
-      @profile_viewed_by.push name
+      unless name.empty?
+        yield name, time_ago
+        @profile_viewed_by.push name
+      end
     end
 
     def execute(num_times = 50)
