@@ -36,12 +36,13 @@ RSpec.describe Salesnavot do
     expect(scrap.linkedin_url).to eq("https://www.linkedin.com/in/scebula")
   end
 
-  xit 'scrap up to 40 leads with pending invites' do
+  it 'scrap up to 40 leads with pending invites' do
     invites = @session.sent_invites
     invites.execute(40) do |invited_lead|
       puts invited_lead
     end
     expect(invites.invited_leads.length).to be <= 40
+    expect(invites.invited_leads.length).to be >= 10
   end
 
   xit 'scrap up to 10000 leads with pending invites' do

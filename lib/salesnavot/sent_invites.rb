@@ -19,25 +19,33 @@ module Salesnavot
       @session.driver.execute_script(script, element.native)
     end
 
-    def nth_invited_lead_css(count)
-      ".mn-invitation-list li:nth-child(#{count + 1}) .invitation-card__name"
+    def nth_invited_lead_css(count, invitation: true)
+      if invitation
+        ".mn-invitation-list li:nth-child(#{count + 1}) .invitation-card__name"
+      else
+        ".mn-invitation-list li:nth-child(#{count + 1})"
+      end
     end
 
     def find_lead_name(count)
-      item = @session.find(nth_invited_lead_css(count))
-      scroll_to(item)
-      name = item.text
-      @invited_leads.push name
-      yield name
+      if @session.has_selector?(nth_invited_lead_css(count), wait: 3)
+        item = @session.find(nth_invited_lead_css(count))
+        scroll_to(item)
+        name = item.text
+        unless name.empty?
+          @invited_leads.push name
+          yield name
+        end
+      end
     end
 
     def execute(num_times = 50)
       return unless init_list(target_page)
 
       count = 0
-
       num_times.times.each do
-        unless @session.has_selector?(nth_invited_lead_css(count), wait: 15)
+
+        unless @session.has_selector?(nth_invited_lead_css(count, invitation: false), wait: 10)
           count = 0
           break unless next_page
         end
