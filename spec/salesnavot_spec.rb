@@ -13,13 +13,13 @@ RSpec.describe Salesnavot do
     expect(Salesnavot::VERSION).not_to be nil
   end
 
-  xit 'gets profile and image links from all leads of the list' do
+  it 'gets profile and image links from all leads of the list' do
     puts "Loading ...".blue
     @session.search('test_one_200').execute() do |link, image|
       unless link
         puts "NOT OK".red
       end
-      expect(link).to start_with('https://www.linkedin.com/sales/profile/')
+      expect(link).to start_with('https://www.linkedin.com/sales/people')
     end
   end
 
@@ -55,7 +55,7 @@ RSpec.describe Salesnavot do
     expect(invites.invited_leads.length).to be <= number_of_invites
   end
 
-  it 'profile views up to 40' do
+  xit 'profile views up to 40' do
     count = 1
     n = 500
     profile_views = @session.profile_views
@@ -76,12 +76,6 @@ RSpec.describe Salesnavot do
     end
   end
 
-  xit 'create sent invites' do
-    @session.sent_invites.execute do |invite|
-      puts invite
-    end
-  end
-
   xit 'from linkedin profile send message' do
     send_message = @session.send_message('https://www.linkedin.com/in/scebula/',
                                          'Hi, this is a test message at ' +
@@ -93,12 +87,6 @@ RSpec.describe Salesnavot do
   xit 'scrap friends' do
     @session.friends.execute(30) do |time_ago, name|
       puts name + ' -> ' + time_ago
-    end
-  end
-
-  xit 'scrap profile views' do
-    @session.sent_invites.execute(30) do |time_str, name|
-      puts time_str, name
     end
   end
 
