@@ -58,7 +58,7 @@ module Salesnavot
 
     def scrap_linkedin_url
       @session.find('button.profile-topcard-actions__overflow-toggle').click
-      @session.find('a.view-linkedin').click
+      @session.find('.copy-linkedin').click
       @linkedin_url = IO.popen('pbpaste', 'r+').read
     end
 

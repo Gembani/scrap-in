@@ -23,8 +23,8 @@ RSpec.describe Salesnavot do
     end
   end
 
-  xit 'scraps phones, emails and website links for a lead' do
-    seb_link = 'https://www.linkedin.com/sales/people/ACwAAB2tnsMBfAVq-L4xuYiXAzrugszqNs7Sg1o,NAME_SEARCH'
+  it 'scraps phones, emails and website links for a lead' do
+    seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'
     scrap = @session.scrap_lead(sales_nav_url: seb_link)
     scrap.execute
     expect(scrap.sales_nav_url).not_to be_nil
