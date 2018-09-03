@@ -56,11 +56,7 @@ module Salesnavot
       end
     end
 
-    def scrap_linkedin_url
-      @session.find('button.profile-topcard-actions__overflow-toggle').click
-      @session.find('.copy-linkedin').click
-      @linkedin_url = IO.popen('pbpaste', 'r+').read
-    end
+  
 
     def scrap_datas
       @session.find('button.profile-topcard__contact-info-show-all').click
@@ -75,7 +71,6 @@ module Salesnavot
       @first_degree = (@session.find('.m-type--degree').text == '1st')
       return unless @session.has_selector?(infos_selector)
 
-      scrap_linkedin_url
       scrap_datas
     end
   end
