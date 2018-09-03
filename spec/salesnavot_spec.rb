@@ -13,13 +13,33 @@ RSpec.describe Salesnavot do
     expect(Salesnavot::VERSION).not_to be nil
   end
 
-  it 'gets profile and image links from all leads of the list' do
-    puts "Loading ...".blue
-    @session.search('test_one_200').execute() do |link, image|
-      unless link
-        puts "NOT OK".red
+  describe '#Search' do
+
+    before do
+      puts "Loading ...".blue
+      @search = @session.search('test_one_200')
+      allow_any_instance_of(Salesnavot::Search).to receive(:calculate_last_page).and_return(4)
+    end
+
+    it 'gets profile and image links from all leads of the first page of the list and return the next page' do
+      next_page_to_process = @search.execute(1) do |link, image|
+        expect(link).to start_with('https://www.linkedin.com/sales/people')
       end
-      expect(link).to start_with('https://www.linkedin.com/sales/people')
+      expect(next_page_to_process).to eq(2)
+    end
+
+    it 'gets profile and image links from all leads of the second page of the list and return the next page' do
+      next_page_to_process = @search.execute(2) do |link, image|
+        expect(link).to start_with('https://www.linkedin.com/sales/people')
+      end
+      expect(next_page_to_process).to eq(3)
+    end
+
+    it 'gets profile and image links from all leads of the last page of the list and return the last page' do
+      next_page_to_process = @search.execute(4) do |link, image|
+        expect(link).to start_with('https://www.linkedin.com/sales/people')
+      end
+      expect(next_page_to_process).to eq(1)
     end
   end
 
@@ -56,7 +76,7 @@ RSpec.describe Salesnavot do
     expect(invites.invited_leads.length).to be <= number_of_invites
   end
 
-  xit 'profile views up to 40' do
+  it 'profile views up to 40' do
     count = 1
     n = 500
     profile_views = @session.profile_views
@@ -80,13 +100,13 @@ RSpec.describe Salesnavot do
   xit 'from linkedin profile send message' do
     send_message = @session.send_message('https://www.linkedin.com/in/scebula/',
                                          'Hi, this is a test message at ' +
-                                             Time.now.strftime('%H:%M:%S').to_s +
-                                             '. Thanks!')
+                                         Time.now.strftime('%H:%M:%S').to_s +
+                                         '. Thanks!')
     send_message.execute
   end
 
-  xit 'scrap friends' do
-    @session.friends.execute(30) do |time_ago, name|
+  it 'scrap friends' do
+    @session.friends.execute(500) do |time_ago, name|
       puts name + ' -> ' + time_ago
     end
   end

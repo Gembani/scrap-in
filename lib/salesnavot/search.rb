@@ -15,8 +15,8 @@ module Salesnavot
       @session.driver.browser.execute_script(script, element.native)
     end
 
-    def visit_start(root_url, start_number)
-      @session.visit("#{root_url}")
+    def visit_start(url, page)
+      @session.visit("#{url}&page=#{page}")
       @session
         .has_selector?('ul#results-list li.result:first-child  div:first-child')
     end
@@ -28,24 +28,19 @@ module Salesnavot
         .has_selector?('ul#results-list li.result:first-child  div:first-child', wait: 2)
     end
 
-    def first_result_class
-      css = 'ol.search-results__result-list li.search-results__result-item:first-child div.search-results__result-container'
-      @session.has_selector?(css, wait: 2)
-      results = @session.all(css)
-      results.first[:class]
+    def has_empty_results
+      css = 'search-results__no-results'
+      @session.has_selector?(css, wait: 5)
     end
 
     # Check if there are results in actual page
-    def page_is_populated?(start_number)
-
-      if start_number == 0
-        visit_start(@saved_search_url, start_number)
-      else
-        click_on_page(start_number / 25 + 1)
+    def page_is_populated?(page)
+      if page != 1
+        click_on_page(2)
+        visit_start(@session.current_url, page)
       end
 
-      return false if first_result_class == 'empty-result'
-      true
+      !has_empty_results
     end
 
     def calculate_last_page
@@ -60,14 +55,15 @@ module Salesnavot
       go_to_saved_search
       last_page = calculate_last_page
 
-      while page <= last_page
-        start_number = (page - 1) * 25
-        return unless page_is_populated?(start_number)
-        get_page_leads(page, last_page) do |a, b|
-          yield a, b
-        end
-        page += 1
+      page = 1 unless page.between?(1, last_page)
+
+      puts "Page processed = #{page} cuz last page = #{last_page}"
+      return unless page_is_populated?(page)
+      get_page_leads(page, last_page) do |a, b|
+        yield a, b
       end
+      return 1 if page == last_page
+      return page + 1
     end
 
     def get_page_leads(page, last_page)
