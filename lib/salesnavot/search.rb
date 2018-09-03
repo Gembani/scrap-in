@@ -44,11 +44,8 @@ module Salesnavot
     end
 
     def calculate_last_page
-      @session.has_selector?('.artdeco-tab-primary-text')
-      total_results = @session.all('.artdeco-tab-primary-text').first.text.to_i
-      last_page = total_results / 25
-      last_page += 1 if total_results % 25 > 0
-      last_page
+      @session.has_selector?('.search-results__pagination-list li a')
+      @session.all('.search-results__pagination-list li a').last.text.to_i
     end
 
     def execute(page = 1)

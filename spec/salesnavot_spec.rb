@@ -14,32 +14,42 @@ RSpec.describe Salesnavot do
   end
 
   describe '#Search' do
-
-    before do
-      puts "Loading ...".blue
-      @search = @session.search('test_one_200')
-      allow_any_instance_of(Salesnavot::Search).to receive(:calculate_last_page).and_return(4)
-    end
-
-    it 'gets profile and image links from all leads of the first page of the list and return the next page' do
-      next_page_to_process = @search.execute(1) do |link, image|
-        expect(link).to start_with('https://www.linkedin.com/sales/people')
+    context 'when last page = 4' do
+      before do
+        puts "Loading ...".blue
+        @search = @session.search('test_one_200')
+        allow_any_instance_of(Salesnavot::Search).to receive(:calculate_last_page).and_return(4)
       end
-      expect(next_page_to_process).to eq(2)
-    end
 
-    it 'gets profile and image links from all leads of the second page of the list and return the next page' do
-      next_page_to_process = @search.execute(2) do |link, image|
-        expect(link).to start_with('https://www.linkedin.com/sales/people')
+      it 'gets profile and image links from all leads of the first page of the list and return the next page' do
+        next_page_to_process = @search.execute(1) do |link, image|
+          expect(link).to start_with('https://www.linkedin.com/sales/people')
+        end
+        expect(next_page_to_process).to eq(2)
       end
-      expect(next_page_to_process).to eq(3)
-    end
 
-    it 'gets profile and image links from all leads of the last page of the list and return the last page' do
-      next_page_to_process = @search.execute(4) do |link, image|
-        expect(link).to start_with('https://www.linkedin.com/sales/people')
+      it 'gets profile and image links from all leads of the second page of the list and return the next page' do
+        next_page_to_process = @search.execute(2) do |link, image|
+          expect(link).to start_with('https://www.linkedin.com/sales/people')
+        end
+        expect(next_page_to_process).to eq(3)
       end
-      expect(next_page_to_process).to eq(1)
+
+      it 'gets profile and image links from all leads of the last page of the list and return the first page' do
+        next_page_to_process = @search.execute(4) do |link, image|
+          expect(link).to start_with('https://www.linkedin.com/sales/people')
+        end
+        expect(next_page_to_process).to eq(1)
+      end
+    end
+    context "when last page is not defined (stubbed)" do
+      it 'gets profile and image links from all leads of the last page of the list (13 pages) and return the first page' do
+        @search = @session.search('test_one_200')
+        next_page_to_process = @search.execute(13) do |link, image|
+          expect(link).to start_with('https://www.linkedin.com/sales/people')
+        end
+        expect(next_page_to_process).to eq(1)
+      end
     end
   end
 
