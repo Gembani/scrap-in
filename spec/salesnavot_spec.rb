@@ -42,7 +42,7 @@ RSpec.describe Salesnavot do
         expect(next_page_to_process).to eq(1)
       end
     end
-    context "when last page is not defined (stubbed)" do
+    context "when last page is not stubbed" do
       it 'gets profile and image links from all leads of the last page of the list (13 pages) and return the first page' do
         @search = @session.search('test_one_200')
         next_page_to_process = @search.execute(13) do |link, image|
