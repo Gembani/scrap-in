@@ -15,7 +15,7 @@ module Salesnavot
     def to_hash
       {
         name: @name,
-        sales_nav_url: @sales_nav_url
+        sales_nav_url: @sales_nav_url,
         emails: @emails,
         phones: @phones,
         first_degree: @first_degree,
