@@ -45,10 +45,14 @@ RSpec.describe Salesnavot do
     context "when last page is not defined (stubbed)" do
       it 'gets profile and image links from all leads of the last page of the list (13 pages) and return the first page' do
         @search = @session.search('test_one_200')
-        next_page_to_process = @search.execute(13) do |link, image|
-          expect(link).to start_with('https://www.linkedin.com/sales/people')
+        #next_page_to_process = @search.execute(13) do |link, image|
+          #expect(link).to start_with('https://www.linkedin.com/sales/people')
+
+        expect(@search.execute).to receive(:calculate_last_page).and_return(13) do
+          puts 'yeah'
         end
-        expect(next_page_to_process).to eq(1)
+        #end
+        #expect(next_page_to_process).to eq(1)
       end
     end
   end
@@ -97,13 +101,38 @@ RSpec.describe Salesnavot do
     expect(profile_views.profile_viewed_by.length).to be <= n
   end
 
-  xit 'create invite already connected' do
-    message = 'Hello, this is a test'
-    invite = @session.invite('https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name', message)
-    if invite.execute
-      puts 'invite sent'
-    else
-      puts invite.error
+  describe '#Salesnavot::Invite' do
+    context 'Invite a lead who is not a friend yet' do
+      it 'create invite already connected' do
+        invite = @session.invite('Link', 'Test message')
+        allow_any_instance_of(Salesnavot::Invite).to receive(:go_to).and_return(true)
+        allow_any_instance_of(Salesnavot::Invite).to receive(:is_friend?).and_return(false)
+        allow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
+        allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
+        value = invite.execute
+        expect(value).to be true
+        puts 'Invite sent !'
+      end
+    end
+
+    context 'Does not invite a lead when he/she is already a friend' do
+      it 'create invite already connected' do
+        invite = @session.invite('Link', 'Test message')
+        allow_any_instance_of(Salesnavot::Invite).to receive(:go_to).and_return(true)
+        allow_any_instance_of(Salesnavot::Invite).to receive(:is_friend?).and_return(true)
+        value = invite.execute
+        expect(value).to be false
+        puts 'Invite not sent !!'
+      end
+    end
+
+    xit 'create invite already connected' do ## Integration
+      message = 'Hello, this is a test'
+      invite = @session.invite('https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name', message)
+
+      value = invite.execute
+      expect(value).to be true
+      puts 'Invite sent !'
     end
   end
 
