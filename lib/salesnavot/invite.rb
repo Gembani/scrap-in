@@ -25,10 +25,10 @@ class Invite
 
   def find_and_click(css)
     unless @session.has_selector?(css)
-      @error = 'Cannot find action button'
+      @error = "Cannot find action button for css = #{css}"
       return false
     end
-    #@session.find().click
+    @session.find(css).click
     return true
   end
 
@@ -58,7 +58,6 @@ class Invite
   end
 
   def execute
-
     return false unless go_to(@sales_nav_url)
     return false if is_friend?
     return false unless click_and_connect
