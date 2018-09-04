@@ -48,8 +48,7 @@ class Invite
     return false unless find_and_click(action_button_css)
     return false unless find_and_click(connect_button_css)
     @session.fill_in 'connect-cta-form__invitation', with: @content
-    return false unless find_and_click(send_button_css)
-    find_and_click(connect_button_css)
+    find_and_click(send_button_css)
   end
 
   def lead_invited?
