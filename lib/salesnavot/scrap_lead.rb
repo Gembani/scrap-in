@@ -1,8 +1,7 @@
 module Salesnavot
   # Goes to lead profile and scrap his phones, emails and websites
   class ScrapLead
-    attr_reader :name, :emails,
-                :phone_number, :url, :linkedin_url,
+    attr_reader :name, :emails, :url, :linkedin_url,
                 :sales_nav_url, :links, :phones
     def initialize(config, session)
       @sales_nav_url = config[:sales_nav_url] || ''
@@ -11,6 +10,21 @@ module Salesnavot
       @first_degree = config[:first_degree] || false
       @links = config[:links] || []
       @session = session
+    end
+
+    def to_hash
+      {
+        name: @name,
+        sales_nav_url: @sales_nav_url,
+        emails: @emails,
+        phones: @phones,
+        first_degree: @first_degree,
+        links: @links
+      }
+    end
+
+    def to_json
+      to_hash.to_json
     end
 
     def phone_selector
@@ -56,11 +70,7 @@ module Salesnavot
       end
     end
 
-    def scrap_linkedin_url
-      @session.find('button.profile-topcard-actions__overflow-toggle').click
-      @session.find('.copy-linkedin').click
-      @linkedin_url = IO.popen('pbpaste', 'r+').read
-    end
+
 
     def scrap_datas
       @session.find('button.profile-topcard__contact-info-show-all').click
@@ -75,7 +85,6 @@ module Salesnavot
       @first_degree = (@session.find('.m-type--degree').text == '1st')
       return unless @session.has_selector?(infos_selector)
 
-      scrap_linkedin_url
       scrap_datas
     end
   end
