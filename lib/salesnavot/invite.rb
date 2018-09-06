@@ -15,12 +15,16 @@ class Invite
   end
 
   def is_friend?
-    if '1st' ==  @session.find('.m-type--degree').text
-      return true
-    else
-      @error = "Already friends"
-      return false
+    if @session.has_selector?('.m-type--degree', wait: 4)
+      if '1st' ==  @session.find('.m-type--degree').text
+        return true
+      else
+        @error = "Already friends"
+        return false
+      end
     end
+    @error = "No connections. Not a friend"
+    return false
   end
 
   def find_and_click(css)
@@ -52,7 +56,7 @@ class Invite
   end
 
   def lead_invited?
-    @session.find('.profile-topcard-actions__overflow-toggle').click
+    return false unless find_and_click(action_button_css)
     @session.has_selector?('.pending-connection')
   end
 
