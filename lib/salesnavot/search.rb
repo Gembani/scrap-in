@@ -16,7 +16,8 @@ module Salesnavot
     end
 
     def visit_start(url, page)
-      @session.visit("#{url}&page=#{page}")
+      start=(page - 1) * 25
+      @session.visit("#{url}&start=#{start}&count=25")
       @session
         .has_selector?('ul#results-list li.result:first-child  div:first-child')
     end
@@ -29,50 +30,45 @@ module Salesnavot
     end
 
     def has_empty_results
-      css = 'search-results__no-results'
+      css = '.empty-result'
       @session.has_selector?(css, wait: 5)
     end
 
     # Check if there are results in actual page
     def page_is_populated?(page)
-      if page != 1
-        click_on_page(2)
-        visit_start(@session.current_url, page)
-      end
-
+      visit_start(@session.current_url, page) unless page == 1
       !has_empty_results
     end
 
-    def calculate_last_page
-      @session.has_selector?('.search-results__pagination-list li a')
-      @session.all('.search-results__pagination-list li a').last.text.to_i
-    end
+
 
     def execute(page = 1)
       go_to_saved_search
-      last_page = calculate_last_page
 
-      page = 1 unless page.between?(1, last_page)
 
-      puts "Page processed = #{page} cuz last page = #{last_page}"
-      return unless page_is_populated?(page)
-      get_page_leads(page, last_page) do |a, b|
+      puts "Processing page = #{page}"
+
+      unless page_is_populated?(page)
+        puts "Page #{page} is empty, not scrapping, and returning first page"
+        return 1
+      end
+
+      get_page_leads(page) do |a, b|
         yield a, b
       end
-      return 1 if page == last_page
       return page + 1
     end
 
-    def get_page_leads(page, last_page)
-      @session.has_selector?('.result-lockup__icon-link', wait: 3)
-      items = @session.all('a.result-lockup__icon-link')
+    def get_page_leads(page)
+      raise "CSS changed a.name-link doesn't exist" unless @session.has_selector?('a.name-link', wait: 3)
+      items = @session.all('a.name-link')
       size = items.count
-      while size != 25 && page != last_page
+      while size != 25
         scroll_to(items.last)
-        items = @session.all('a.result-lockup__icon-link')
+        items = @session.all('a.name-link')
         size = items.count
       end
-      @session.all('a.result-lockup__icon-link').each do |item|
+      @session.all('a.name-link').each do |item|
         href = item[:href]
 
         profile_image = if item.has_selector?('img', wait: 0)

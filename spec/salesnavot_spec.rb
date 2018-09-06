@@ -14,47 +14,33 @@ RSpec.describe Salesnavot do
   end
 
   describe '#Search' do
-    context 'when last page = 4' do
-      before do
-        puts "Loading ...".blue
-        @search = @session.search('test_one_200')
-        allow_any_instance_of(Salesnavot::Search).to receive(:calculate_last_page).and_return(4)
+    it 'page 1 works' do
+      @search = @session.search('test_one_200')
+      next_page_to_process = @search.execute(1) do |link, image|
+        expect(link).to start_with('https://www.linkedin.com/sales/profile')
       end
-
-      it 'gets profile and image links from all leads of the first page of the list and return the next page' do
-        next_page_to_process = @search.execute(1) do |link, image|
-          expect(link).to start_with('https://www.linkedin.com/sales/people')
-        end
-        expect(next_page_to_process).to eq(2)
-      end
-
-      it 'gets profile and image links from all leads of the second page of the list and return the next page' do
-        next_page_to_process = @search.execute(2) do |link, image|
-          expect(link).to start_with('https://www.linkedin.com/sales/people')
-        end
-        expect(next_page_to_process).to eq(3)
-      end
-
-      it 'gets profile and image links from all leads of the last page of the list and return the first page' do
-        next_page_to_process = @search.execute(4) do |link, image|
-          expect(link).to start_with('https://www.linkedin.com/sales/people')
-        end
-        expect(next_page_to_process).to eq(1)
-      end
+      expect(next_page_to_process).to eq(2)
     end
-    context "when last page is not stubbed" do
-      it 'gets profile and image links from all leads of the last page of the list (13 pages) and return the first page' do
-        @search = @session.search('test_one_200')
-        #next_page_to_process = @search.execute(13) do |link, image|
-          #expect(link).to start_with('https://www.linkedin.com/sales/people')
 
-        expect(@search.execute).to receive(:calculate_last_page).and_return(13) do
-          puts 'yeah'
-        end
-        #end
-        #expect(next_page_to_process).to eq(1)
+    it 'gets profile and image links from all leads of the second page of the list and return the next page' do
+      @search = @session.search('test_one_200')
+      next_page_to_process = @search.execute(3) do |link, image|
+        expect(link).to start_with('https://www.linkedin.com/sales/profile')
       end
+      expect(next_page_to_process).to eq(4)
     end
+
+
+    it 'gets profile and image links from all leads of the first page of the list and return the next page' do
+      @search = @session.search('test_one_200')
+      next_page_to_process = @search.execute(100) do |link, image|
+        expect(true).to eq(false)
+      end
+      expect(next_page_to_process).to eq(1)
+
+    end
+
+
   end
 
   it 'scraps phones, emails and website links for a lead' do
