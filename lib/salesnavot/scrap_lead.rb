@@ -2,7 +2,7 @@ module Salesnavot
   # Goes to lead profile and scrap his phones, emails and websites
   class ScrapLead
     attr_reader :name, :emails, :url, :linkedin_url,
-                :sales_nav_url, :links, :phones
+                :sales_nav_url, :links, :phones, :error
     def initialize(config, session)
       @sales_nav_url = config[:sales_nav_url] || ''
       @emails = config[:emails] || []
@@ -10,6 +10,7 @@ module Salesnavot
       @first_degree = config[:first_degree] || false
       @links = config[:links] || []
       @session = session
+      @error = ''
     end
 
     def to_hash
@@ -70,22 +71,45 @@ module Salesnavot
       end
     end
 
+    def find_lead_name
+      unless @session.has_selector?('.profile-topcard-person-entity__name')
+        @error = 'No name found'
+        return false
+      end
+      @name = @session.find('.profile-topcard-person-entity__name').text
+      true
+    end
 
+    def find_lead_degree
+      unless @session.has_selector?('.m-type--degree')
+        @first_degree = false
+        return
+      end
+      @first_degree = (@session.find('.m-type--degree').text == '1st')
+    end
 
     def scrap_datas
-      @session.find('button.profile-topcard__contact-info-show-all').click
+      return false unless find_and_click(infos_selector)
       %w[phones emails links].each do |name|
         method("scrap_#{name}").call
       end
     end
 
+    def find_and_click(css)
+      unless @session.has_selector?(css)
+        @error = "Cannot find action button for css = #{css}"
+        return false
+      end
+      @session.find(css).click
+      true
+    end
+
     def execute
       @session.visit @sales_nav_url
-      @name = @session.find('.profile-topcard-person-entity__name').text
-      @first_degree = (@session.find('.m-type--degree').text == '1st')
-      return unless @session.has_selector?(infos_selector)
 
-      scrap_datas
+      return false unless find_lead_name
+      find_lead_degree
+      return false unless scrap_datas
     end
   end
 end
