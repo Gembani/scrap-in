@@ -127,9 +127,12 @@ RSpec.describe Salesnavot do
   end
 
   it 'scrap friends' do
+    count = 1
     @session.friends.execute(500) do |time_ago, name|
-      puts name + ' -> ' + time_ago
+      puts "#{count} -> #{name} : #{time_ago}."
+      count = count + 1
     end
+    expect(count).to eq(501)
   end
 
   xit 'scrap threads' do
