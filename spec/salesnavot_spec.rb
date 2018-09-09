@@ -16,16 +16,16 @@ RSpec.describe Salesnavot do
   describe '#Search' do
     it 'page 1 works' do
       @search = @session.search('test_one_200')
-      next_page_to_process = @search.execute(1) do |link, _image|
-        expect(link).to start_with('https://www.linkedin.com/sales/profile')
+      next_page_to_process = @search.execute(1) do |link, image|
+        expect(link).to start_with('https://www.linkedin.com/sales/people')
       end
       expect(next_page_to_process).to eq(2)
     end
 
     it 'gets profile and image links from all leads of the second page of the list and return the next page' do
       @search = @session.search('test_one_200')
-      next_page_to_process = @search.execute(3) do |link, _image|
-        expect(link).to start_with('https://www.linkedin.com/sales/profile')
+      next_page_to_process = @search.execute(3) do |link, image|
+        expect(link).to start_with('https://www.linkedin.com/sales/people')
       end
       expect(next_page_to_process).to eq(4)
     end

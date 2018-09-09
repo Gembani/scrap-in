@@ -14,30 +14,36 @@ module Salesnavot
       JS
       @session.driver.browser.execute_script(script, element.native)
     end
-
-    def visit_start(url, page)
-      start=(page - 1) * 25
-      @session.visit("#{url}&start=#{start}&count=25")
-      @session
-        .has_selector?('ul#results-list li.result:first-child  div:first-child')
+    def css_results_loaded
+      'ol.search-results__result-list li.search-results__result-item div.search-results__result-container'
     end
+
+    def check_results_loaded
+      raise "NOT LOADED" unless @session.has_selector?(css_results_loaded, wait: 3)
+    end
+
 
     def click_on_page(page)
       css = ".cursor-pointer [data-page-number='#{page}']"
       @session.all(css).first.click
-      @session
-        .has_selector?('ul#results-list li.result:first-child  div:first-child', wait: 2)
+      check_results_loaded
     end
 
     def has_empty_results
-      css = '.empty-result'
-      @session.has_selector?(css, wait: 5)
+      css = '.search-results__no-results'
+      @session.has_selector?(css, wait: 3)
     end
 
-    # Check if there are results in actual page
-    def page_is_populated?(page)
-      visit_start(@session.current_url, page) unless page == 1
-      !has_empty_results
+    # if page 2 empty results fails - don't use this with a too small search!
+    def visit_page(page)
+      return true if page == 1
+      click_on_page(2)
+      return true if page == 2
+      url = @session.current_url.sub("page=2", "page=#{page}")
+      @session.visit(url)
+      return false if has_empty_results
+      check_results_loaded
+      return true
     end
 
 
@@ -48,7 +54,7 @@ module Salesnavot
 
       puts "Processing page = #{page}"
 
-      unless page_is_populated?(page)
+      unless visit_page(page)
         puts "Page #{page} is empty, not scrapping, and returning first page"
         return 1
       end
@@ -60,15 +66,16 @@ module Salesnavot
     end
 
     def get_page_leads(page)
-      raise "CSS changed a.name-link doesn't exist" unless @session.has_selector?('a.name-link', wait: 3)
-      items = @session.all('a.name-link')
+      css = 'dt.result-lockup__name a'
+      raise "CSS changed a.name-link doesn't exist" unless @session.has_selector?(css, wait: 3)
+      items = @session.all(css)
       size = items.count
       while size != 25
         scroll_to(items.last)
-        items = @session.all('a.name-link')
+        items = @session.all(css)
         size = items.count
       end
-      @session.all('a.name-link').each do |item|
+      @session.all(css).each do |item|
         href = item[:href]
 
         profile_image = if item.has_selector?('img', wait: 0)
