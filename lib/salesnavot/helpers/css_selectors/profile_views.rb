@@ -10,8 +10,8 @@ module CssSelectors
        "article[data-control-name=\"profileview_private\"]:nth-child(#{count})"
     end
 
-    def viewers_list_css(*args)
-      'section.me-wvmp-viewers-list' 
+    def viewers_list_css
+      'section.me-wvmp-viewers-list'
     end
 
     def name_css
