@@ -23,7 +23,6 @@ module Salesnavot
       return false unless find_lead_name
       find_lead_degree
       return false unless scrap_datas
-      byebug
     end
 
     def scrap_datas
