@@ -1,4 +1,3 @@
-
 module Salesnavot
   # Goes to 'profile views' page and get all persons who viewed our profile
   class ProfileViews

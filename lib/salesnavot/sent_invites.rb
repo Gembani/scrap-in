@@ -37,7 +37,6 @@ module Salesnavot
 
       count = 0
       num_times.times.each do
-
         unless @session.has_selector?(nth_invited_lead_css(count, invitation: false), wait: 10)
           count = 0
           break unless next_page

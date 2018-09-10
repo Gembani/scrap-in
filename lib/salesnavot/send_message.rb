@@ -4,7 +4,7 @@ module Salesnavot
       @session = session
       @profile = profile
       @message = message
-      @error = "An error occured when sending the message."
+      @error = 'An error occured when sending the message.'
     end
 
     def execute
@@ -20,10 +20,10 @@ module Salesnavot
       @session.visit(@profile)
 
       while @session.all('button.pv-s-profile-actions--message').count == 0
-        puts "sleeping"
+        puts 'sleeping'
         sleep(0.2)
       end
-      puts "Profile has been visited."
+      puts 'Profile has been visited.'
     end
 
     def open_message_window
@@ -31,7 +31,7 @@ module Salesnavot
       @session.click_button 'Message'
       puts 'Message window has been opened.'
     end
-    
+
     def write_message
       puts 'Writing message...'
       @session.fill_in 'message', with: @message
@@ -42,9 +42,8 @@ module Salesnavot
       puts 'Sending message...'
       @session.find('.msg-form__send-button').click
       puts 'Message has been sent.'
-      #check, for now we suppose the message has been sent correctly 
+      # check, for now we suppose the message has been sent correctly
       true
     end
-
   end
 end

@@ -30,7 +30,7 @@ module Salesnavot
       num_times.times do
         friend = get_next_friend(count)
         if friend && @session.has_selector?(friend_name_css) &&
-            @session.has_selector?(time_ago_css)
+           @session.has_selector?(time_ago_css)
           name = friend.find(friend_name_css).text
           time_ago = friend.find(time_ago_css).text
           yield time_ago, name

@@ -14,9 +14,8 @@ module Salesnavot
     end
 
     def check_results_loaded
-      raise "NOT LOADED" unless @session.has_selector?(css_results_loaded, wait: 3)
+      raise 'NOT LOADED' unless @session.has_selector?(css_results_loaded, wait: 3)
     end
-
 
     def click_on_page(page)
       css = ".cursor-pointer [data-page-number='#{page}']"
@@ -34,18 +33,15 @@ module Salesnavot
       return true if page == 1
       click_on_page(2)
       return true if page == 2
-      url = @session.current_url.sub("page=2", "page=#{page}")
+      url = @session.current_url.sub('page=2', "page=#{page}")
       @session.visit(url)
       return false if has_empty_results
       check_results_loaded
-      return true
+      true
     end
-
-
 
     def execute(page = 1)
       go_to_saved_search
-
 
       puts "Processing page = #{page}"
 
@@ -57,10 +53,10 @@ module Salesnavot
       get_page_leads(page) do |a, b|
         yield a, b
       end
-      return page + 1
+      page + 1
     end
 
-    def get_page_leads(page)
+    def get_page_leads(_page)
       css = 'dt.result-lockup__name a'
       raise "CSS changed a.name-link doesn't exist" unless @session.has_selector?(css, wait: 3)
       items = @session.all(css)
