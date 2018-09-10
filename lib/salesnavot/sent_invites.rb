@@ -1,6 +1,7 @@
 module Salesnavot
   # Goes to "Sent invitations" page, and scrap all leads that were invited
   class SentInvites
+    include Tools
     attr_reader :invited_leads
     def initialize(session)
       @session = session
@@ -9,14 +10,6 @@ module Salesnavot
 
     def target_page
       'https://www.linkedin.com/mynetwork/invitation-manager/sent/'
-    end
-
-    def scroll_to(element)
-      script = <<-JS
-        arguments[0].scrollIntoView(true);
-      JS
-
-      @session.driver.execute_script(script, element.native)
     end
 
     def nth_invited_lead_css(count, invitation: true)

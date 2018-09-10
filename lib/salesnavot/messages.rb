@@ -1,5 +1,6 @@
 module Salesnavot
   class Messages
+    include Tools
     def initialize(session, thread_link)
       @session = session
       @thread_link = thread_link
@@ -51,7 +52,6 @@ module Salesnavot
           direction = :incoming : direction = :outgoing
         end
         yield  message, direction
-       # scroll_to(item)
       end
       sleep(0.5)
 
@@ -117,14 +117,5 @@ module Salesnavot
         end
       end
     end
-
-    def scroll_to(element)
-      script = <<-JS
-      arguments[0].scrollIntoView(true);
-      JS
-
-      @session.driver.browser.execute_script(script, element.native)
-    end
-
   end
 end

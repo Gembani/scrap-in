@@ -1,5 +1,6 @@
 require "salesnavot/version"
 
+require "salesnavot/helpers/tools"
 
 require "capybara/dsl"
 require "salesnavot/search"

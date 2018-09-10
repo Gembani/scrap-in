@@ -1,5 +1,6 @@
 module Salesnavot
   class Threads
+    include Tools
     def initialize(session)
       @session = session
 
@@ -55,15 +56,5 @@ module Salesnavot
         end
       end
     end
-
-
-    def scroll_to(element)
-      script = <<-JS
-        arguments[0].scrollIntoView(true);
-      JS
-
-      @session.driver.browser.execute_script(script, element.native)
-    end
-
   end
 end

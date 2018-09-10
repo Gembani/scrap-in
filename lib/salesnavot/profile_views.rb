@@ -1,17 +1,12 @@
+
 module Salesnavot
   # Goes to 'profile views' page and get all persons who viewed our profile
   class ProfileViews
+    include Tools
     attr_reader :profile_viewed_by
     def initialize(session)
       @session = session
       @profile_viewed_by = []
-    end
-
-    def scroll_to(element)
-      script = <<-JS
-        arguments[0].scrollIntoView(true);
-      JS
-      @session.driver.browser.execute_script(script, element.native)
     end
 
     def css(count)

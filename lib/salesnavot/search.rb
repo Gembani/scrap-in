@@ -1,6 +1,7 @@
 module Salesnavot
   # Goes on list page and get profile and image links of all leads
   class Search
+    include Tools
     def initialize(list_identifier, session)
       @session = session
       @list_identifier = list_identifier
@@ -8,12 +9,6 @@ module Salesnavot
       @saved_search_url = ''
     end
 
-    def scroll_to(element)
-      script = <<-JS
-        arguments[0].scrollIntoView(true);
-      JS
-      @session.driver.browser.execute_script(script, element.native)
-    end
     def css_results_loaded
       'ol.search-results__result-list li.search-results__result-item div.search-results__result-container'
     end
