@@ -1,5 +1,6 @@
 module Salesnavot
   class Invite
+    include Tools
     attr_reader :error
     def initialize(sales_nav_url, session, content)
       @sales_nav_url = sales_nav_url
@@ -25,15 +26,6 @@ module Salesnavot
       end
       @error = 'No connections. Not a friend'
       false
-    end
-
-    def find_and_click(css)
-      unless @session.has_selector?(css)
-        @error = "Cannot find action button for css = #{css}"
-        return false
-      end
-      @session.find(css).click
-      true
     end
 
     def action_button_css

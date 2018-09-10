@@ -1,6 +1,7 @@
 module Salesnavot
   # Goes to lead profile and scrap his phones, emails and websites
   class ScrapLead
+    include Tools
     attr_reader :name, :emails, :url, :linkedin_url,
                 :sales_nav_url, :links, :phones, :error
     def initialize(config, session)
@@ -93,15 +94,6 @@ module Salesnavot
       %w[phones emails links].each do |name|
         method("scrap_#{name}").call
       end
-    end
-
-    def find_and_click(css)
-      unless @session.has_selector?(css)
-        @error = "Cannot find action button for css = #{css}"
-        return false
-      end
-      @session.find(css).click
-      true
     end
 
     def execute
