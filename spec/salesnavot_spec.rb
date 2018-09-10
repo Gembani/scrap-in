@@ -14,7 +14,7 @@ RSpec.describe Salesnavot do
   end
 
   describe '#Search' do
-    it 'page 1 works' do
+    it 'gets lead from page 1' do
       @search = @session.search('test_one_200')
       next_page_to_process = @search.execute(1) do |link, image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
