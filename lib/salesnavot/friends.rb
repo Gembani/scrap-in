@@ -8,6 +8,17 @@ module Salesnavot
       @session = session
     end
 
+    def execute(num_times = 40)
+      next unless visit_target_page
+      count = 0
+      num_times.times do
+        search_for_name_and_time_ago(count) do |name, time_ago|
+          yield name, time_ago
+        end
+        count += 1
+      end
+    end
+
     def search_for_name_and_time_ago(count)
       friend = get_next_friend(count)
       if friend && @session.has_selector?(friend_name_css) &&
@@ -15,17 +26,6 @@ module Salesnavot
         name = friend.find(friend_name_css).text
         time_ago = friend.find(time_ago_css).text
         yield time_ago, name
-      end
-    end
-
-    def execute(num_times = 40)
-      visit_target_page
-      count = 0
-      num_times.times do
-        search_for_name_and_time_ago(count) do |name, time_ago|
-          yield name, time_ago
-        end
-        count += 1
       end
     end
 
