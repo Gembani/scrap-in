@@ -1,4 +1,5 @@
 module CssSelectors
+  # All css selectors used in Salesnavot::ProfileViews Class
   module ProfileViews
     def profile_view_css(count)
       'section.me-wvmp-viewers-list '\

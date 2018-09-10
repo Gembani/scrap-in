@@ -1,4 +1,5 @@
 module CssSelectors
+  # All css selectors used in Salesnavot::SentInvites Class
   module SentInvites
     def nth_lead_css(count, invitation: true)
       if invitation

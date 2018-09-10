@@ -1,4 +1,5 @@
 module Salesnavot
+  # Capybara Session
   class Session
     def initialize(username, password)
       #Capybara.default_max_wait_time = 10 # Seconds

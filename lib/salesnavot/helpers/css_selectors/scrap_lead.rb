@@ -1,4 +1,5 @@
 module CssSelectors
+  # All css selectors used in Salesnavot::ScrapLead Class
   module ScrapLead
     def phones_block_css
       '.contact-info-form__phone div.contact-info-form__phone-readonly-group'

@@ -1,5 +1,5 @@
-# Class to Log in into Linkedin
 module Salesnavot
+  # Class to Log in into Linkedin
   class Auth
     def initialize(session)
       @session = session

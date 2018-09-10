@@ -1,7 +1,9 @@
 module CssSelectors
+  # All css selectors used in Salesnavot::Search Class
   module Search
     def results_loaded_css
-      'ol.search-results__result-list li.search-results__result-item div.search-results__result-container'
+      'ol.search-results__result-list '\
+        'li.search-results__result-item div.search-results__result-container'
     end
 
     def page_css(page)

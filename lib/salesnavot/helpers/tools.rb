@@ -1,3 +1,4 @@
+# Methods used in some of Salesnavot's classes
 module Tools
   def scroll_to(element)
     script = <<-JS

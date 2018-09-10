@@ -1,4 +1,5 @@
 module CssSelectors
+  # All css selectors used in Salesnavot::Invite Class
   module Invite
     def action_button_css
       '.profile-topcard-actions__overflow-toggle'

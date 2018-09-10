@@ -1,4 +1,5 @@
 module CssSelectors
+  # All css selectors used in Salesnavot::Friend Class
   module Friends
     def friend_name_css
       '.mn-connection-card__name'

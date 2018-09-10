@@ -22,6 +22,7 @@ require 'salesnavot/send_message'
 require 'salesnavot/threads'
 require 'salesnavot/messages'
 
+# Our gem which will pull informations from Linkedin
 module Salesnavot
   def self.setup
     Capybara.run_server = false
