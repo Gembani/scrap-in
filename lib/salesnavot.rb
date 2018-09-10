@@ -6,6 +6,7 @@ require 'salesnavot/helpers/css_selectors/invite'
 require 'salesnavot/helpers/css_selectors/profile_views'
 require 'salesnavot/helpers/css_selectors/scrap_lead'
 require 'salesnavot/helpers/css_selectors/search'
+require 'salesnavot/helpers/css_selectors/sent_invites'
 
 require 'capybara/dsl'
 require 'salesnavot/search'
