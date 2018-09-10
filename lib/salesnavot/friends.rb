@@ -9,7 +9,7 @@ module Salesnavot
     end
 
     def execute(num_times = 40)
-      next unless visit_target_page
+      return unless visit_target_page
       count = 0
       num_times.times do
         search_for_name_and_time_ago(count) do |name, time_ago|
