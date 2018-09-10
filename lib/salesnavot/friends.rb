@@ -44,5 +44,9 @@ module Salesnavot
       scroll_to(friend)
       friend
     end
+
+    def connections_url
+      'https://www.linkedin.com/mynetwork/invite-connect/connections/'
+    end
   end
 end

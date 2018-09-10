@@ -44,5 +44,9 @@ module Salesnavot
       yield name, time_ago
       @profile_viewed_by.push name
     end
+
+    def target_page
+      'https://www.linkedin.com/me/profile-views/'
+    end
   end
 end

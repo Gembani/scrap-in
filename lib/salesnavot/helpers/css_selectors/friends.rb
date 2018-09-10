@@ -11,9 +11,5 @@ module CssSelectors
     def nth_friend_css(count)
       "section.mn-connections > ul >  li:nth-child(#{count + 1})"
     end
-
-    def connections_url(*args)
-      'https://www.linkedin.com/mynetwork/invite-connect/connections/'
-    end
   end
 end

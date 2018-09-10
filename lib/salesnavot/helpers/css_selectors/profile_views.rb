@@ -10,10 +10,6 @@ module CssSelectors
        "article[data-control-name=\"profileview_private\"]:nth-child(#{count})"
     end
 
-    def target_page
-      'https://www.linkedin.com/me/profile-views/'
-    end
-
     def viewers_list_css(*args)
       'section.me-wvmp-viewers-list' 
     end
