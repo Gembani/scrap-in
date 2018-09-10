@@ -2,42 +2,13 @@ module Salesnavot
   # Goes on list page and get profile and image links of all leads
   class Search
     include Tools
+    include CssSelectors::Search
+
     def initialize(list_identifier, session)
       @session = session
       @list_identifier = list_identifier
       @links = []
       @saved_search_url = ''
-    end
-
-    def css_results_loaded
-      'ol.search-results__result-list li.search-results__result-item div.search-results__result-container'
-    end
-
-    def check_results_loaded
-      raise 'NOT LOADED' unless @session.has_selector?(css_results_loaded, wait: 3)
-    end
-
-    def click_on_page(page)
-      css = ".cursor-pointer [data-page-number='#{page}']"
-      @session.all(css).first.click
-      check_results_loaded
-    end
-
-    def has_empty_results
-      css = '.search-results__no-results'
-      @session.has_selector?(css, wait: 3)
-    end
-
-    # if page 2 empty results fails - don't use this with a too small search!
-    def visit_page(page)
-      return true if page == 1
-      click_on_page(2)
-      return true if page == 2
-      url = @session.current_url.sub('page=2', "page=#{page}")
-      @session.visit(url)
-      return false if has_empty_results
-      check_results_loaded
-      true
     end
 
     def execute(page = 1)
@@ -54,6 +25,31 @@ module Salesnavot
         yield a, b
       end
       page + 1
+    end
+
+    def check_results_loaded
+      raise 'NOT LOADED' unless @session.has_selector?(results_loaded_css, wait: 3)
+    end
+
+    def click_on_page(page)
+      @session.all(page_css(page)).first.click
+      check_results_loaded
+    end
+
+    def empty_results?
+      @session.has_selector?(no_results_css, wait: 3)
+    end
+
+    # if page 2 empty results fails - don't use this with a too small search!
+    def visit_page(page)
+      return true if page == 1
+      click_on_page(2)
+      return true if page == 2
+      url = @session.current_url.sub('page=2', "page=#{page}")
+      @session.visit(url)
+      return false if empty_results?
+      check_results_loaded
+      true
     end
 
     def get_page_leads(_page)
