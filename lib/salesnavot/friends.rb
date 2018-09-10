@@ -19,7 +19,7 @@ module Salesnavot
     end
 
     def execute(num_times = 40)
-      init_list
+      visit_target_page
       count = 0
       num_times.times do
         search_for_name_and_time_ago(count) do |name, time_ago|
@@ -29,7 +29,7 @@ module Salesnavot
       end
     end
 
-    def init_list
+    def visit_target_page
       @session.visit(connections_url)
       unless @session.has_selector?(nth_friend_css(0))
         @error = "No friend found (no css element: #{nth_friend_css(0)})"
