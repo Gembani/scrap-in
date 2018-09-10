@@ -2,42 +2,24 @@ module Salesnavot
   # Goes to 'profile views' page and get all persons who viewed our profile
   class ProfileViews
     include Tools
+    include CssSelectors::ProfileViews
+
     attr_reader :profile_viewed_by
+
     def initialize(session)
       @session = session
       @profile_viewed_by = []
     end
 
-    def css(count)
-      'section.me-wvmp-viewers-list '\
-      "article[data-control-name=\"profileview_single\"]:nth-child(#{count})"
-    end
-
-    def last_element_css(count)
-      'section.me-wvmp-viewers-list '\
-       "article[data-control-name=\"profileview_private\"]:nth-child(#{count})"
-    end
-
-    def find_name_and_time_ago(number)
-      item = @session.find(css(number))
-      scroll_to(item)
-      name = item.find('.me-wvmp-viewer-card__name-text').text
-      time_ago = item.find('.me-wvmp-viewer-card__time-ago').text
-      unless name.empty?
-        yield name, time_ago
-        @profile_viewed_by.push name
-      end
-    end
-
     def execute(num_times = 50)
-      return unless init_list(target_page)
+      return unless visit_target_page(target_page)
+      search_for_leads(num_times) { |name, time_ago| yield name, time_ago }
+    end
 
-      count = 1
-      i = 1
-      not_a_lead = 0
+    def search_for_leads(num_times, count = 1, not_a_lead = 0)
       while count <= num_times
         i = not_a_lead + count
-        if @session.has_selector?(css(i), wait: 1)
+        if @session.has_selector?(profile_view_css(i), wait: 1)
           find_name_and_time_ago(i) { |name, time_ago| yield name, time_ago }
           count += 1
         else
@@ -47,14 +29,20 @@ module Salesnavot
       end
     end
 
-    def target_page
-      'https://www.linkedin.com/me/profile-views/'
+    def visit_target_page(link)
+      @session.visit(link)
+      return false unless @session.has_selector?(viewers_list_css)
+      true
     end
 
-    def init_list(link)
-      @session.visit(link)
-      return false unless @session.has_selector?('section.me-wvmp-viewers-list')
-      true
+    def find_name_and_time_ago(number)
+      item = @session.find(profile_view_css(number))
+      scroll_to(item)
+      name = item.find(name_css).text
+      time_ago = item.find(time_ago_css).text
+      return if name.empty?
+      yield name, time_ago
+      @profile_viewed_by.push name
     end
   end
 end
