@@ -108,9 +108,9 @@ RSpec.describe Salesnavot do
     end
 
     it 'create invite already connected' do ## Integration
-      message = 'Hello, this is a test'
+      message = 'Hello there'
       # invite = @session.invite('https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name', message)
-      invite = @session.invite('https://www.linkedin.com/sales/people/ACwAAChfmuYBvjIbCcBAEM0npwYdZ1t_yG29Y6w,NAME_SEARCH,bJYg?trk=d_sales2_nav_typeahead_entitysuggestion', 'Hello there')
+      invite = @session.invite('https://www.linkedin.com/sales/people/ACwAAChfmuYBvjIbCcBAEM0npwYdZ1t_yG29Y6w,NAME_SEARCH,bJYg?trk=d_sales2_nav_typeahead_entitysuggestion', message)
 
       value = invite.execute
       expect(value).to be true
@@ -142,8 +142,8 @@ RSpec.describe Salesnavot do
   end
 
   xit 'scrap messages' do
-    messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
-    did_send = messages.send_greeting_message("hello world\n This message is long and blah blah blah")
+    #messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
+    #did_send = messages.send_greeting_message("hello world\n This message is long and blah blah blah")
     # messages.execute(100) do | message, direction|
     #
     #   if direction == :incoming
