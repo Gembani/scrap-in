@@ -1,7 +1,8 @@
 module Salesnavot
   class Session
     def initialize(username, password)
-      Capybara.default_max_wait_time = 10 # Seconds
+      #Capybara.default_max_wait_time = 10 # Seconds
+      Capybara.default_max_wait_time = 60 # Seconds
       @capybara = Capybara::Session.new(ENV.fetch('driver').to_sym)
       auth = Salesnavot::Auth.new(@capybara)
       auth.login!(username, password)
