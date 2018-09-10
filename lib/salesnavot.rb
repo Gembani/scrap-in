@@ -1,7 +1,8 @@
 require 'salesnavot/version'
 
 require 'salesnavot/helpers/tools'
-require 'salesnavot/helpers/css_selectors'
+require 'salesnavot/helpers/css_selectors/friends'
+require 'salesnavot/helpers/css_selectors/invite'
 
 require 'capybara/dsl'
 require 'salesnavot/search'
