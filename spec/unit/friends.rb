@@ -17,6 +17,7 @@ RSpec.describe Salesnavot::Friends do
   describe 'instance of described class' do
     subject { friends.instance_variables }
     it { is_expected.to include(:@session) }
+    it { is_expected.to include(:@error) }
   end
 
   describe '.execute' do
