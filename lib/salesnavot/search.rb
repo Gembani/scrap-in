@@ -21,14 +21,16 @@ module Salesnavot
         return 1
       end
 
-      get_page_leads(page) do |a, b|
+      find_page_leads do |a, b|
         yield a, b
       end
       page + 1
     end
 
     def check_results_loaded
-      raise 'NOT LOADED' unless @session.has_selector?(results_loaded_css, wait: 3)
+      raise 'NOT LOADED' unless @session.has_selector?(
+        results_loaded_css, wait: 3
+      )
     end
 
     def click_on_page(page)
@@ -52,23 +54,28 @@ module Salesnavot
       true
     end
 
-    def get_page_leads(_page)
-      css = 'dt.result-lockup__name a'
-      raise "CSS changed a.name-link doesn't exist" unless @session.has_selector?(css, wait: 3)
-      items = @session.all(css)
+    def check_leads_loaded
+      raise css_error(name_css) unless @session.has_selector?(name_css, wait: 3)
+    end
+
+    def find_leads_size
+      items = @session.all(name_css)
       size = items.count
       while size != 25
         scroll_to(items.last)
-        items = @session.all(css)
+        items = @session.all(name_css)
         size = items.count
       end
-      @session.all(css).each do |item|
-        href = item[:href]
+    end
 
+    def find_page_leads
+      check_leads_loaded
+      find_leads_size
+      @session.all(name_css).each do |item|
+        href = item[:href]
         profile_image = if item.has_selector?('img', wait: 0)
                           item.find('img')[:src]
                         end
-
         puts "Link = #{href}"
         yield href, profile_image
       end
