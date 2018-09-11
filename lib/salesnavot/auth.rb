@@ -1,32 +1,13 @@
 module Salesnavot
   # Class to Log in into Linkedin
   class Auth
+    include CssSelectors::Auth
     def initialize(session)
       @session = session
     end
 
-    def email_input(type = :selector)
-      type.to_sym
-      return 'session_key-login' if type == :id
-      '#session_key-login'
-    end
-
-    def password_input(type = :selector)
-      return 'session_password-login' if type == :id
-      '#session_password-login'
-    end
-
-    def login_button(type = :selector)
-      return 'btn-primary' if type == :id
-      '#btn-primary'
-    end
-
-    def homepage
-      'https://www.linkedin.com/sales'
-    end
-
     def login!(username, password)
-      puts 'visiting login screen'
+      puts 'Visiting login screen'
       @session.visit(homepage)
 
       puts 'Filling in email...'
@@ -37,8 +18,11 @@ module Salesnavot
 
       puts 'Clicking on login button'
       @session.find(login_button).click
-      @session.has_selector?('#insights-list')
-      # We just need to log in. No need to wait for a css to appear
+      raise 'Login failed !' unless @session.has_selector?(insight_list_css)
+    end
+
+    def homepage
+      'https://www.linkedin.com/sales'
     end
   end
 end
