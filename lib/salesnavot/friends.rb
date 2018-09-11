@@ -4,8 +4,10 @@ module Salesnavot
   class Friends
     include Tools
     include CssSelectors::Friends
+    attr_reader :error
     def initialize(session)
       @session = session
+      @error = ''
     end
 
     def execute(num_times = 40)
