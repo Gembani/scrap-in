@@ -9,10 +9,14 @@ module Tools
 
   def find_and_click(css)
     unless @session.has_selector?(css)
-      @error = "Cannot find action button for css = #{css}"
+      @error = css_error(css)
       return false
     end
     @session.find(css).click
     true
+  end
+
+  def css_error(css)
+    "Wrong CSS, or it has been changed : #{css}"
   end
 end
