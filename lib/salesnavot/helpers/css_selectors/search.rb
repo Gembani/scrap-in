@@ -13,5 +13,9 @@ module CssSelectors
     def no_results_css
       '.search-results__no-results'
     end
+
+    def name_css
+      'dt.result-lockup__name a'
+    end
   end
 end
