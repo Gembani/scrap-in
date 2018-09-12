@@ -12,7 +12,7 @@ module Salesnavot
     end
 
     def execute(num_times = 50)
-      return unless visit_target_page(target_page)
+      visit_target_page(target_page)
       search_for_leads(num_times) { |name, time_ago| yield name, time_ago }
     end
 
@@ -31,8 +31,7 @@ module Salesnavot
 
     def visit_target_page(link)
       @session.visit(link)
-      return false unless @session.has_selector?(viewers_list_css)
-      true
+      raise css_error(viewers_list_css) unless @session.has_selector?(viewers_list_css)
     end
 
     def find_name_and_time_ago(number)
