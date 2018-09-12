@@ -8,6 +8,9 @@ module Salesnavot
                 :sales_nav_url, :links, :phones, :error
 
     def initialize(config, session)
+      @name = ''
+      @linkedin_url = ''
+      @url = ''
       @sales_nav_url = config[:sales_nav_url] || ''
       @emails = config[:emails] || []
       @phones = config[:phones] || []
@@ -20,16 +23,9 @@ module Salesnavot
     def execute
       @session.visit @sales_nav_url
 
-      return false unless find_lead_name
+      find_lead_name
       find_lead_degree
-      return false unless scrap_datas
-    end
-
-    def scrap_datas
-      return false unless find_and_click(infos_css)
-      %w[phones emails links].each do |name|
-        method("scrap_#{name}").call
-      end
+      scrap_datas
     end
 
     def to_hash
@@ -47,9 +43,19 @@ module Salesnavot
       to_hash.to_json
     end
 
+    private
+
+    def scrap_datas
+      find_and_click(infos_css)
+      %w[phones links emails].each do |name|
+        method("scrap_#{name}").call
+      end
+    end
+
     def scrap_phones
-      return unless @session.has_selector?(phones_block_css, wait: 1)
-      phones = @session.all(phones_block_css)
+      css = phones_block_css
+      raise css_error(css) unless @session.has_selector?(css, wait: 1)
+      phones = @session.all(css)
       phones.each do |phone|
         value = phone.find(phone_css).text
         @phones << value
@@ -57,7 +63,8 @@ module Salesnavot
     end
 
     def scrap_emails
-      return unless @session.has_selector?(emails_block_css, wait: 1)
+      css = emails_block_css
+      raise css_error(css) unless @session.has_selector?(css, wait: 1)
       emails = @session.all(emails_block_css)
       emails.each do |email|
         value = email.find(email_css).text
@@ -66,7 +73,8 @@ module Salesnavot
     end
 
     def scrap_links
-      return unless @session.has_selector?(links_block_css, wait: 1)
+      css = links_block_css
+      raise css_error(css) unless @session.has_selector?(css, wait: 1)
       links = @session.all(links_block_css)
       links.each do |link|
         value = link.find(link_css).text
@@ -77,10 +85,9 @@ module Salesnavot
     def find_lead_name
       unless @session.has_selector?(name_css)
         @error = 'No name found'
-        return false
+        raise css_error(name_css)
       end
       @name = @session.find(name_css).text
-      true
     end
 
     def find_lead_degree
