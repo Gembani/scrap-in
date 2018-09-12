@@ -10,10 +10,9 @@ module Tools
   def find_and_click(css)
     unless @session.has_selector?(css)
       @error = css_error(css)
-      return false
+      raise css_error(css)
     end
     @session.find(css).click
-    true
   end
 
   def css_error(css)
