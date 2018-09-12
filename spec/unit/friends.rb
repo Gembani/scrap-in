@@ -24,10 +24,12 @@ RSpec.describe Salesnavot::Friends do
     context 'Friends were found on the page' do
       before do
         allow(friends).to receive(:visit_target_page).and_return(true)
-        allow(friends).to receive(:search_for_name_and_time_ago).and_yield(
-          Faker::Name.name,
-          Faker::Time.backward(14, :evening)
-        )
+        40.times do |i|
+          allow(friends).to receive(:search_for_name_and_time_ago).with(i).and_yield(
+            Faker::Name.name,
+            Faker::Time.backward(14, :evening)
+          )
+        end
       end
 
       it 'finds one friend' do
