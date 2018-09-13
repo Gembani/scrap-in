@@ -13,7 +13,10 @@ module Salesnavot
 
     def execute
       visit_target_page(@sales_nav_url)
-      # return false if friend?
+      if lead_invited?
+        @error = 'Invitation is pending ...'
+        return false
+      end
       if friend?
         @error = 'Already friends'
         return false
