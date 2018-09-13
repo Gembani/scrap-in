@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Salesnavot::Friends do
-
   let(:friends) do
     described_class.new(session)
   end

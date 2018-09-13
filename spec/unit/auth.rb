@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Salesnavot::Auth do
-
   let(:auth) do
     described_class.new(session)
   end
@@ -60,9 +59,9 @@ RSpec.describe Salesnavot::Auth do
       end
 
       it 'does not log in into Linkedin and raises an error' do
-        expect {
+        expect do
           auth.login!(username, password)
-        }.to raise_error('Login failed !')
+        end.to raise_error('Login failed !')
       end
     end
   end

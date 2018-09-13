@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Salesnavot::ProfileViews do
-
   include Tools
   let(:profile_views) do
     described_class.new(session)
@@ -62,9 +61,9 @@ RSpec.describe Salesnavot::ProfileViews do
       end
 
       it 'stops the research and raise error' do
-        expect {
+        expect do
           profile_views.execute
-        }.to raise_error(css_error(viewers_list_css))
+        end.to raise_error(css_error(viewers_list_css))
       end
     end
   end

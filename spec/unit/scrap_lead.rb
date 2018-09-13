@@ -115,7 +115,6 @@ RSpec.describe Salesnavot::ScrapLead do
               scrap_lead.execute
             end.to raise_error(css_error(phones_block_css))
           end
-
         end
         context 'links css was not found' do
           before do
@@ -128,7 +127,6 @@ RSpec.describe Salesnavot::ScrapLead do
               scrap_lead.execute
             end.to raise_error(css_error(links_block_css))
           end
-
         end
         context 'emails css was not found' do
           before do
@@ -142,7 +140,6 @@ RSpec.describe Salesnavot::ScrapLead do
               scrap_lead.execute
             end.to raise_error(css_error(emails_block_css))
           end
-
         end
       end
     end
