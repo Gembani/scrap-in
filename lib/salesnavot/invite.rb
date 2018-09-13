@@ -19,8 +19,7 @@ module Salesnavot
         return false
       end
       return false unless click_and_connect
-      lead_invited?
-      false
+      return lead_invited?
     end
 
     private
