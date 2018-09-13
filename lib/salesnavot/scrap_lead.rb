@@ -54,7 +54,10 @@ module Salesnavot
 
     def scrap_phones
       css = phones_block_css
-      raise css_error(css) unless @session.has_selector?(css, wait: 1)
+      unless @session.has_selector?(css, wait: 1)
+        @error << 'No phones found.'
+        return
+      end
       phones = @session.all(css)
       phones.each do |phone|
         value = phone.find(phone_css).text
@@ -64,7 +67,10 @@ module Salesnavot
 
     def scrap_emails
       css = emails_block_css
-      raise css_error(css) unless @session.has_selector?(css, wait: 1)
+      unless @session.has_selector?(css, wait: 1)
+        @error << 'No emails found.'
+        return
+      end
       emails = @session.all(emails_block_css)
       emails.each do |email|
         value = email.find(email_css).text
@@ -74,7 +80,10 @@ module Salesnavot
 
     def scrap_links
       css = links_block_css
-      raise css_error(css) unless @session.has_selector?(css, wait: 1)
+      unless @session.has_selector?(css, wait: 1)
+        @error << 'No links found.'
+        return
+      end
       links = @session.all(links_block_css)
       links.each do |link|
         value = link.find(link_css).text
