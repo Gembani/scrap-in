@@ -12,52 +12,58 @@ module Salesnavot
     end
 
     def execute
-      return false unless visit_target_page(@sales_nav_url)
-      return false if friend?
+      visit_target_page(@sales_nav_url)
+      # return false if friend?
+      if friend?
+        @error = 'Already friends'
+        return false
+      end
       return false unless click_and_connect
       lead_invited?
+      false
     end
+
+    private
 
     def visit_target_page(link)
       @session.visit(link)
-      return false unless @session.has_selector?(profile_css)
-      true
+      raise css_error(profile_css) unless @session.has_selector?(profile_css)
     end
 
     def friend?
       if @session.has_selector?(degree_css, wait: 4)
         return true if @session.find(degree_css).text == '1st'
-        @error = 'Already friends'
-        return false
       end
-      @error = 'No connections. Not a friend'
       false
     end
 
     def lead_email_required?
-      if @session.has_selector?(form_email_css, wait: 3)
-        @error = "Lead's email is required to connect"
-        return false
-      end
-      true
+      return true if @session.has_selector?(form_email_css, wait: 3)
+      false
     end
 
     def invitation_window_closed?
-      !@session.has_selector?(form_css)
+      return true unless @session.has_selector?(form_css)
+      @error = 'Invitation form did not close'
+      false
     end
 
     def click_and_connect
-      return false unless find_and_click(action_button_css)
-      return false unless find_and_click(connect_button_css)
-      return false unless lead_email_required?
+      find_and_click(action_button_css)
+      find_and_click(connect_button_css)
+      if lead_email_required?
+        @error = "Lead's email is required to connect"
+        return false
+      end
 
       @session.fill_in form_invitation_id, with: @content
       find_and_click(send_button_css)
+      true
     end
 
     def lead_invited?
       return false unless invitation_window_closed?
-      return false unless find_and_click(action_button_css)
+      find_and_click(action_button_css)
       unless @session.has_selector?(pending_connection_css)
         @error = "Can't find pending connection button"
         return false
