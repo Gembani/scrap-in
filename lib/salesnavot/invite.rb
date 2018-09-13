@@ -13,16 +13,17 @@ module Salesnavot
 
     def execute
       visit_target_page(@sales_nav_url)
-      if lead_invited?
-        @error = 'Invitation is pending ...'
+      if pending?
+        @error = 'Invitation is already pending ...'
         return false
       end
+      find_and_click(action_button_css)
       if friend?
         @error = 'Already friends'
         return false
       end
       return false unless click_and_connect
-      return lead_invited?
+      lead_invited?
     end
 
     private
@@ -63,14 +64,18 @@ module Salesnavot
       true
     end
 
-    def lead_invited?
-      return false unless invitation_window_closed?
+    def pending?
       find_and_click(action_button_css)
-      unless @session.has_selector?(pending_connection_css)
+      unless @session.has_selector?(pending_connection_css, wait: 4)
         @error = "Can't find pending connection button"
         return false
       end
       true
+    end
+
+    def lead_invited?
+      visit_target_page(@sales_nav_url)
+      pending?
     end
   end
 end
