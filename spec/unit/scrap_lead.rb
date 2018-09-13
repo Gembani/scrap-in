@@ -108,24 +108,25 @@ RSpec.describe Salesnavot::ScrapLead do
         context 'phones css was not found' do
           before do
             allow(scrap_lead).to receive(:phones_block_css).and_return(phones_block_css)
+            allow(scrap_lead).to receive(:scrap_emails)
+            allow(scrap_lead).to receive(:scrap_links)
             allow(session).to receive(:has_selector?).with(phones_block_css, wait: 1).and_return(false)
           end
-          it 'raises a css error' do
-            expect do
+          it 'writes an error' do
               scrap_lead.execute
-            end.to raise_error(css_error(phones_block_css))
+              expect(scrap_lead.error).not_to be_empty
           end
         end
         context 'links css was not found' do
           before do
             allow(scrap_lead).to receive(:scrap_phones)
+            allow(scrap_lead).to receive(:scrap_emails)
             allow(scrap_lead).to receive(:links_block_css).and_return(links_block_css)
             allow(session).to receive(:has_selector?).with(links_block_css, wait: 1).and_return(false)
           end
-          it 'raises a css error' do
-            expect do
+          it 'writes an error' do
               scrap_lead.execute
-            end.to raise_error(css_error(links_block_css))
+              expect(scrap_lead.error).not_to be_empty
           end
         end
         context 'emails css was not found' do
@@ -135,10 +136,9 @@ RSpec.describe Salesnavot::ScrapLead do
             allow(scrap_lead).to receive(:emails_block_css).and_return(emails_block_css)
             allow(session).to receive(:has_selector?).with(emails_block_css, wait: 1).and_return(false)
           end
-          it 'raises a css error' do
-            expect do
+          it 'writes an error' do
               scrap_lead.execute
-            end.to raise_error(css_error(emails_block_css))
+              expect(scrap_lead.error).not_to be_empty
           end
         end
       end

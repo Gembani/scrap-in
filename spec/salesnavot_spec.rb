@@ -83,33 +83,12 @@ RSpec.describe Salesnavot do
   end
 
   describe '#Salesnavot::Invite' do
-    context 'Invite a lead who is not a friend yet' do
-      it 'create invite already connected' do
-        invite = @session.invite('Link', 'Test message')
-        allow_any_instance_of(Salesnavot::Invite).to receive(:go_to).and_return(true)
-        allow_any_instance_of(Salesnavot::Invite).to receive(:is_friend?).and_return(false)
-        allow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
-        allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
-        value = invite.execute
-        expect(value).to be true
-        puts 'Invite sent !'
-      end
+    before do
+      allow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
+      allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
     end
-
-    context 'Does not invite a lead when he/she is already a friend' do
-      it 'create invite already connected' do
-        invite = @session.invite('Link', 'Test message')
-        allow_any_instance_of(Salesnavot::Invite).to receive(:go_to).and_return(true)
-        allow_any_instance_of(Salesnavot::Invite).to receive(:is_friend?).and_return(true)
-        value = invite.execute
-        expect(value).to be false
-        puts 'Invite not sent !!'
-      end
-    end
-
-    it 'create invite already connected' do ## Integration
+    it 'creates invite already connected' do ## Integration
       message = 'Hello there'
-      # invite = @session.invite('https://www.linkedin.com/sales/profile/323951533,F1Ig,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people&contextId=8F37C172A38F1315806C569E8B2B0000&requestId=f9372319-4f38-4bae-9830-e810398675f5&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C323951533)&pageNumber=0&targetEl=profilelink&position=7&trk=lss-serp-result-lead_name', message)
       invite = @session.invite('https://www.linkedin.com/sales/people/ACwAAChfmuYBvjIbCcBAEM0npwYdZ1t_yG29Y6w,NAME_SEARCH,bJYg?trk=d_sales2_nav_typeahead_entitysuggestion', message)
 
       value = invite.execute
@@ -132,7 +111,7 @@ RSpec.describe Salesnavot do
       puts "#{count} -> #{name} : #{time_ago}."
       count = count + 1
     end
-    expect(count).to eq(501)
+    expect(count).to eq(251)
   end
 
   xit 'scrap threads' do
