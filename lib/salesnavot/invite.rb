@@ -13,7 +13,7 @@ module Salesnavot
 
     def execute
       visit_target_page(@sales_nav_url)
-      if pending?
+      if initially_pending?
         @error = 'Invitation is already pending ...'
         return false
       end
@@ -58,13 +58,17 @@ module Salesnavot
         @error = "Lead's email is required to connect"
         return false
       end
-
       @session.fill_in form_invitation_id, with: @content
       find_and_click(send_button_css)
       true
     end
 
-    def pending?
+    def initially_pending?
+      find_and_click(action_button_css)
+      return @session.has_selector?(pending_connection_css, wait: 4)
+    end
+
+    def pending_after_invite?
       find_and_click(action_button_css)
       unless @session.has_selector?(pending_connection_css, wait: 4)
         @error = "Can't find pending connection button"
@@ -75,7 +79,7 @@ module Salesnavot
 
     def lead_invited?
       visit_target_page(@sales_nav_url)
-      pending?
+      pending_after_invite?
     end
   end
 end
