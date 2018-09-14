@@ -21,6 +21,10 @@ module Salesnavot
     end
 
     def execute
+      if @sales_nav_url.include?('OUT_OF_NETWORK')
+        @error = 'Lead is out of network.'
+        return
+      end
       @session.visit @sales_nav_url
 
       find_lead_name
@@ -46,7 +50,12 @@ module Salesnavot
     private
 
     def scrap_datas
-      find_and_click(infos_css)
+      begin
+        find_and_click(infos_css)
+      rescue
+        @error = 'No infos at all, or button has been changed'
+        return
+      end
       %w[phones links emails].each do |name|
         method("scrap_#{name}").call
       end
