@@ -12,6 +12,10 @@ module Salesnavot
     end
 
     def execute
+      if @sales_nav_url.include?('OUT_OF_NETWORK')
+        @error = 'Lead is out of network.'
+        return false
+      end
       visit_target_page(@sales_nav_url)
       if initially_pending?
         @error = 'Invitation is already pending ...'
