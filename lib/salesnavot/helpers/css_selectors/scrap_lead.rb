@@ -5,6 +5,10 @@ module CssSelectors
       '.contact-info-form__phone div.contact-info-form__phone-readonly-group'
     end
 
+    def location_css
+      '.profile-topcard__location-data'
+    end
+
     def emails_block_css
       '.contact-info-form__email div.contact-info-form__email-readonly-group'
     end

@@ -5,7 +5,7 @@ module Salesnavot
     include CssSelectors::ScrapLead
 
     attr_reader :name, :emails, :url, :linkedin_url,
-                :sales_nav_url, :links, :phones, :error
+                :sales_nav_url, :links, :phones, :error, :location
 
     def initialize(config, session)
       @name = ''
@@ -18,6 +18,7 @@ module Salesnavot
       @links = config[:links] || []
       @session = session
       @error = ''
+      @location = config[:location] || ''
     end
 
     def execute
@@ -29,6 +30,7 @@ module Salesnavot
 
       find_lead_name
       find_lead_degree
+      find_location
       scrap_datas
     end
 
@@ -106,6 +108,15 @@ module Salesnavot
         raise css_error(name_css)
       end
       @name = @session.find(name_css).text
+    end
+
+    def find_location
+      unless @session.has_selector?(location_css)
+        @error = 'No location found'
+        raise css_error(location_css)
+      end
+      @location = @session.find(location_css).text
+      location_css
     end
 
     def find_lead_degree

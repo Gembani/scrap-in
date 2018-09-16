@@ -39,13 +39,14 @@ RSpec.describe Salesnavot do
     end
   end
 
-  it 'scraps phones, emails and website links for a lead' do
+  it 'scraps location, phones, emails and website links for a lead' do
     seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'
     scrap = @session.scrap_lead(sales_nav_url: seb_link)
     scrap.execute
     puts "Error: #{scrap.error}" unless scrap.error.empty?
     expect(scrap.sales_nav_url).not_to be_nil
     expect(scrap.name).not_to be_nil
+    expect(scrap.location).not_to be_nil
     expect(scrap.emails.count).to be > 0
     expect(scrap.phones.count).to be > 0
     expect(scrap.links.count).to eq(0)
