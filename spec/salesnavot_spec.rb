@@ -108,8 +108,8 @@ RSpec.describe Salesnavot do
 
   it 'scrap friends' do
     count = 1
-    @session.friends.execute(250) do |time_ago, name|
-      puts "#{count} -> #{name} : #{time_ago}."
+    @session.friends.execute(250) do |time_ago, name, url|
+      puts "#{count} -> #{name} : #{time_ago}. -> #{url}"
       count = count + 1
     end
     expect(count).to eq(251)

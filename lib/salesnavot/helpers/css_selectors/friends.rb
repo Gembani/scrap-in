@@ -9,6 +9,10 @@ module CssSelectors
       '.time-ago'
     end
 
+    def link_css
+      '.mn-connection-card__details a'
+    end
+
     def nth_friend_css(count)
       "section.mn-connections > ul >  li:nth-child(#{count + 1})"
     end
