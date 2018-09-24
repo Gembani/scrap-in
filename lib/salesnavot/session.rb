@@ -17,6 +17,10 @@ module Salesnavot
       Salesnavot::Invite.new(sales_nav_profile_link, @capybara, content)
     end
 
+    def convert_linkedin_to_salesnav(linkedin_url)
+      Salesnavot::LinkedinSalesnavConverter.new(linkedin_url, @capybara)
+    end
+
     def sent_invites
       Salesnavot::SentInvites.new(@capybara)
     end

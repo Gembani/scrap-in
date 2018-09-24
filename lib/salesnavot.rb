@@ -22,6 +22,7 @@ require 'salesnavot/driver'
 require 'salesnavot/send_message'
 require 'salesnavot/threads'
 require 'salesnavot/messages'
+require 'salesnavot/linkedin_salesnav_converter'
 
 # Our gem which will pull informations from Linkedin
 module Salesnavot

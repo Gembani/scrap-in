@@ -39,6 +39,13 @@ RSpec.describe Salesnavot do
     end
   end
 
+  it 'convert_linkedin_to_salesnav' do
+    scrap = @session.convert_linkedin_to_salesnav('https://www.linkedin.com/in/fabricelenoble/')
+    expect(scrap.execute).to eq('https://www.linkedin.com/sales/people/ACoAAADWUwgBctzvFTKAW_3OhL5rc-fpKquTURM,name,2Qv9')
+
+  end
+
+
   it 'scraps location, phones, emails and website links for a lead' do
     seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'
     scrap = @session.scrap_lead(sales_nav_url: seb_link)
