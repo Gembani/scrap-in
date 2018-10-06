@@ -45,6 +45,10 @@ RSpec.describe Salesnavot do
 
   end
 
+  it 'get_linkedin_data_from_name' do
+    expect(@session.get_linkedin_data_from_name("Emma Donovan")).to eq(linkedin_url: "https://www.linkedin.com/in/emmadonovan1", salesnav_url:"https://www.linkedin.com/sales/people/ACoAAAAAJ_kBu6vzRwww0KpB2oF4ljYmj1O21z8,name,QOK6")
+  end
+
 
   it 'scraps location, phones, emails and website links for a lead' do
     seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'

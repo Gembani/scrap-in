@@ -25,6 +25,11 @@ module Salesnavot
       Salesnavot::SentInvites.new(@capybara)
     end
 
+    def get_linkedin_data_from_name(name)
+      object = Salesnavot::LinkedInDataFromName.new(@capybara)
+      object.execute(name)
+    end
+
     def send_message(profile, message)
       Salesnavot::SendMessage.new(@capybara, profile, message)
     end
