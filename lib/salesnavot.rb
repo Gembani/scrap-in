@@ -24,6 +24,8 @@ require 'salesnavot/threads'
 require 'salesnavot/messages'
 require 'salesnavot/linkedin_salesnav_converter'
 require 'salesnavot/linkedin_data_from_name'
+require 'salesnavot/thread_from_name'
+
 # Our gem which will pull informations from Linkedin
 module Salesnavot
   def self.setup

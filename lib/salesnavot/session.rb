@@ -30,6 +30,11 @@ module Salesnavot
       object.execute(name)
     end
 
+    def get_thread_from_name(name)
+      object = Salesnavot::ThreadFromName.new(@capybara)
+      object.execute(name)
+    end
+
     def send_message(profile, message)
       Salesnavot::SendMessage.new(@capybara, profile, message)
     end

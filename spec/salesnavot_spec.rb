@@ -50,6 +50,12 @@ RSpec.describe Salesnavot do
   end
 
 
+    it 'get friend thread' do
+      expect(@session.get_thread_from_name("Emma Donovan")).to eq("https://www.linkedin.com/messaging/thread/S490732917_3")
+    end
+
+
+
   it 'scraps location, phones, emails and website links for a lead' do
     seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'
     scrap = @session.scrap_lead(sales_nav_url: seb_link)
@@ -131,6 +137,7 @@ RSpec.describe Salesnavot do
       puts "#{name}, #{thread}"
     end
   end
+
 
   xit 'scrap messages' do
     #messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
