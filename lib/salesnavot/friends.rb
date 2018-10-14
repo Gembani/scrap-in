@@ -26,7 +26,7 @@ module Salesnavot
       if friend && @session.has_selector?(friend_name_css) &&
          @session.has_selector?(time_ago_css) && @session.has_selector?(link_css)
         name = friend.find(friend_name_css).text
-        link = friend.find(link_css)[:href]
+        link = friend.find(link_css)[:href].chomp("/")
         time_ago = friend.find(time_ago_css).text
         yield time_ago, name, link
       end
