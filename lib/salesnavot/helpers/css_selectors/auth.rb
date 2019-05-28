@@ -3,18 +3,18 @@ module CssSelectors
   module Auth
     def email_input(type = :selector)
       type.to_sym
-      return 'session_key-login' if type == :id
-      '#session_key-login'
+      return '#username' if type == :id
+      '#username'
     end
 
     def password_input(type = :selector)
-      return 'session_password-login' if type == :id
-      '#session_password-login'
+      return '#password' if type == :id
+      '#password'
     end
 
     def login_button(type = :selector)
-      return 'btn-primary' if type == :id
-      '#btn-primary'
+      return 'btn__primary--large' if type == :id
+      'btn__primary--large'
     end
 
     def insight_list_css

@@ -9,15 +9,17 @@ module Salesnavot
     def login!(username, password)
       puts 'Visiting login screen'
       @session.visit(homepage)
-
       puts 'Filling in email...'
-      @session.fill_in id: email_input(:id), with: username
-
+      username_field =  @session.find(email_input(:id))
+      username_field.click 
+      username_field.send_keys(username)
+      
+      password_field = @session.find(password_input(:id))
       puts 'Filling in password...'
-      @session.fill_in id: password_input(:id), with: password
-
+      password_field.click
+      password_field.send_keys(password)
       puts 'Clicking on login button'
-      @session.find(login_button).click
+      password_field.send_keys(:enter)
       raise 'Login failed !' unless @session.has_selector?(insight_list_css)
     end
 
