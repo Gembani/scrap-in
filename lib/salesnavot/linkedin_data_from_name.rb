@@ -1,5 +1,4 @@
 module Salesnavot
-  # Goes to "Sent invitations" page, and scrap all leads that were invited
   class LinkedInDataFromName
     def initialize(session)
       @session = session
@@ -10,19 +9,24 @@ module Salesnavot
     end
 
     def sales_nav_button_css
-      '[data-control-name="view_profile_in_sales_navigator"]'
+      '.pv-s-profile-actions--view-profile-in-sales-navigator'
     end
 
     def execute(name)
       @session.visit(target_page)
       raise "Error" unless @session.has_selector?('.core-rail')
-      seach_input = @session.find("input[role='combobox'][placeholder='Search']")
-      seach_input.set(name)
+      search_input = @session.find("input[role='combobox'][placeholder='Search']")
+      search_input.set(name)
       raise "Error" unless @session.has_selector?('artdeco-typeahead-deprecated-results-container')
-      seach_input.send_keys(:arrow_down)
-      seach_input.send_keys(:enter)
+      search_input.send_keys(:arrow_down)
+      search_input.send_keys(:enter)
       raise "Error" unless @session.has_selector?(sales_nav_button_css)
-      {linkedin_url: @session.current_url.chomp("/"), salesnav_url: @session.find(sales_nav_button_css)[:href]}
+      @session.find(sales_nav_button_css).click
+      linkedin_url=@session.current_url
+      tabs = @session.driver.browser.window_handles
+      @session.driver.browser.switch_to.window(tabs.last)
+      sales_nav_url = @session.current_url
+      {linkedin_url: linkedin_url.chomp("/"), salesnav_url: sales_nav_url}
     end
   end
 end
