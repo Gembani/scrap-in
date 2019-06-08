@@ -47,8 +47,8 @@ RSpec.describe Salesnavot do
   end
 
   it 'convert_linkedin_to_salesnav' do
-    scrap = @session.convert_linkedin_to_salesnav('https://www.linkedin.com/in/fabricelenoble/')
-    expect(scrap.execute).to eq('https://www.linkedin.com/sales/people/ACoAAADWUwgBctzvFTKAW_3OhL5rc-fpKquTURM,name,2Qv9')
+    convert = @session.convert_linkedin_to_salesnav('https://www.linkedin.com/in/fabricelenoble/')
+    expect(convert.execute).to eq('https://www.linkedin.com/sales/people/ACoAAADWUwgBctzvFTKAW_3OhL5rc-fpKquTURM,name,2Qv9')
 
   end
 

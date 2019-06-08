@@ -10,12 +10,14 @@ module Salesnavot
       @linked_url = linkedin_url
     end
     def sales_nav_button_css
-      '[data-control-name="view_profile_in_sales_navigator"]'
+      '.pv-s-profile-actions--view-profile-in-sales-navigator'
     end
     def execute
       visit_target_page
-      @sales_nav_url = @session.find(sales_nav_button_css)[:href]
-      @sales_nav_url
+      @session.find(sales_nav_button_css).click
+      tabs = @session.driver.browser.window_handles
+      @session.driver.browser.switch_to.window(tabs.last)
+      @sales_nav_url = @session.current_url
     end
 
 
