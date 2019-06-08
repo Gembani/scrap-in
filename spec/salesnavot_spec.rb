@@ -30,12 +30,12 @@ RSpec.describe Salesnavot do
       expect(next_page_to_process).to eq(4)
     end
 
-    it 'gets profile and image links from all leads of the first page of the list and return the next page' do
+    it 'gets profile and image links from all leads of the twelfth page of the list and return the next page' do
       @search = @session.search('test_one_200')
-      next_page_to_process = @search.execute(100) do |_link, _image|
-        expect(true).to eq(false)
+      next_page_to_process = @search.execute(12) do |_link, _image|
+        expect(link).to start_with('https://www.linkedin.com/sales/people')
       end
-      expect(next_page_to_process).to eq(1)
+      expect(next_page_to_process).to eq(13)
     end
   end
 
