@@ -6,6 +6,7 @@ module Salesnavot
       Capybara.default_max_wait_time = 60 # Seconds
       @capybara = Capybara::Session.new(ENV.fetch('driver').to_sym)
       auth = Salesnavot::Auth.new(@capybara)
+      @capybara.driver.browser.manage.window.resize_to(4000, 4000)
       auth.login!(username, password)
     end
 

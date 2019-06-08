@@ -7,7 +7,7 @@ module CssSelectors
     end
 
     def page_css(page)
-      ".cursor-pointer [data-page-number='#{page}']"
+      "[data-page-number='#{page}']"
     end
 
     def no_results_css
