@@ -57,9 +57,9 @@ RSpec.describe Salesnavot do
   end
 
 
-    it 'get friend thread' do
-      expect(@session.get_thread_from_name("Emma Donovan")).to eq("https://www.linkedin.com/messaging/thread/S490732917_3")
-    end
+  it 'gets friend thread' do
+    expect(@session.get_thread_from_name("Emma Donovan")).to eq("https://www.linkedin.com/messaging/thread/S490732917_3")
+  end
 
 
 
