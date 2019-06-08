@@ -15,7 +15,8 @@ module Salesnavot
       go_to_saved_search
 
       puts "Processing page = #{page}"
-
+      max_page = @session.find('.search-results__pagination-list').all('li').last.find('button').text.to_i
+      return 1 if page > max_page
       unless visit_page(page)
         puts "Page #{page} is empty, not scrapping, and returning first page"
         return 1
