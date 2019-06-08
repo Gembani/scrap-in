@@ -83,8 +83,8 @@ module Salesnavot
 
     def go_to_saved_search
       @session.visit(homepage)
-      @session.find('.global-nav-saved-searches-button').hover
-      @session.find('.global-nav-dropdown-list').click_on(@list_identifier)
+      @session.find(searches_hover_css).hover
+      @session.find(searches_container_css).find(searches_list_css).click_on(@list_identifier)
       @saved_search_url = @session.current_url
     end
 
