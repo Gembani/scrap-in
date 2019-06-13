@@ -16,7 +16,7 @@ module Salesnavot
       search_for_leads(num_times) { |name, time_ago| yield name, time_ago }
     end
 
-    def search_for_leads(num_times, count = 1, not_a_lead = 0)
+    def search_for_leads(num_times, count = 1, not_a_lead = 1) #not_a_lead=1 as the first div isn't a profile
       while count <= num_times
         i = not_a_lead + count
         if @session.has_selector?(profile_view_css(i), wait: 1)

@@ -76,7 +76,7 @@ RSpec.describe Salesnavot do
     expect(scrap.links.count).to eq(0)
   end
 
-  it 'scrap up to 40 leads with pending invites' do
+  it 'scraps up to 40 leads names with pending invites' do
     invites = @session.sent_invites
     invites.execute(40) do |invited_lead|
       puts invited_lead
@@ -85,7 +85,7 @@ RSpec.describe Salesnavot do
     expect(invites.invited_leads.length).to be >= 10
   end
 
-  xit 'scrap up to 10000 leads with pending invites' do
+  xit 'scraps up to 10000 leads names with pending invites' do
     count = 1
     number_of_invites = 10_000
     invites = @session.sent_invites
@@ -96,9 +96,20 @@ RSpec.describe Salesnavot do
     expect(invites.invited_leads.length).to be <= number_of_invites
   end
 
-  it 'profile views up to 40' do
+  it 'shows the profiles of up to 5 poeple who viewed our profile recently' do
     count = 1
-    n = 500
+    n = 5
+    profile_views = @session.profile_views
+    profile_views.execute(n) do |name, time_ago|
+      puts "#{count} -> #{name} , #{time_ago} ago."
+      count += 1
+    end
+    expect(profile_views.profile_viewed_by.length).to be <= n
+  end
+
+  xit 'shows the profiles of up to 100 poeple who viewed our profile recently' do
+    count = 1
+    n = 100
     profile_views = @session.profile_views
     profile_views.execute(n) do |name, time_ago|
       puts "#{count} -> #{name} , #{time_ago} ago."
