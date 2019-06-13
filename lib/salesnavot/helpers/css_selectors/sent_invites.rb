@@ -3,7 +3,7 @@ module CssSelectors
   module SentInvites
     def nth_lead_css(count, invitation: true)
       if invitation
-        ".mn-invitation-list li:nth-child(#{count + 1}) .invitation-card__name"
+        ".mn-invitation-list li:nth-child(#{count + 1}) .invitation-card__title"
       else
         ".mn-invitation-list li:nth-child(#{count + 1})"
       end
