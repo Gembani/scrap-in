@@ -38,6 +38,8 @@ module Salesnavot
         return false
       end
       return false unless click_and_connect
+      return false unless invitation_window_closed?
+      return false unless pending_after_invite?
       lead_invited?
     end
 
@@ -87,7 +89,7 @@ module Salesnavot
       # this isn't working anymore probably a bug on their end.
       find_xpath_and_click(action_button_xpath)
       unless @session.has_selector?(pending_connection_css, wait: 4)
-        #@error = "Can't find pending connection button"
+        @error = "Can't find pending connection button"
         return false
       end
       true
