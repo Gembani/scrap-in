@@ -16,7 +16,10 @@ module Salesnavot
 
       puts "Processing page = #{page}"
       max_page = @session.find('.search-results__pagination-list').all('li').last.find('button').text.to_i
-      return 1 if page > max_page
+       if page > max_page
+        puts "Page #{page} doesn't exist as the maximum page is #{max_page}"
+        return 1
+      end
       unless visit_page(page)
         puts "Page #{page} is empty, not scrapping, and returning first page"
         return 1
@@ -49,6 +52,7 @@ module Salesnavot
       click_on_page(2)
       return true if page == 2
       url = @session.current_url.sub('page=2', "page=#{page}")
+      puts "Going to page #{page}"
       @session.visit(url)
       return false if empty_results?
       check_results_loaded
@@ -72,6 +76,7 @@ module Salesnavot
     def find_page_leads
       check_leads_loaded
       find_leads_size
+      puts "Getting the links and the image source of each profile on the page..."
       @session.all(name_css).each do |item|
         href = item[:href]
         profile_image = if item.has_selector?('img', wait: 0)
@@ -80,11 +85,15 @@ module Salesnavot
         puts "Link = #{href}"
         yield href, profile_image
       end
+      puts "Done"
     end
 
     def go_to_saved_search
+      puts "Going to the Homepage"
       @session.visit(homepage)
+      puts "Hovering the mouse over the button 'Saved searches'"
       @session.find(searches_hover_css).hover
+      puts "Clicking on the search of interest"
       @session.find(searches_container_css).find(searches_list_css).click_on(@list_identifier)
       @saved_search_url = @session.current_url
     end

@@ -38,7 +38,7 @@ RSpec.describe Salesnavot do
       expect(next_page_to_process).to eq(13)
     end
 
-    it 'tries to go to the tousandth page of the list, doesnt find it and return the first page' do
+    it 'tries to go to the twentieth page of the list, doesnt find it and return the first page' do
       @search = @session.search('test_one_200')
       next_page_to_process = @search.execute(20) do |_link, _image|
       end
