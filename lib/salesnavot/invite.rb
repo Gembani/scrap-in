@@ -32,7 +32,7 @@ module Salesnavot
         @error = :already_pending
         return false
       end
-      find_and_click(action_button_css)
+      find_xpath_and_click(action_button_xpath)
       if friend?
         @error = :already_friends
         return false
@@ -67,7 +67,7 @@ module Salesnavot
     end
 
     def click_and_connect
-      find_and_click(action_button_css)
+      find_xpath_and_click(action_button_xpath)
       find_and_click(connect_button_css)
       if lead_email_required?
         @error = :email_required
@@ -79,13 +79,13 @@ module Salesnavot
     end
 
     def initially_pending?
-      find_and_click(action_button_css)
+      find_xpath_and_click(action_button_xpath)
       return @session.has_selector?(pending_connection_css, wait: 4)
     end
 
     def pending_after_invite?
       # this isn't working anymore probably a bug on their end.
-      find_and_click(action_button_css)
+      find_xpath_and_click(action_button_xpath)
       unless @session.has_selector?(pending_connection_css, wait: 4)
         #@error = "Can't find pending connection button"
         return false
