@@ -13,7 +13,7 @@ module Salesnavot
         out_of_network: 'Lead is out of network.',
         already_friends: 'Already friends',
         email_required:  "Lead's email is required to connect",
-        invitattion_form_didnot_close: 'Invitation form did not close'
+        invitation_form_did_not_close: 'Invitation form did not close'
       }
       @error = nil
       @content = content
@@ -64,7 +64,7 @@ module Salesnavot
 
     def invitation_window_closed?
       return true unless @session.has_selector?(form_css)
-      @error = :invitattion_form_didnot_close
+      @error = :invitation_form_did_not_close
       false
     end
 
@@ -88,11 +88,9 @@ module Salesnavot
     def pending_after_invite?
       # this isn't working anymore probably a bug on their end.
       find_xpath_and_click(action_button_xpath)
-      unless @session.has_selector?(pending_connection_css, wait: 4)
-        @error = "Can't find pending connection button"
-        return false
-      end
-      true
+      return true unless @session.has_selector?(pending_connection_css, wait: 4)
+      @error = "Can't find pending connection button"
+      return false
     end
 
     def lead_invited?
