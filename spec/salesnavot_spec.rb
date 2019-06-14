@@ -107,7 +107,7 @@ RSpec.describe Salesnavot do
     expect(profile_views.profile_viewed_by.length).to be <= n
   end
 
-  xit 'shows the profiles of up to 100 poeple who viewed our profile recently' do
+  it 'shows the profiles of up to 100 poeple who viewed our profile recently' do
     count = 1
     n = 100
     profile_views = @session.profile_views

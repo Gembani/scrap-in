@@ -22,6 +22,8 @@ module Salesnavot
         if @session.has_selector?(profile_view_css(i), wait: 1)
           find_name_and_time_ago(i) { |name, time_ago| yield name, time_ago }
           count += 1
+        elsif @session.has_selector?(semi_private_css(i), wait: 1)
+          not_a_lead += 1
         else
           break if @session.all(last_element_css(i)).count == 1
           not_a_lead += 1

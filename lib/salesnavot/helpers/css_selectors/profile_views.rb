@@ -6,9 +6,14 @@ module CssSelectors
       "div[data-control-name=\"profileview_single\"]:nth-child(#{count})"
     end
 
+    def semi_private_css(count)
+      'section.me-wvmp-viewers-list '\
+       "div[data-control-name=\"profileview_single_semi\"]:nth-child(#{count})"
+    end
+
     def last_element_css(count)
       'section.me-wvmp-viewers-list '\
-       "article[data-control-name=\"profileview_single_semi\"]:nth-child(#{count})"
+       "div[data-control-name=\"profileview_private\"]:nth-child(#{count})"
     end
 
     def viewers_list_css
