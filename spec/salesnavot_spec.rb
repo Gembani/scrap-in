@@ -133,7 +133,7 @@ RSpec.describe Salesnavot do
     end
   end
 
-  xit 'from linkedin profile send message' do
+  it ' sends a message from linkedin profile to a lead' do
     send_message = @session.send_message('https://www.linkedin.com/in/scebula/',
                                          'Hi, this is a test message at ' +
                                          Time.now.strftime('%H:%M:%S').to_s +
@@ -141,7 +141,7 @@ RSpec.describe Salesnavot do
     send_message.execute
   end
 
-  it 'scrap friends' do
+  xit 'scraps friends' do
     count = 1
     @session.friends.execute(250) do |time_ago, name, url|
       puts "#{count} -> #{name} : #{time_ago}. -> #{url}"
@@ -150,7 +150,7 @@ RSpec.describe Salesnavot do
     expect(count).to eq(251)
   end
 
-  xit 'scrap threads' do
+  xit 'scraps threads' do #for now we don't care
     @session.threads.execute(70) do |name, thread|
       puts "#{name}, #{thread}"
     end
