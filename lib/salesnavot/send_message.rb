@@ -34,7 +34,8 @@ module Salesnavot
 
     def write_message
       puts 'Writing message...'
-      @session.fill_in 'message', with: @message
+      message_field= @session.find('.msg-form__contenteditable')
+      message_field.send_keys(@message)
       puts 'Message has been written.'
     end
 
