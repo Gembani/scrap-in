@@ -45,6 +45,8 @@ RSpec.describe Salesnavot::ScrapLead do
   let(:target_page) { 'Target.url' }
   let(:name_css) { '.name-css' }
   let(:infos_css) { '.infos-css' }
+  let(:phone_css) {'.phone-css'}
+  let(:location_css) {'.location-css'}
   let(:degree_css) { '.degree-css' }
   let(:phones_block_css) { '.phones-block-css' }
   let(:links_block_css) { '.links-block-css' }
@@ -89,56 +91,73 @@ RSpec.describe Salesnavot::ScrapLead do
         allow(scrap_lead).to receive(:find_lead_name)
         allow(scrap_lead).to receive(:find_lead_degree)
       end
-      context 'infos button not found' do
+      context 'location was not found' do
         before do
-          allow(scrap_lead).to receive(:infos_css).and_return(infos_css)
-          allow(session).to receive(:has_selector?).with(infos_css).and_return(false)
+          allow(scrap_lead).to receive(:location_css).and_return(location_css)
+          allow(session).to receive(:has_selector?).with(location_css).and_return(false)
         end
-        it 'raises a css error' do
+        it 'raises an error' do
           expect do
             scrap_lead.execute
-          end.to raise_error(css_error(infos_css))
+          end.to raise_error(css_error(location_css))
         end
       end
-      context 'infos button was found' do
+      context 'when the location was found' do
         before do
-          allow(scrap_lead).to receive(:infos_css).and_return(infos_css)
-          allow(scrap_lead).to receive(:find_and_click).with(infos_css)
+          allow(scrap_lead).to receive(:find_location)
         end
-        context 'phones css was not found' do
+        context 'but infos button not found' do
           before do
-            allow(scrap_lead).to receive(:phones_block_css).and_return(phones_block_css)
-            allow(scrap_lead).to receive(:scrap_emails)
-            allow(scrap_lead).to receive(:scrap_links)
-            allow(session).to receive(:has_selector?).with(phones_block_css, wait: 1).and_return(false)
+            allow(scrap_lead).to receive(:infos_css).and_return(infos_css)
+            allow(session).to receive(:has_selector?).with(infos_css).and_return(false)
           end
-          it 'writes an error' do
+          it 'raises an error' do
+            expect do
               scrap_lead.execute
-              expect(scrap_lead.error).not_to be_empty
-          end
-        end
-        context 'links css was not found' do
-          before do
-            allow(scrap_lead).to receive(:scrap_phones)
-            allow(scrap_lead).to receive(:scrap_emails)
-            allow(scrap_lead).to receive(:links_block_css).and_return(links_block_css)
-            allow(session).to receive(:has_selector?).with(links_block_css, wait: 1).and_return(false)
-          end
-          it 'writes an error' do
-              scrap_lead.execute
-              expect(scrap_lead.error).not_to be_empty
+            end.to raise_error(css_error(infos_css))
+            puts "Error: #{scrap_lead.error}"
           end
         end
-        context 'emails css was not found' do
+        context 'when infos button was found' do
           before do
-            allow(scrap_lead).to receive(:scrap_phones)
-            allow(scrap_lead).to receive(:scrap_links)
-            allow(scrap_lead).to receive(:emails_block_css).and_return(emails_block_css)
-            allow(session).to receive(:has_selector?).with(emails_block_css, wait: 1).and_return(false)
+            allow(scrap_lead).to receive(:infos_css).and_return(infos_css)
+            allow(scrap_lead).to receive(:find_and_click).with(infos_css)
           end
-          it 'writes an error' do
-              scrap_lead.execute
-              expect(scrap_lead.error).not_to be_empty
+          context 'but phones css was not found' do
+            before do
+              allow(scrap_lead).to receive(:phones_block_css).and_return(phones_block_css)
+              allow(scrap_lead).to receive(:scrap_emails)
+              allow(scrap_lead).to receive(:scrap_links)
+              allow(session).to receive(:has_selector?).with(phones_block_css, wait: 1).and_return(false)
+            end
+            it 'writes an error' do
+                scrap_lead.execute
+                expect(scrap_lead.error).not_to be_empty
+            end
+          end
+          context 'but links css was not found' do
+            before do
+              allow(scrap_lead).to receive(:scrap_phones)
+              allow(scrap_lead).to receive(:scrap_emails)
+              allow(scrap_lead).to receive(:links_block_css).and_return(links_block_css)
+              allow(session).to receive(:has_selector?).with(links_block_css, wait: 1).and_return(false)
+            end
+            it 'writes an error' do
+                scrap_lead.execute
+                expect(scrap_lead.error).not_to be_empty
+            end
+          end
+          context 'but emails css was not found' do
+            before do
+              allow(scrap_lead).to receive(:scrap_phones)
+              allow(scrap_lead).to receive(:scrap_links)
+              allow(scrap_lead).to receive(:emails_block_css).and_return(emails_block_css)
+              allow(session).to receive(:has_selector?).with(emails_block_css, wait: 1).and_return(false)
+            end
+            it 'writes an error' do
+                scrap_lead.execute
+                expect(scrap_lead.error).not_to be_empty
+            end
           end
         end
       end
