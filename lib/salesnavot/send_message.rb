@@ -1,5 +1,8 @@
 module Salesnavot
   class SendMessage
+
+    include CssSelectors::SendMessage
+
     def initialize(session, profile, message)
       @session = session
       @profile = profile
@@ -34,14 +37,14 @@ module Salesnavot
 
     def write_message
       puts 'Writing message...'
-      message_field= @session.find('.msg-form__contenteditable')
+      message_field= @session.find(message_field_css)
       message_field.send_keys(@message)
       puts 'Message has been written.'
     end
 
     def send_message
       puts 'Sending message...'
-      @session.find('.msg-form__send-button').click
+      @session.find(send_button_css).click
       puts 'Message has been sent.'
       # check, for now we suppose the message has been sent correctly
       true
