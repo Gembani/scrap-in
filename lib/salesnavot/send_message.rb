@@ -54,7 +54,6 @@ module Salesnavot
 
     def message_sent?
       puts 'Checking the message has been sent...'
-      byebug
       if @session.all('.msg-s-event-listitem p')[-1].text == @message
         puts 'Confirmed'
         return true
