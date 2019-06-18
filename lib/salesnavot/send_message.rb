@@ -1,6 +1,7 @@
 module Salesnavot
-  class SendMessage
 
+  class SendMessage
+    include Tools
     include CssSelectors::SendMessage
 
     def initialize(session, profile, message)
