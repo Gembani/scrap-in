@@ -122,6 +122,7 @@ RSpec.describe Salesnavot do
     before do
       allow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
       allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
+      allow_any_instance_of(Salesnavot::Invite).to receive(:pending_after_invite?).and_return(true)
     end
     it 'creates invite already connected' do ## Integration
       message = 'Hello there'
@@ -141,7 +142,7 @@ RSpec.describe Salesnavot do
     send_message.execute
   end
 
-  xit 'scraps friends' do
+  it 'scraps friends' do
     count = 1
     @session.friends.execute(250) do |time_ago, name, url|
       puts "#{count} -> #{name} : #{time_ago}. -> #{url}"
