@@ -16,6 +16,7 @@ module Salesnavot
       open_message_window
       write_message
       send_message
+      message_sent?
     end
 
     def visit_profile
@@ -49,6 +50,18 @@ module Salesnavot
       puts 'Message has been sent.'
       # check, for now we suppose the message has been sent correctly
       true
+    end
+
+    def message_sent?
+      puts 'Checking the message has been sent...'
+      byebug
+      if @session.all('.msg-s-event-listitem p')[-1].text == @message
+        puts 'Confirmed'
+        return true
+      else
+        @error
+        return false
+      end
     end
   end
 end
