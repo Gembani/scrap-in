@@ -7,13 +7,14 @@ module Salesnavot
     def initialize(sales_nav_url, session, content)
       @sales_nav_url = sales_nav_url
       @session = session
-      @error_types = [:already_pending, :out_of_network, :already_friends, :email_required, :invitattion_form_didnot_close]
+      @error_types = [:already_pending, :out_of_network, :already_friends, :email_required, :invitation_form_did_not_close, :no_pending_after]
       @error_messages = {
         already_pending: 'Invitation is already pending ...',
         out_of_network: 'Lead is out of network.',
         already_friends: 'Already friends',
         email_required:  "Lead's email is required to connect",
-        invitattion_form_didnot_close: 'Invitation form did not close'
+        invitation_form_did_not_close: 'Invitation form did not close',
+        no_pending_after: "Can't find pending connection button"
       }
       @error = nil
       @content = content
@@ -32,12 +33,14 @@ module Salesnavot
         @error = :already_pending
         return false
       end
-      find_and_click(action_button_css)
+      find_xpath_and_click(action_button_xpath)
       if friend?
         @error = :already_friends
         return false
       end
       return false unless click_and_connect
+      return false unless invitation_window_closed?
+      return false unless pending_after_invite?
       lead_invited?
     end
 
@@ -62,12 +65,12 @@ module Salesnavot
 
     def invitation_window_closed?
       return true unless @session.has_selector?(form_css)
-      @error = :invitattion_form_didnot_close
+      @error = :invitation_form_did_not_close
       false
     end
 
     def click_and_connect
-      find_and_click(action_button_css)
+      find_xpath_and_click(action_button_xpath)
       find_and_click(connect_button_css)
       if lead_email_required?
         @error = :email_required
@@ -79,15 +82,15 @@ module Salesnavot
     end
 
     def initially_pending?
-      find_and_click(action_button_css)
+      find_xpath_and_click(action_button_xpath)
       return @session.has_selector?(pending_connection_css, wait: 4)
     end
 
     def pending_after_invite?
       # this isn't working anymore probably a bug on their end.
-      find_and_click(action_button_css)
+      find_xpath_and_click(action_button_xpath)
       unless @session.has_selector?(pending_connection_css, wait: 4)
-        #@error = "Can't find pending connection button"
+        @error = :no_pending_after
         return false
       end
       true

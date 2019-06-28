@@ -30,18 +30,25 @@ RSpec.describe Salesnavot do
       expect(next_page_to_process).to eq(4)
     end
 
-    it 'gets profile and image links from all leads of the first page of the list and return the next page' do
+    it 'gets profile and image links from all leads of the twelfth page of the list and return the next page' do
       @search = @session.search('test_one_200')
-      next_page_to_process = @search.execute(100) do |_link, _image|
-        expect(true).to eq(false)
+      next_page_to_process = @search.execute(12) do |link, _image|
+        expect(link).to start_with('https://www.linkedin.com/sales/people')
+      end
+      expect(next_page_to_process).to eq(13)
+    end
+
+    it 'tries to go to the twentieth page of the list, doesnt find it and return the first page' do
+      @search = @session.search('test_one_200')
+      next_page_to_process = @search.execute(20) do |_link, _image|
       end
       expect(next_page_to_process).to eq(1)
     end
   end
 
   it 'convert_linkedin_to_salesnav' do
-    scrap = @session.convert_linkedin_to_salesnav('https://www.linkedin.com/in/fabricelenoble/')
-    expect(scrap.execute).to eq('https://www.linkedin.com/sales/people/ACoAAADWUwgBctzvFTKAW_3OhL5rc-fpKquTURM,name,2Qv9')
+    convert = @session.convert_linkedin_to_salesnav('https://www.linkedin.com/in/fabricelenoble/')
+    expect(convert.execute).to eq('https://www.linkedin.com/sales/people/ACoAAADWUwgBctzvFTKAW_3OhL5rc-fpKquTURM,name,2Qv9')
 
   end
 
@@ -50,9 +57,9 @@ RSpec.describe Salesnavot do
   end
 
 
-    it 'get friend thread' do
-      expect(@session.get_thread_from_name("Emma Donovan")).to eq("https://www.linkedin.com/messaging/thread/S490732917_3")
-    end
+  it 'gets friend thread' do
+    expect(@session.get_thread_from_name("Emma Donovan")).to eq("https://www.linkedin.com/messaging/thread/S490732917_3")
+  end
 
 
 
@@ -69,7 +76,7 @@ RSpec.describe Salesnavot do
     expect(scrap.links.count).to eq(0)
   end
 
-  it 'scrap up to 40 leads with pending invites' do
+  it 'scraps up to 40 leads names with pending invites' do
     invites = @session.sent_invites
     invites.execute(40) do |invited_lead|
       puts invited_lead
@@ -78,7 +85,7 @@ RSpec.describe Salesnavot do
     expect(invites.invited_leads.length).to be >= 10
   end
 
-  xit 'scrap up to 10000 leads with pending invites' do
+  xit 'scraps up to 10000 leads names with pending invites' do
     count = 1
     number_of_invites = 10_000
     invites = @session.sent_invites
@@ -89,9 +96,20 @@ RSpec.describe Salesnavot do
     expect(invites.invited_leads.length).to be <= number_of_invites
   end
 
-  it 'profile views up to 40' do
+  it 'shows the profiles of up to 5 people who viewed our profile recently' do
     count = 1
-    n = 500
+    n = 5
+    profile_views = @session.profile_views
+    profile_views.execute(n) do |name, time_ago|
+      puts "#{count} -> #{name} , #{time_ago} ago."
+      count += 1
+    end
+    expect(profile_views.profile_viewed_by.length).to be <= n
+  end
+
+  it 'shows the profiles of up to 100 people who viewed our profile recently' do
+    count = 1
+    n = 100
     profile_views = @session.profile_views
     profile_views.execute(n) do |name, time_ago|
       puts "#{count} -> #{name} , #{time_ago} ago."
@@ -104,6 +122,7 @@ RSpec.describe Salesnavot do
     before do
       allow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
       allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
+      allow_any_instance_of(Salesnavot::Invite).to receive(:pending_after_invite?).and_return(true)
     end
     it 'creates invite already connected' do ## Integration
       message = 'Hello there'
@@ -115,7 +134,7 @@ RSpec.describe Salesnavot do
     end
   end
 
-  xit 'from linkedin profile send message' do
+  it ' sends a message from linkedin profile to a lead' do
     send_message = @session.send_message('https://www.linkedin.com/in/scebula/',
                                          'Hi, this is a test message at ' +
                                          Time.now.strftime('%H:%M:%S').to_s +
@@ -123,7 +142,7 @@ RSpec.describe Salesnavot do
     send_message.execute
   end
 
-  it 'scrap friends' do
+  it 'scraps friends' do
     count = 1
     @session.friends.execute(250) do |time_ago, name, url|
       puts "#{count} -> #{name} : #{time_ago}. -> #{url}"
@@ -132,7 +151,7 @@ RSpec.describe Salesnavot do
     expect(count).to eq(251)
   end
 
-  xit 'scrap threads' do
+  xit 'scraps threads' do #for now we don't care
     @session.threads.execute(70) do |name, thread|
       puts "#{name}, #{thread}"
     end

@@ -57,7 +57,7 @@ module Salesnavot
         find_and_click(infos_css)
       rescue
         @error = 'No infos at all, or button has been changed'
-        return
+        raise css_error(infos_css)
       end
       %w[phones links emails].each do |name|
         method("scrap_#{name}").call

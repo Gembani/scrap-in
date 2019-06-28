@@ -26,7 +26,8 @@ RSpec.describe Salesnavot::Friends do
         40.times do |i|
           allow(friends).to receive(:search_for_name_and_time_ago).with(i).and_yield(
             Faker::Name.name,
-            Faker::Time.backward(14, :evening)
+            Faker::Time.backward(14, :evening),
+            Faker::Internet.url
           )
         end
       end

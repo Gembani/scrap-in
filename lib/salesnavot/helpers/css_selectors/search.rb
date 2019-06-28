@@ -7,7 +7,7 @@ module CssSelectors
     end
 
     def page_css(page)
-      ".cursor-pointer [data-page-number='#{page}']"
+      "[data-page-number='#{page}']"
     end
 
     def no_results_css
@@ -16,6 +16,18 @@ module CssSelectors
 
     def name_css
       'dt.result-lockup__name a'
+    end
+
+    def searches_hover_css
+      '.global-nav-saved-searches-button'
+    end
+
+    def searches_container_css
+      '.global-nav-saved-searches-flyout'
+    end
+
+    def searches_list_css
+      'ul.global-nav-dropdown-list'
     end
   end
 end

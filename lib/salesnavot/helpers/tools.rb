@@ -12,7 +12,15 @@ module Tools
       @error = css_error(css)
       raise css_error(css)
     end
-    @session.find(css).click
+    @session.find(css).click 
+  end
+  
+  def find_xpath_and_click(xpath)
+    unless @session.has_selector?(:xpath, xpath)
+      @error = css_error(xpath)
+      raise css_error(xpath)
+    end
+    @session.find(:xpath, xpath).click
   end
 
   def css_error(css)

@@ -28,7 +28,7 @@ module Salesnavot
         name = friend.find(friend_name_css).text
         link = friend.find(link_css)[:href].chomp("/")
         time_ago = friend.find(time_ago_css).text
-        yield time_ago, name, link
+        yield name, time_ago, link
       end
     end
 
