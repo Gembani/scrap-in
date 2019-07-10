@@ -22,11 +22,15 @@ module Salesnavot
     end
 
     def execute
-      if @sales_nav_url.include?('OUT_OF_NETWORK')
+      unless @sales_nav_url.include?("linkedin.com/sales/people/")
+        @error = 'Lead\'s salesnav url is not valid'
+      end
+      @session.visit @sales_nav_url
+      lead_name = @session.find(name_css).text
+      if out_of_network?(@sales_nav_url, name = lead_name)
         @error = 'Lead is out of network.'
         return
       end
-      @session.visit @sales_nav_url
 
       find_lead_name
       find_lead_degree

@@ -26,4 +26,9 @@ module Tools
   def css_error(css)
     "Wrong CSS, or it has been changed : #{css}"
   end
+
+  def out_of_network?(url, name = '')
+    url.include?('OUT_OF_NETWORK') || 
+    name.include?('LinkedIn')
+  end
 end

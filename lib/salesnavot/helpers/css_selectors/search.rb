@@ -29,5 +29,9 @@ module CssSelectors
     def searches_list_css
       'ul.global-nav-dropdown-list'
     end
+
+    def pagination_list_css
+      '.search-results__pagination-list'
+    end
   end
 end

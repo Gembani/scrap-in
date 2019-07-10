@@ -14,13 +14,35 @@ RSpec.describe Salesnavot do
   end
 
   describe '#Search' do
+
+    it 'gets lead from all pages' do
+      @search = @session.search('test_one_200')
+      max_page = 13
+      page = 1
+      until page == max_page
+        puts "TESTING PAGE = #{page}"
+        found_links = []
+        next_page_to_process = @search.execute(page) do |link, image|
+          expect(link).to start_with('https://www.linkedin.com/sales/people')
+          found_links << link
+        end
+        expect(found_links.size).to eq(25)
+        expect(next_page_to_process).to eq(page + 1)
+        page += 1
+      end
+    end
+
     it 'gets lead from page 1' do
       @search = @session.search('test_one_200')
+      found_links = []
       next_page_to_process = @search.execute(1) do |link, image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
+        found_links << link
       end
+      expect(found_links.size).to eq(25)
       expect(next_page_to_process).to eq(2)
     end
+
 
     it 'gets profile and image links from all leads of the second page of the list and return the next page' do
       @search = @session.search('test_one_200')
@@ -38,6 +60,17 @@ RSpec.describe Salesnavot do
       expect(next_page_to_process).to eq(13)
     end
 
+    it 'gets leads form the last page' do
+      @search = @session.search('test_one_200')
+      found_links = []
+      next_page_to_process = @search.execute(13) do |link, image|
+        expect(link).to start_with('https://www.linkedin.com/sales/people')
+        found_links << link
+      end
+      expect(found_links.size).to eq(9)
+      expect(next_page_to_process).to eq(14)
+    end
+
     it 'tries to go to the twentieth page of the list, doesnt find it and return the first page' do
       @search = @session.search('test_one_200')
       next_page_to_process = @search.execute(20) do |_link, _image|
@@ -48,6 +81,7 @@ RSpec.describe Salesnavot do
 
   it 'convert_linkedin_to_salesnav' do
     convert = @session.convert_linkedin_to_salesnav('https://www.linkedin.com/in/fabricelenoble/')
+    # convert = @session.convert_linkedin_to_salesnav('https://www.linkedin.com/in/gautierv/')
     expect(convert.execute).to eq('https://www.linkedin.com/sales/people/ACoAAADWUwgBctzvFTKAW_3OhL5rc-fpKquTURM,name,2Qv9')
 
   end
@@ -65,9 +99,12 @@ RSpec.describe Salesnavot do
 
   it 'scraps location, phones, emails and website links for a lead' do
     seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'
+    byebug
     scrap = @session.scrap_lead(sales_nav_url: seb_link)
     scrap.execute
+    byebug
     puts "Error: #{scrap.error}" unless scrap.error.empty?
+
     expect(scrap.sales_nav_url).not_to be_nil
     expect(scrap.name).not_to be_nil
     expect(scrap.location).not_to be_nil
