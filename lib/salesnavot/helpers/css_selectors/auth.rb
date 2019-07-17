@@ -17,8 +17,8 @@ module CssSelectors
       'btn__primary--large'
     end
 
-    def insight_list_css
-      '#insights-list'
+    def alert_header_css
+      '.alert-center__heading'
     end
   end
 end

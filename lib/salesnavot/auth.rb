@@ -20,7 +20,7 @@ module Salesnavot
       password_field.send_keys(password)
       puts 'Clicking on login button'
       password_field.send_keys(:enter)
-      raise 'Login failed !' unless @session.has_selector?(insight_list_css)
+      raise 'Login failed !' unless @session.has_selector?(alert_header_css)
     end
 
     def homepage
