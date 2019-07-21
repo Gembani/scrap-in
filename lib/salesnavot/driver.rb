@@ -12,7 +12,7 @@ Capybara.register_driver :salesnavot_driver do |app|
       'chromeOptions': {
         'args': [
           'no-sandbox',
-          'window-size=1180x800'
+          'window-size=1920x1080'
         ]
       }
     }
