@@ -5,12 +5,12 @@ Capybara.register_driver :salesnavot_driver do |app|
     url: ENV.fetch('hud_url'),
     desired_capabilities: {
       "browser": 'chrome',
+      "browserName": "chrome",
+      "build": "salesnavot",
       'chromeOptions': {
         'args': [
           'no-sandbox',
-          'headless',
-          'disable-gpu',
-          'window-size=1920x1080'
+          'window-size=1280x800'
         ]
       }
     }
