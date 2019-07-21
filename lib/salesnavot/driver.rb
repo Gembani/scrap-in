@@ -10,7 +10,7 @@ Capybara.register_driver :salesnavot_driver do |app|
           'no-sandbox',
           'headless',
           'disable-gpu',
-          'window-size=1920,1080'
+          'window-size=1280x800'
         ]
       }
     }
