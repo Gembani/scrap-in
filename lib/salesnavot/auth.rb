@@ -16,7 +16,8 @@ module Salesnavot
         username_field =  @session.find(email_input(:id))
         username_field.click
         sleep(1)
-        puts "Filling in email...#{username}"
+        puts "Filling in email..."
+        puts "Email #{username}"
      
         username_field.send_keys(username)
         sleep(1)
