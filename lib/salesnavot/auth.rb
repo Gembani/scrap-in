@@ -15,13 +15,14 @@ module Salesnavot
        
       loop  do
         username_field =  @session.find(email_input(:id))
-        username_field.click
+        @session.find('body').send_keys(:tab)
+        
         sleep(1)
         username_field.send_keys(username)
         sleep(1)
         password_field = @session.find(password_input(:id))
         puts 'Filling in password...'
-        password_field.click
+        @session.find('body').send_keys(:tab)
         sleep(1)
         password_field.send_keys(password)
         puts 'Clicking on login button'
