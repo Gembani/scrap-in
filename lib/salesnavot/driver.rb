@@ -7,10 +7,12 @@ Capybara.register_driver :salesnavot_driver do |app|
       "browser": 'chrome',
       "browserName": "chrome",
       "build": "salesnavot",
+      "zal:name": "linkedin",
+      "zal:build": "linkedin",
       'chromeOptions': {
         'args': [
           'no-sandbox',
-          'window-size=1280x800'
+          'window-size=1180x800'
         ]
       }
     }

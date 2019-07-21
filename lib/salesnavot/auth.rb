@@ -11,17 +11,24 @@ module Salesnavot
       @session.visit(homepage)
       raise 'Cannot find email field' unless @session.has_selector?(email_input(:id))
       puts 'Filling in email...'
-      username_field =  @session.find(email_input(:id))
-      username_field.click 
-      sleep(1.2)
-      username_field.send_keys(username)
       
-      password_field = @session.find(password_input(:id))
-      puts 'Filling in password...'
-      password_field.click
-      password_field.send_keys(password)
-      puts 'Clicking on login button'
-      password_field.send_keys(:enter)
+       
+      loop  do
+        username_field =  @session.find(email_input(:id))
+        username_field.click
+        sleep(1)
+        username_field.send_keys(username)
+        sleep(1)
+        password_field = @session.find(password_input(:id))
+        puts 'Filling in password...'
+        password_field.click
+        sleep(1)
+        password_field.send_keys(password)
+        puts 'Clicking on login button'
+        sleep(1)
+        password_field.send_keys(:enter)
+        break unless @session.has_selector?('#error-for-username')
+      end
       raise 'Login failed !' unless @session.has_selector?(alert_header_css)
     end
 
