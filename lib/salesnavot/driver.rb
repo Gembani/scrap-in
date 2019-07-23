@@ -9,6 +9,7 @@ Capybara.register_driver :salesnavot_driver do |app|
       "build": "salesnavot",
       "zal:name": "linkedin",
       "zal:build": "linkedin",
+      "idleTimeout", "3600",
       'chromeOptions': {
         'args': [
           'no-sandbox',
