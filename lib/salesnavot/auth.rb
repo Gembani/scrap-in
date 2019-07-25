@@ -1,8 +1,8 @@
-module Salesnavot
+#captcha error
+class CaptchaError < StandardError
+end
 
-  #captcha error
-  class CaptchaError < StandardError
-  end
+module Salesnavot
 
   # Class to Log in into Linkedin
   class Auth
