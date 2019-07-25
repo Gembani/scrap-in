@@ -38,18 +38,26 @@ RSpec.describe Salesnavot::Auth do
         allow(session).to receive_message_chain(:find, :click).and_return(true)
         allow(session).to receive(:has_selector?).with(insight_list_css).and_return(true)
       end
-
-      it 'logs in into Linkedin' do
-        auth.login!(username, password)
-        expect(auth).to have_received(:email_input)
-        expect(auth).to have_received(:password_input)
-        expect(auth).to have_received(:login_button)
-        expect(auth).to have_received(:insight_list_css)
-        expect(session).to have_received(:visit).with(auth.homepage)
-        expect(session).to have_received(:fill_in).with(id: email_input, with: username)
-        expect(session).to have_received(:fill_in).with(id: password_input, with: password)
-        expect(session.find.click).to eq(true)
-        expect(session).to have_received(:has_selector?).with(insight_list_css)
+      context 'when a CAPTCHA page appears' do
+        it 'raises an error' do
+          expect do
+            auth.login!(username, password)
+          end.to raise_error(CaptchaError)
+        end
+      end
+      context 'when CAPTCHA didnt appear' do
+        it 'logs in into Linkedin' do
+          auth.login!(username, password)
+          expect(auth).to have_received(:email_input)
+          expect(auth).to have_received(:password_input)
+          expect(auth).to have_received(:login_button)
+          expect(auth).to have_received(:insight_list_css)
+          expect(session).to have_received(:visit).with(auth.homepage)
+          expect(session).to have_received(:fill_in).with(id: email_input, with: username)
+          expect(session).to have_received(:fill_in).with(id: password_input, with: password)
+          expect(session.find.click).to eq(true)
+          expect(session).to have_received(:has_selector?).with(insight_list_css)
+        end
       end
     end
     context 'Username and/or password are incorrect' do

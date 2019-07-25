@@ -20,5 +20,9 @@ module CssSelectors
     def alert_header_css
       '.alert-center__heading'
     end
+
+    def captcha_css
+      '.rc-anchor'
+    end
   end
 end

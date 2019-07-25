@@ -1,4 +1,9 @@
 module Salesnavot
+
+  #captcha error
+  class CaptchaError < StandardError
+  end
+
   # Class to Log in into Linkedin
   class Auth
     include CssSelectors::Auth
@@ -33,6 +38,7 @@ module Salesnavot
         password_field.send_keys(:enter)
         break unless @session.has_selector?('#error-for-username')
       end
+      raise CaptchaError,"Security reCAPTCHA raised!" if @session.has_selector?(captcha_css)
       raise 'Login failed !' unless @session.has_selector?(alert_header_css)
     end
 
