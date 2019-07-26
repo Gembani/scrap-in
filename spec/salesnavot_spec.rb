@@ -163,7 +163,7 @@ RSpec.describe Salesnavot do
     # end
     it 'sends invite and send a message' do ## Integration
       message = 'Hello there'
-      invite = @session.invite('https://www.linkedin.com/sales/people/ACwAAAFc6IQBBha0FcqlkpYYQc9tsbcZYRdFp6U,NAME_SEARCH,uYGr', message)
+      invite = @session.invite('https://www.linkedin.com/sales/people/ACwAAAH0sfYBxITLbDpjmA7L5iAPE_WtUzz1-c0,NAME_SEARCH,IoU3', message)
       value = invite.execute
       expect(value).to be true
       puts 'Invite sent !'

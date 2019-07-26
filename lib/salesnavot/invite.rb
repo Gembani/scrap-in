@@ -31,7 +31,6 @@ module Salesnavot
       visit_target_page(@sales_nav_url)
       if initially_pending?
         @error = :already_pending
-        byebug
         return false
       end
       find_xpath_and_click(action_button_xpath)
@@ -65,7 +64,13 @@ module Salesnavot
     end
 
     def invitation_window_closed?
-      return true unless @session.has_selector?(form_css, wait: 5)
+      # This wasn't working without the sleep as the window didn't have time to close so we put in
+      # into a loop that check for 5 seconds (5000*1ms) and returns true the moment it stops seeing the window
+      # We used a loop instead of a sleep on its own so it wouldn't wait if not needed
+      5000.times do 
+        return true unless @session.has_selector?(form_css)
+        sleep(0.001)
+      end
       @error = :invitation_form_did_not_close
       false
     end
@@ -79,7 +84,7 @@ module Salesnavot
         return false
       end
       @session.fill_in form_invitation_id, with: @content
-      puts "Sending Hello message"
+      puts "Sending invitation message"
       find_and_click(send_button_css)
       puts "Message sent"
       true
