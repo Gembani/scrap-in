@@ -156,15 +156,14 @@ RSpec.describe Salesnavot do
   end
 
   describe '#Salesnavot::Invite' do
-    before do
-      allow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
-      allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
-      allow_any_instance_of(Salesnavot::Invite).to receive(:pending_after_invite?).and_return(true)
-    end
-    it 'creates invite already connected' do ## Integration
+    # before do
+    #   allow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
+    #   allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
+    #   allow_any_instance_of(Salesnavot::Invite).to receive(:pending_after_invite?).and_return(true)
+    # end
+    it 'sends invite and send a message' do ## Integration
       message = 'Hello there'
-      invite = @session.invite('https://www.linkedin.com/sales/people/ACwAAChfmuYBvjIbCcBAEM0npwYdZ1t_yG29Y6w,NAME_SEARCH,bJYg?trk=d_sales2_nav_typeahead_entitysuggestion', message)
-
+      invite = @session.invite('https://www.linkedin.com/sales/people/ACwAAAFc6IQBBha0FcqlkpYYQc9tsbcZYRdFp6U,NAME_SEARCH,uYGr', message)
       value = invite.execute
       expect(value).to be true
       puts 'Invite sent !'

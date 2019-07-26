@@ -31,6 +31,7 @@ module Salesnavot
       visit_target_page(@sales_nav_url)
       if initially_pending?
         @error = :already_pending
+        byebug
         return false
       end
       find_xpath_and_click(action_button_xpath)
@@ -64,32 +65,35 @@ module Salesnavot
     end
 
     def invitation_window_closed?
-      return true unless @session.has_selector?(form_css)
+      return true unless @session.has_selector?(form_css, wait: 5)
       @error = :invitation_form_did_not_close
       false
     end
 
     def click_and_connect
       find_xpath_and_click(action_button_xpath)
+      puts "clicking on the Connect button"
       find_and_click(connect_button_css)
       if lead_email_required?
         @error = :email_required
         return false
       end
       @session.fill_in form_invitation_id, with: @content
+      puts "Sending Hello message"
       find_and_click(send_button_css)
+      puts "Message sent"
       true
     end
 
     def initially_pending?
       find_xpath_and_click(action_button_xpath)
-      return @session.has_selector?(pending_connection_css, wait: 4)
+      return @session.has_selector?('li', :text=>pending_connection_css, wait: 4)
     end
 
     def pending_after_invite?
       # this isn't working anymore probably a bug on their end.
       find_xpath_and_click(action_button_xpath)
-      unless @session.has_selector?(pending_connection_css, wait: 4)
+      unless @session.has_selector?('li', :text=>pending_connection_css, wait: 4)
         @error = :no_pending_after
         return false
       end

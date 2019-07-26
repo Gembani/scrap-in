@@ -6,7 +6,7 @@ module CssSelectors
     end
 
     def connect_button_css
-      '.connect'
+      'artdeco-dropdown-item[data-control-name="connect"]'
     end
 
     def send_button_css
@@ -34,7 +34,7 @@ module CssSelectors
     end
 
     def pending_connection_css
-      '.pending-connection'
+      'Pending'
     end
   end
 end
