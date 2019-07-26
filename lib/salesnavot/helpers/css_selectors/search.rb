@@ -19,7 +19,7 @@ module CssSelectors
     end
 
     def searches_hover_css
-      '.global-nav-saved-searches-button'
+      '.nav-saved-searches'
     end
 
     def searches_container_css
@@ -27,7 +27,7 @@ module CssSelectors
     end
 
     def searches_list_css
-      'ul.global-nav-dropdown-list'
+      'ul.saved-searches-list'
     end
 
     def pagination_list_css

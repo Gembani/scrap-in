@@ -115,7 +115,7 @@ module Salesnavot
       puts "Hovering the mouse over the button 'Saved searches'"
       @session.find(searches_hover_css).hover
       puts "Clicking on the search of interest"
-      @session.find(searches_container_css).find(searches_list_css).click_on(@list_identifier)
+      @session.find(searches_hover_css).find(searches_list_css).find('li',:text=>@list_identifier).click_link
       @saved_search_url = @session.current_url
     end
 
