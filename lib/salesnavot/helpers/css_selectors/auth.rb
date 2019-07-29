@@ -17,12 +17,12 @@ module CssSelectors
       'btn__primary--large'
     end
 
-    def alert_header_css
-      '.alert-center__heading'
+    def alert_header_xpath
+      '//*/section/header/h2[contains(.,"Alerts")]'
     end
 
-    def captcha_css
-      '.rc-anchor'
+    def captcha_xpath
+      '//*[@id="app__container"]/main/h1[contains(.,"Let\'s do a quick security check")]'
     end
   end
 end
