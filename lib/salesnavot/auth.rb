@@ -33,11 +33,11 @@ module Salesnavot
       puts 'Clicking on login button'
       sleep(1)
       password_field.send_keys(:enter)
-      loop do
-        break unless @session.has_xpath?(captcha_xpath)
-        puts "Captcha verification waiting for result"
-        sleep(3)
-      end
+      # loop do
+      #   break unless @session.has_xpath?(captcha_xpath)
+      #   puts "Captcha verification waiting for result"
+      #   sleep(3)
+      # end
       raise 'Login failed !' unless @session.has_xpath?(alert_header_xpath)
     end
     

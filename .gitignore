@@ -17,3 +17,6 @@
 #byebug history
 .byebug_history
 
+.env
+
+Gemfile.lock
