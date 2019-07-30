@@ -44,6 +44,10 @@ module Salesnavot
       Salesnavot::Threads.new(@capybara)
     end
 
+    def sales_nav_threads
+      Salesnavot::SalesNavThreads.new(@capybara)
+    end
+
     def messages(thread_link)
       Salesnavot::Messages.new(@capybara, thread_link)
     end

@@ -193,6 +193,11 @@ RSpec.describe Salesnavot do
     end
   end
 
+  it 'scraps threads' do #for now we don't care
+    @session.sales_nav_threads.execute(70) do |name, thread|
+      puts "#{name}, #{thread}"
+    end
+  end
 
   xit 'scrap messages' do
     #messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
