@@ -34,7 +34,7 @@ module Salesnavot
       sleep(1)
       password_field.send_keys(:enter)
       loop do
-        break unless @session.has_xpath?(captcha_xpath)
+        break unless @session.has_xpath?(captcha_xpath, wait: 10)
         puts "Captcha verification waiting for result"
         sleep(3)
       end
