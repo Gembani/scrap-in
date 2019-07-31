@@ -193,6 +193,15 @@ RSpec.describe Salesnavot do
     end
   end
 
+  describe '#send_inmail' do
+    it 'sends inmail' do
+      url = ''
+      message = 'Hello'
+      send_inmail = @session.send_inmail(url, message)
+      send_inmail.execute
+    end
+  end
+
 
   xit 'scrap messages' do
     #messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')

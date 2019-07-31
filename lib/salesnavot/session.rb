@@ -40,6 +40,10 @@ module Salesnavot
       Salesnavot::SendMessage.new(@capybara, profile, message)
     end
 
+    def send_inmail(profile_url, message)
+      Salesnavot::SendInmail.new(@capybara, profile_url, message)
+    end
+
     def threads
       Salesnavot::Threads.new(@capybara)
     end
