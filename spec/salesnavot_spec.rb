@@ -193,10 +193,40 @@ RSpec.describe Salesnavot do
     end
   end
 
-  it 'scraps threads' do #for now we don't care
-    @session.sales_nav_threads.execute(70) do |name, thread|
+  before do
+    allow(@session).to receive(count).and_return(10)
+  end
+  it 'scraps threads when threads < open conversations' do #for now we don't care
+    count = 0
+    @session.sales_nav_threads.execute(5) do |name, thread|
       puts "#{name}, #{thread}"
+      count += 1
     end
+    expect(count).to eq(5)
+  end
+
+  before do
+    allow(@session).to receive(count).and_return(5)
+  end
+  it 'scraps threads when threads > open conversations' do
+    count = 0
+    @session.sales_nav_threads.execute(10) do |name, thread|
+      puts "#{name}, #{thread}"
+      count += 1
+    end
+    expect(count).to eq(5)
+  end
+
+  before do
+    allow(@session).to receive(count).and_return(0)
+  end
+  it 'does not scrap any threads if no open conversations' do
+    count = 0
+    @session.sales_nav_threads.execute(100) do |name, thread|
+      puts "#{name}, #{thread}"
+      count += 1
+    end
+    expect(count).to eq(0)
   end
 
   xit 'scrap messages' do
