@@ -10,30 +10,34 @@ module Salesnavot
     end
 
     def execute(num_times = 500)
-      byebug
+      
+      # byebug
       visit_messages_link
       count = 0
 
       num_times.times.each do
-        item = @session.all(css(count)).first
-        if item.nil?
+        sleep(2)
+        item = @session.find('.infinite-scroller').all('.list-style-none .conversation-list-item').first
+        item_limit = @session.find('.infinite-scroller').all('.list-style-none .conversation-list-item').count
+        if count >= item_limit
           puts 'item = nil'
-          count = 0
+          # count = 0
           break
         else
-          name = item.find('.msg-conversation-listitem__participant-names').text
-          thread_link = item.find('a')[:href]
+          name = @session.find('.infinite-scroller ul').all('li')[count].find('artdeco-entity-lockup-title').text
+          name_click = @session.find('.infinite-scroller ul').all('li')[count].find('artdeco-entity-lockup-title').click
+          thread_link = @session.current_url
           yield name, thread_link
-          scroll_to(item)
           count += 1
         end
         sleep(0.5)
       end
+      puts "/!\\ #{count} /!\\".colorize(:blue)
     end
 
     def visit_messages_link
       @session.all('.nav-item__icon')[0].click
-      wait_messages_page_to_load
+      # wait_messages_page_to_load
       puts 'Messages have been visited.'
     end
 
@@ -49,3 +53,6 @@ module Salesnavot
     end
   end
 end
+
+# @session.find('.infinite-scroller ul').all('li')[0].find('artdeco-entity-lockup-title').text get the name
+# @session.current_url get url
