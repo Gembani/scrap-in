@@ -5,6 +5,11 @@ module CssSelectors
       '.infinite-scroller ul'
     end
 
+    def threads_list_elements_css
+      threads_list_css + ' li'
+    end
+
+    end
     def loaded_threads_css
       '.list-style-none .conversation-list-item'  
     end

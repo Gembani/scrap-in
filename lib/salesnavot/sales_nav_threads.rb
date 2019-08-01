@@ -20,8 +20,8 @@ module Salesnavot
           # count = 0
           break
         else
-          name = @session.find(threads_list_css).all('li')[count].find(thread_name_css).text
-          name_click = @session.find(threads_list_css).all('li')[count].find(thread_name_css).click
+          name = @session.find(threads_list_elements_css)[count].find(thread_name_css).text
+          name_click = @session.find(threads_list_elements_css)[count].find(thread_name_css).click
           thread_link = @session.current_url
           yield name, thread_link
           count += 1
