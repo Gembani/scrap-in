@@ -196,7 +196,7 @@ RSpec.describe Salesnavot do
   before do
     allow(@session).to receive(count).and_return(10)
   end
-  it 'scraps threads when threads < open conversations' do #for now we don't care
+  xit 'scraps threads when threads < open conversations' do #for now we don't care
     count = 0
     @session.sales_nav_threads.execute(5) do |name, thread|
       puts "#{name}, #{thread}"
@@ -208,7 +208,7 @@ RSpec.describe Salesnavot do
   before do
     allow(@session).to receive(count).and_return(5)
   end
-  it 'scraps threads when threads > open conversations' do
+  xit 'scraps threads when threads > open conversations' do
     count = 0
     @session.sales_nav_threads.execute(10) do |name, thread|
       puts "#{name}, #{thread}"
@@ -220,7 +220,7 @@ RSpec.describe Salesnavot do
   before do
     allow(@session).to receive(count).and_return(0)
   end
-  it 'does not scrap any threads if no open conversations' do
+  xit 'does not scrap any threads if no open conversations' do
     count = 0
     @session.sales_nav_threads.execute(100) do |name, thread|
       puts "#{name}, #{thread}"
