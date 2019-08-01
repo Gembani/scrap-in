@@ -195,9 +195,9 @@ RSpec.describe Salesnavot do
 
   describe '#send_inmail' do
     it 'sends inmail' do
-      url = 'https://www.linkedin.com/sales/people/ACwAACKgXTkB19s7bfefUWhOvSgz5eDDgpXKXdo,NAME_SEARCH,y5Xh'
-      message = 'Hello'
-      subject = ''
+      url = 'https://www.linkedin.com/sales/people/ACwAACUW-OcBAwReCGqcO2Sg6gP03-UrMfSs51Y,NAME_SEARCH,GtnM'
+      message = 'Hello from Paris. I\'m'
+      subject = 'Introduction'
       send_inmail = @session.send_inmail(url, subject, message)
       send_inmail.execute
     end

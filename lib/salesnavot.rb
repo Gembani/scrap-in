@@ -9,6 +9,7 @@ require 'salesnavot/helpers/css_selectors/search'
 require 'salesnavot/helpers/css_selectors/sent_invites'
 require 'salesnavot/helpers/css_selectors/auth'
 require 'salesnavot/helpers/css_selectors/send_message.rb'
+require 'salesnavot/helpers/css_selectors/send_inmail.rb'
 
 require 'capybara/dsl'
 require 'salesnavot/search'

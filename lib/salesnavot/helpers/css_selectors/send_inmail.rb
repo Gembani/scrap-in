@@ -1,12 +1,24 @@
 module CssSelectors
-    # All css selectors used in Salesnavot::SendMessage Class
-    module SendMessage
-        def message_field_css
-            ".msg-form__contenteditable"
-        end
+    # All css selectors used in Salesnavot::SendInmail Class
+	module SendInmail
+		def degree_css
+			'.profile-topcard-person-entity__content span'
+		end
 
-        def send_button_css
-            ".msg-form__send-button"
-        end
-    end
+		def degree_text
+			"1st"
+		end
+
+		def subject_placeholder
+			'Subject (required)'
+		end
+
+		def message_placeholder
+			'Type your message here…'	
+		end
+
+		def message_container
+			'article'
+		end
+	end
 end
