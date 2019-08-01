@@ -1,6 +1,7 @@
 module Salesnavot
   class SalesNavThreads
     include Tools
+    include CssSelectors::SalesNavThreads
     def initialize(session)
       @session = session
     end
@@ -11,16 +12,16 @@ module Salesnavot
 
       num_times.times.each do
         sleep(2)
-        break unless @session.all('.infinite-scroller').nil?
-        item = @session.find('.infinite-scroller').all('.list-style-none .conversation-list-item').first
-        item_limit = @session.find('.infinite-scroller').all('.list-style-none .conversation-list-item').count
+        break unless @session.all(threads_list_css).nil?
+        item = @session.find(threads_list_css).all(loaded_threads_css).first
+        item_limit = @session.find(threads_list_css).all(loaded_threads_css).count
         if count >= item_limit
           puts 'item = nil'
           # count = 0
           break
         else
-          name = @session.find('.infinite-scroller ul').all('li')[count].find('artdeco-entity-lockup-title').text
-          name_click = @session.find('.infinite-scroller ul').all('li')[count].find('artdeco-entity-lockup-title').click
+          name = @session.find(threads_list_css).all('li')[count].find(thread_name_css).text
+          name_click = @session.find(threads_list_css).all('li')[count].find(thread_name_css).click
           thread_link = @session.current_url
           yield name, thread_link
           count += 1
@@ -31,7 +32,7 @@ module Salesnavot
     end
 
     def visit_messages_link
-      @session.all('.nav-item__icon')[0].click
+      @session.all(threads_access_button_css)[0].click
       byebug
       wait_messages_page_to_load
       puts 'Messages have been visited.'
@@ -40,7 +41,7 @@ module Salesnavot
     def wait_messages_page_to_load
       time = 0
       # Linkedin display first a first li with a text inside and the last perso we have talked to. The other conversation are loaded at the same time, or nearly almost.
-      while @session.all('.thread-container li').count < 2
+      while @session.all(message_css).count < 2
         puts 'waiting messages to appear'
         sleep(0.2)
         time += 0.2
