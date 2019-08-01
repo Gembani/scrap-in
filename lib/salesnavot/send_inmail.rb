@@ -45,11 +45,8 @@ module Salesnavot
     def friend?
       degree_css = '.profile-topcard-person-entity__content span'
       text = '1st'
-
-      friend = check_until(500) do
-        @session.has_selector?(degree_css, text: text, wait: 0)
-      end
-      raise 'Error: Friend 1st not found' unless friend
+      raise css_error(degree_css) unless @session.has_selector?(degree_css, wait:5)
+      @session.has_selector?(degree_css, text: text, wait:5)
     end
 
     def open_message_window
