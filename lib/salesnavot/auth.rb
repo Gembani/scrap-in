@@ -33,7 +33,6 @@ module Salesnavot
       puts 'Clicking on login button'
       sleep(1)
       password_field.send_keys(:enter)
-      byebug
       loop do
         break unless @session.has_xpath?(captcha_xpath, wait: 4)
         puts "Captcha verification waiting for result"
