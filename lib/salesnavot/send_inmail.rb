@@ -3,17 +3,26 @@ module Salesnavot
   class SendInmail
     include Tools
     include CssSelectors::SendMessage
+    include CssSelectors::Invite # for friend? method (degree_css)
 
-    def initialize(session, profile, message)
+    def initialize(session, profile_url, subject, message)
       @session = session
-      @profile = profile
+      @profile_url = profile_url
       @message = message
-      @error = 'An error occured when sending the message.'
+      @subject = subject
+      @error = 'An error occured when sending the inmail.'
     end
 
     def execute
-      byebug
+      # Go to profile
+      # Ensure lead is not friend
+      # Click on message link
+      # Write the message
+      # Send the message
       visit_profile
+      byebug
+      friend = friend?
+      byebug
       open_message_window
       write_message
       send_message
@@ -23,13 +32,24 @@ module Salesnavot
     def visit_profile
       puts 'Visiting profile...'
 
-      @session.visit(@profile)
+      @session.visit(@profile_url)
 
-      while @session.all('button.pv-s-profile-actions--message').count == 0
-        puts 'sleeping'
-        sleep(0.2)
+      button_found = check_until(500) do
+        @session.has_selector?('button', text: 'Message', wait: 0)
       end
+      raise 'Error: Button not found' unless button_found
+      
       puts 'Profile has been visited.'
+    end
+
+    def friend?
+      degree_css = '.profile-topcard-person-entity__content span'
+      text = '1st'
+
+      friend = check_until(500) do
+        @session.has_selector?(degree_css, text: text, wait: 0)
+      end
+      raise 'Error: Friend 1st not found' unless friend
     end
 
     def open_message_window
@@ -37,7 +57,7 @@ module Salesnavot
       @session.click_button 'Message'
       puts 'Message window has been opened.'
     end
-
+    
     def write_message
       puts 'Writing message...'
       message_field= @session.find(message_field_css)
