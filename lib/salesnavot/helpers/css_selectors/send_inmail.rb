@@ -20,5 +20,17 @@ module CssSelectors
 		def message_container
 			'article'
 		end
+
+		def message_button_css
+			'button'
+		end
+
+		def message_button_text
+			'Message'
+		end
+
+		def send_button_text
+			'Send'
+		end
 	end
 end

@@ -5,38 +5,49 @@ module Salesnavot
     include Tools
     include CssSelectors::SendInmail
 
-    def initialize(session, profile_url, subject, message)
+    def initialize(session, profile_url, subject, inmail_message)
       @session = session
       @profile_url = profile_url
-      @message = message
+      @inmail_message = inmail_message
       @subject = subject
       @error = 'An error occured when sending the inmail.'
     end
 
     def execute
-      visit_profile
-      return false if friend?
-
-      click_message_link
-      write_subject
-      write_message
-      send_message
-      raise @error unless message_sent?
+      begin
+        visit_profile
+        search_for_message_button
+        friend?
+        click_message_link
+        write_subject
+        write_message
+        send_message
+      rescue StandardError => e
+        puts '-------------------------'
+        puts e
+        puts '-------------------------'
+        return false
+      end
+      # raise @error unless message_sent?
 
       true
     end
 
     def visit_profile
       puts 'Visiting profile...'
-
       @session.visit(@profile_url)
-
-      button_found = check_until(500) do
-        @session.has_selector?('button', text: 'Message', wait: 0)
-      end
-      raise 'Error: Button not found' unless button_found
-
       puts 'Profile has been visited.'
+    end
+
+    def search_for_message_button
+      puts 'Checking if message button has appeared on profile page'
+      button_found = check_until(500) do
+        @session.has_selector?(message_button_css, text: message_button_text, wait: 0)
+      end
+      return false unless button_found
+
+      puts 'Message button has been found.'
+      true
     end
 
     def friend?
@@ -47,8 +58,10 @@ module Salesnavot
 
     def click_message_link
       puts 'Opening message window...'
-      @session.click_button 'Message'
+      return false unless @session.click_button(message_button_text)
+
       puts 'Message window has been opened.'
+      true
     end
 
     def write_subject
@@ -56,18 +69,19 @@ module Salesnavot
       subject_field = @session.find_field(placeholder: subject_placeholder)
       subject_field.send_keys(@subject)
       puts 'Subject has been written.'
+      true
     end
 
     def write_message
       puts 'Writing message...'
       message_field = @session.find_field(placeholder: message_placeholder)
-      message_field.send_keys(@message)
+      message_field.send_keys(@inmail_message)
       puts 'Message has been written.'
     end
 
     def send_message
       puts 'Sending message...'
-      @session.click_button 'Send'
+      @session.click_button send_button_text
       puts 'Message has been sent.'
       true
     end
@@ -79,7 +93,7 @@ module Salesnavot
       puts 'Clicking on Message button'
       click_message_link
       check = check_until(500) do
-        @session.has_selector?(message_container, text: @message, wait: 5)
+        @session.has_selector?(message_container, text: @inmail_message, wait: 5)
       end
       return false unless check
 
