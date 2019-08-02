@@ -14,23 +14,15 @@ module Salesnavot
     end
 
     def execute
-      begin
-        visit_profile
-        search_for_message_button
-        friend?
-        click_message_link
-        write_subject
-        write_message
-        send_message
-      rescue StandardError => e
-        puts '-------------------------'
-        puts e
-        puts '-------------------------'
-        return false
-      end
-      # raise @error unless message_sent?
-
-      true
+      visit_profile
+      search_for_message_button
+      friend?
+      click_message_link
+      write_subject
+      write_message
+      send_message
+      message_sent?
+      return true
     end
 
     def visit_profile
@@ -95,7 +87,7 @@ module Salesnavot
       check = check_until(500) do
         @session.has_selector?(message_container, text: @inmail_message, wait: 5)
       end
-      return false unless check
+      raise 'erreerurr' unless check
 
       puts 'Confirmed'
       true

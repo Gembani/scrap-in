@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe Salesnavot::SendInmail do
@@ -5,7 +7,7 @@ RSpec.describe Salesnavot::SendInmail do
     described_class
   end
 
-  let(:send_inmail_instance) do 
+  let(:send_inmail_instance) do
     subject.new(session, profile_url, subject_text, inmail_message)
   end
 
@@ -25,48 +27,63 @@ RSpec.describe Salesnavot::SendInmail do
   let(:message_button_text) { 'message_button_text' }
   let(:send_button_text) { 'message_button_text' }
 
+  # Before every test we mock the CssSelectors::SendInmail, which is used by SendInmail class.
+  before do
+    allow_any_instance_of(CssSelectors::SendInmail).to receive(:message_button_css)
+      .and_return(message_button_css)
+    allow_any_instance_of(CssSelectors::SendInmail).to receive(:message_button_text)
+      .and_return(message_button_text)
+    allow_any_instance_of(CssSelectors::SendInmail).to receive(:send_button_text)
+      .and_return(send_button_text)
+    allow_any_instance_of(CssSelectors::SendInmail).to receive(:degree_css)
+      .and_return(degree_css)
+    allow_any_instance_of(CssSelectors::SendInmail).to receive(:degree_text)
+      .and_return(degree_text)
+    allow_any_instance_of(CssSelectors::SendInmail).to receive(:subject_placeholder)
+      .and_return(subject_placeholder)
+    allow_any_instance_of(CssSelectors::SendInmail).to receive(:message_placeholder)
+      .and_return(message_placeholder)
+    allow_any_instance_of(CssSelectors::SendInmail).to receive(:message_container)
+      .and_return(message_container)
+  end
+
   describe '.initialize' do
     it { is_expected.to eq Salesnavot::SendInmail }
   end
+
   describe '.execute' do
     before do
-      # stubing class css --> GENERAL
-      allow(send_inmail_instance).to receive(:message_button_css)
-                                 .and_return(message_button_css)
-      allow(send_inmail_instance).to receive(:message_button_text)
-                                 .and_return(message_button_text)
-      allow(send_inmail_instance).to receive(:send_button_text)
-                                 .and_return(send_button_text)
-      allow(send_inmail_instance).to receive(:degree_css)
-                                 .and_return(degree_css)
-      allow(send_inmail_instance).to receive(:degree_text)
-                                 .and_return(degree_text)
-      allow(send_inmail_instance).to receive(:subject_placeholder)
-                                 .and_return(subject_placeholder)
-      allow(send_inmail_instance).to receive(:message_placeholder)
-                                 .and_return(message_placeholder)
-      # visit_profile succeed
+     # visit_profile succeed
       allow(session).to receive(:visit).with(profile_url)
-      # searching for message button  
-      allow(session).to receive(:has_selector?)
-                    .with(message_button_css, text: message_button_text, wait: 0).and_return(true)
+
+      # searching for message button
+     allow(session).to receive(:has_selector?)
+       .with(message_button_css, text: message_button_text, wait: 0).and_return(true)
+
       # friend? return false
-      allow(session).to receive(:has_selector?).with(degree_css, wait: 5).and_return(true)
-      allow(session).to receive(:has_selector?).with(degree_css, text: degree_text, wait: 5).and_return(false)
-     # click_message_link succeed 
-      allow(session).to receive(:click_button).with(message_button_text).and_return(true)
-     # write_subject succeed
-      subject_field = instance_double('Capybara::Node::Element')
-      allow(subject_field).to receive(:send_keys).with(subject_text)
-      allow(session).to receive(:find_field).with(placeholder: subject_placeholder).and_return(subject_field)
-     # write_message succeed
-      message_field = instance_double('Capybara::Node::Element')
-      allow(message_field).to receive(:send_keys).with(inmail_message)
-      allow(session).to receive(:find_field).with(placeholder: message_placeholder).and_return(message_field)
-     # send_message succeed 
-      allow(session).to receive(:click_button).with(send_button_text)
+     allow(session).to receive(:has_selector?).with(degree_css, wait: 5).and_return(true)
+     allow(session).to receive(:has_selector?).with(degree_css, text: degree_text, wait: 5).and_return(false)
+
+      # click_message_link succeed
+     allow(session).to receive(:click_button).with(message_button_text).and_return(true)
+
+      # write_subject succeed
+     subject_field = instance_double('Capybara::Node::Element')
+     allow(subject_field).to receive(:send_keys).with(subject_text)
+     allow(session).to receive(:find_field).with(placeholder: subject_placeholder).and_return(subject_field)
+
+      # write_message succeed
+     message_field = instance_double('Capybara::Node::Element')
+     allow(message_field).to receive(:send_keys).with(inmail_message)
+     allow(session).to receive(:find_field).with(placeholder: message_placeholder).and_return(message_field)
+
+      # send_message succeed
+     allow(session).to receive(:click_button).with(send_button_text)
+
+      # message_sent? return true
+     allow(session).to receive(:has_selector?).with(message_container, text: inmail_message, wait: 5).and_return(true)
     end
-    it 'does not log in into Linkedin and raises an error' do
+    it 'sends successfully an inmail' do
       result = send_inmail_instance.execute
       expect(result).to be(true)
     end
