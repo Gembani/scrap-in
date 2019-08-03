@@ -22,7 +22,7 @@ module Salesnavot
       write_message
       send_message
       message_sent?
-      return true
+      true
     end
 
     def visit_profile
@@ -36,24 +36,24 @@ module Salesnavot
       button_found = check_until(500) do
         @session.has_selector?(message_button_css, text: message_button_text, wait: 0)
       end
-      return false unless button_found
+      raise CssNotFound.new(message_button_css, text = message_button_text) unless button_found
 
       puts 'Message button has been found.'
       true
     end
 
     def friend?
-      raise css_error(degree_css) unless @session.has_selector?(degree_css, wait: 5)
+      raise CssNotFound, degree_css unless @session.has_selector?(degree_css, wait: 5)
 
-      @session.has_selector?(degree_css, text: degree_text, wait: 5)
+      is_friend = @session.has_selector?(degree_css, text: degree_text, wait: 5)
+      # it checks if the lead is friended (degree == '1st')
+      raise LeadIsFriend.new(profile_url: @profile_url) if is_friend
     end
 
     def click_message_link
       puts 'Opening message window...'
-      return false unless @session.click_button(message_button_text)
-
+      @session.click_button(message_button_text)
       puts 'Message window has been opened.'
-      true
     end
 
     def write_subject
@@ -61,7 +61,6 @@ module Salesnavot
       subject_field = @session.find_field(placeholder: subject_placeholder)
       subject_field.send_keys(@subject)
       puts 'Subject has been written.'
-      true
     end
 
     def write_message
@@ -75,7 +74,6 @@ module Salesnavot
       puts 'Sending message...'
       @session.click_button send_button_text
       puts 'Message has been sent.'
-      true
     end
 
     def message_sent?
@@ -84,13 +82,11 @@ module Salesnavot
       visit_profile
       puts 'Clicking on Message button'
       click_message_link
-      check = check_until(500) do
+      message_exists = check_until(500) do
         @session.has_selector?(message_container, text: @inmail_message, wait: 5)
       end
-      raise 'erreerurr' unless check
-
+      raise CssNotFound.new(message_container, text: @inmail_message) unless message_exists
       puts 'Confirmed'
-      true
     end
   end
 end

@@ -31,6 +31,39 @@ require 'salesnavot/thread_from_name'
 
 # Our gem which will pull informations from Linkedin
 module Salesnavot
+  class CssNotFound < StandardError
+    attr_reader :selector
+
+    def initialize(selector = '', text = '')
+      @selector = selector
+      @message = "Css selector not found -> #{selector}"
+      @message = "#{@message} with text: #{text}" unless text.empty?
+      super(@message)
+    end
+  end
+
+  class LeadIsFriend < StandardError
+    attr_reader :selector
+
+    def initialize(profile_url: '')
+      message = "The current lead is friended. Profile url: #{profile_url}"
+      @message = message
+      @profile_url = profile_url
+      super(@message)
+    end
+  end
+
+  class ClickButtonFailed < StandardError
+    attr_reader :selector
+
+    def initialize(button_text: '')
+      message = "Unable to click on button with text: #{button_text}"
+      @message = message
+      @button_text = button_text
+      super(@message)
+    end
+  end
+
   def self.setup
     Capybara.run_server = false
   end
