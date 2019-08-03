@@ -8,7 +8,6 @@ module Salesnavot
       @profile_url = profile_url
       @inmail_message = inmail_message
       @subject = subject
-      @error = 'An error occured when sending the inmail.'
     end
 
     def execute
@@ -39,7 +38,6 @@ module Salesnavot
       raise CssNotFound.new(message_button_css, text = message_button_text) unless button_found
 
       puts 'Message button has been found.'
-      true
     end
 
     def friend?
