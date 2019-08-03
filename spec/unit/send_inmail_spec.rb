@@ -40,41 +40,21 @@ RSpec.describe Salesnavot::SendInmail do
     }
   end
 
-  # Before every test we mock the CssSelectors::SendInmail, which is used by SendInmail class.
+  # Before every test we mock the CssSelectors::SendInmail module, which is used by SendInmail class.
   before do
     css_selectors.each do |key, value|
       allow_any_instance_of(CssSelectors::SendInmail).to receive(key.to_s).and_return(value)
     end
 
-    # visit_profile succeed
-    allow(session).to receive(:visit).with(profile_url)
-
-    # searching for message button
-    allow(session).to receive(:has_selector?)
-      .with(message_button_css, text: message_button_text, wait: 0).and_return(true)
-
-    # friend? return false
-    allow(session).to receive(:has_selector?).with(degree_css, wait: 5).and_return(true)
-    allow(session).to receive(:has_selector?).with(degree_css, text: degree_text, wait: 5).and_return(false)
-
-    # click_message_link succeed
-    allow(session).to receive(:click_button).with(message_button_text).and_return(true)
-
-    # write_subject succeed
-    subject_field = instance_double('Capybara::Node::Element')
-    allow(subject_field).to receive(:send_keys).with(subject_text)
-    allow(session).to receive(:find_field).with(placeholder: subject_placeholder).and_return(subject_field)
-
-    # write_message succeed
-    message_field = instance_double('Capybara::Node::Element')
-    allow(message_field).to receive(:send_keys).with(inmail_message)
-    allow(session).to receive(:find_field).with(placeholder: message_placeholder).and_return(message_field)
-
-    # send_message succeed
-    allow(session).to receive(:click_button).with(send_button_text)
-
-    # message_sent? return true
-    allow(session).to receive(:has_selector?).with(message_container, text: inmail_message, wait: 5).and_return(true)
+    # Mocking (you can see all the methods in spec/unit/helpers/send_inmail_helpers.rb)
+    visit_succeed
+    searching_for_message_button_succeed
+    lead_is_not_friended
+    click_message_link_succeed
+    write_subject_succeed
+    write_message_succeed
+    send_message_succeed
+    message_has_been_sent_successfully
   end
 
   describe '.initialize' do
@@ -82,115 +62,54 @@ RSpec.describe Salesnavot::SendInmail do
   end
 
   describe '.execute' do
-    context 'Tout est ok' do
+    context 'everything is ok in order to send the inmail' do
       it 'sends successfully an inmail' do
         result = send_inmail_instance.execute
         expect(result).to be(true)
       end
     end
-    context 'Can\'t find message button' do
-      before do
-        allow(session).to receive(:has_selector?)
-          .with(message_button_css, text: message_button_text, wait: 0).and_return(false)
-      end
-      it 'raises a css error' do
-        expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound)
-      end
+
+    context "Can't find message button" do
+      before { message_button_not_found }
+
+      it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound) }
+      it { expect { send_inmail_instance.execute }.to raise_error(/#{message_button_css}/) }
     end
-    context 'can\'t find message button' do
-      before do
-        allow(session).to receive(:has_selector?)
-          .with(message_button_css, text: message_button_text, wait: 0).and_return(false)
-      end
-      it 'raises the correct css error' do
-        expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound)
-      end
-      it 'raises an error with css selector as an instance variable' do
-        expect { send_inmail_instance.execute }.to raise_error(/#{message_button_css}/)
-      end
-    end
+
     context 'the selector for friend degree was not found' do
-      before do
-        allow(session).to receive(:has_selector?).with(degree_css, wait: 5).and_return(false)
-      end
-      it 'raises the correct css error' do
-        expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound)
-      end
-      it 'raises an error with css selector as an instance variable' do
-        expect { send_inmail_instance.execute }.to raise_error(/#{degree_css}/)
-      end
+      before { friend_degree_selector_not_found }
+      it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound) }
+      it { expect { send_inmail_instance.execute }.to raise_error(/#{degree_css}/) }
     end
     context 'the selector for friend degree was found but the lead is a friend' do
-      before do
-        allow(session).to receive(:has_selector?).with(degree_css, text: degree_text, wait: 5).and_return(true)
-      end
-      it 'raises the correct css error' do
-        expect { send_inmail_instance.execute }.to raise_error(Salesnavot::LeadIsFriend)
-      end
-      it 'raises an error with css selector as an instance variable' do
-        expect { send_inmail_instance.execute }.to raise_error(/#{profile_url}/)
-      end
+      before { lead_is_friended }
+      it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::LeadIsFriend) }
+      it { expect { send_inmail_instance.execute }.to raise_error(/#{profile_url}/) }
     end
     context 'when we are unable to click on message button' do
-      before do
-        allow(session).to receive(:click_button).with(message_button_text)
-                                                .and_raise(Capybara::ElementNotFound, "Unable to find button '#{message_button_text}' that is not disabled")
-      end
-      it 'raises the correct css error' do
-        expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound)
-      end
-      it 'raises an error with css selector as an instance variable' do
-        expect { send_inmail_instance.execute }.to raise_error(/#{message_button_text}/)
-      end
+      before { click_on_message_button_fails }
+      it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
+      it { expect { send_inmail_instance.execute }.to raise_error(/#{message_button_text}/) }
     end
     context 'when we are unable to find the subject field' do
-      before do
-        exception = "Unable to find field that is not disabled with placeholder #{subject_placeholder}"
-        allow(session).to receive(:find_field).with(placeholder: subject_placeholder)
-                                              .and_raise(Capybara::ElementNotFound, exception)
-      end
-      it 'raises the correct css error' do
-        expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound)
-      end
-      it 'raises an error with css selector as an instance variable' do
-        expect { send_inmail_instance.execute }.to raise_error(/#{subject_placeholder}/)
-      end
+      before { subject_field_not_found }
+      it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
+      it { expect { send_inmail_instance.execute }.to raise_error(/#{subject_placeholder}/) }
     end
     context 'when we are unable to find the message field' do
-      before do
-        exception = "Unable to find field that is not disabled with placeholder #{message_placeholder}"
-        allow(session).to receive(:find_field).with(placeholder: message_placeholder)
-                                              .and_raise(Capybara::ElementNotFound, exception)
-      end
-      it 'raises the correct css error' do
-        expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound)
-      end
-      it 'raises an error with css selector as an instance variable' do
-        expect { send_inmail_instance.execute }.to raise_error(/#{message_placeholder}/)
-      end
+      before { message_field_not_found }
+      it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
+      it { expect { send_inmail_instance.execute }.to raise_error(/#{message_placeholder}/) }
     end
     context 'when we are unable to click on send button' do
-      before do
-        allow(session).to receive(:click_button).with(send_button_text)
-                                                .and_raise(Capybara::ElementNotFound, "Unable to find button '#{send_button_text}' that is not disabled")
-      end
-      it 'raises the correct css error' do
-        expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound)
-      end
-      it 'raises an error with css selector as an instance variable' do
-        expect { send_inmail_instance.execute }.to raise_error(/#{send_button_text}/)
-      end
+      before { send_button_not_found }
+      it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
+      it { expect { send_inmail_instance.execute }.to raise_error(/#{send_button_text}/) }
     end
     context 'the selector which should contain the sent message was not found' do
-      before do
-        allow(session).to receive(:has_selector?).with(message_container, text: inmail_message, wait: 5).and_return(false)
-      end
-      it 'raises the correct css error' do
-        expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound)
-      end
-      it 'raises an error with css selector as an instance variable' do
-        expect { send_inmail_instance.execute }.to raise_error(/#{message_container}/)
-      end
+      before { sent_message_not_found }
+      it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound) }
+      it { expect { send_inmail_instance.execute }.to raise_error(/#{message_container}/) }
     end
   end
 end
