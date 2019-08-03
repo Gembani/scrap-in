@@ -133,7 +133,7 @@ RSpec.describe Salesnavot::SendInmail do
     context 'when we are unable to click on message button' do
       before do
         allow(session).to receive(:click_button).with(message_button_text)
-                      .and_raise(Capybara::ElementNotFound, "Unable to find button '#{message_button_text}' that is not disabled")
+                                                .and_raise(Capybara::ElementNotFound, "Unable to find button '#{message_button_text}' that is not disabled")
       end
       it 'raises the correct css error' do
         expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound)
@@ -146,7 +146,7 @@ RSpec.describe Salesnavot::SendInmail do
       before do
         exception = "Unable to find field that is not disabled with placeholder #{subject_placeholder}"
         allow(session).to receive(:find_field).with(placeholder: subject_placeholder)
-                      .and_raise(Capybara::ElementNotFound, exception)
+                                              .and_raise(Capybara::ElementNotFound, exception)
       end
       it 'raises the correct css error' do
         expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound)
@@ -159,7 +159,7 @@ RSpec.describe Salesnavot::SendInmail do
       before do
         exception = "Unable to find field that is not disabled with placeholder #{message_placeholder}"
         allow(session).to receive(:find_field).with(placeholder: message_placeholder)
-                      .and_raise(Capybara::ElementNotFound, exception)
+                                              .and_raise(Capybara::ElementNotFound, exception)
       end
       it 'raises the correct css error' do
         expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound)
@@ -171,7 +171,7 @@ RSpec.describe Salesnavot::SendInmail do
     context 'when we are unable to click on send button' do
       before do
         allow(session).to receive(:click_button).with(send_button_text)
-                      .and_raise(Capybara::ElementNotFound, "Unable to find button '#{send_button_text}' that is not disabled")
+                                                .and_raise(Capybara::ElementNotFound, "Unable to find button '#{send_button_text}' that is not disabled")
       end
       it 'raises the correct css error' do
         expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound)

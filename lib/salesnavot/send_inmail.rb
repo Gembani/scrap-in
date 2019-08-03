@@ -25,6 +25,8 @@ module Salesnavot
       true
     end
 
+    private
+
     def visit_profile
       puts 'Visiting profile...'
       @session.visit(@profile_url)
@@ -86,6 +88,7 @@ module Salesnavot
         @session.has_selector?(message_container, text: @inmail_message, wait: 5)
       end
       raise CssNotFound.new(message_container, text: @inmail_message) unless message_exists
+
       puts 'Confirmed'
     end
   end
