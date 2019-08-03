@@ -27,24 +27,25 @@ RSpec.describe Salesnavot::SendInmail do
   let(:message_button_text) { 'message_button_text' }
   let(:send_button_text) { 'message_button_text' }
 
+  let(:css_selectors) do
+    {
+      degree_css: 'degree_css',
+      degree_text: 'degree_text',
+      subject_placeholder: 'subject_placeholder',
+      message_placeholder: 'message_placeholder',
+      message_container: 'message_container',
+      message_button_css: 'message_button_css',
+      message_button_text: 'message_button_text',
+      send_button_text: 'message_button_text'
+    }
+  end
+
   # Before every test we mock the CssSelectors::SendInmail, which is used by SendInmail class.
   before do
-    allow_any_instance_of(CssSelectors::SendInmail).to receive(:message_button_css)
-      .and_return(message_button_css)
-    allow_any_instance_of(CssSelectors::SendInmail).to receive(:message_button_text)
-      .and_return(message_button_text)
-    allow_any_instance_of(CssSelectors::SendInmail).to receive(:send_button_text)
-      .and_return(send_button_text)
-    allow_any_instance_of(CssSelectors::SendInmail).to receive(:degree_css)
-      .and_return(degree_css)
-    allow_any_instance_of(CssSelectors::SendInmail).to receive(:degree_text)
-      .and_return(degree_text)
-    allow_any_instance_of(CssSelectors::SendInmail).to receive(:subject_placeholder)
-      .and_return(subject_placeholder)
-    allow_any_instance_of(CssSelectors::SendInmail).to receive(:message_placeholder)
-      .and_return(message_placeholder)
-    allow_any_instance_of(CssSelectors::SendInmail).to receive(:message_container)
-      .and_return(message_container)
+    css_selectors.each do |key, value|
+      allow_any_instance_of(CssSelectors::SendInmail).to receive(key.to_s).and_return(value)
+    end
+
     # visit_profile succeed
     allow(session).to receive(:visit).with(profile_url)
 
