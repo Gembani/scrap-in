@@ -1,24 +1,39 @@
 # frozen_string_literal: true
 
 module SendInmailHelpers
+  
+  def has_selector(*config)
+    allow(session).to receive(:has_selector?)
+      .with(*config).and_return(true)
+  end
+
+  def has_not_selector(*config)
+    allow(session).to receive(:has_selector?)
+      .with(*config).and_return(false)
+  end
+
+   def visit_succeed(url)
+      allow(session).to receive(:visit).with(url)
+   end
+   def click_button_success(text)
+    allow(session).to receive(:click_button).with(text).and_return(true)
+  end 
+
   module Success
-    def visit_succeed
-      allow(session).to receive(:visit).with(profile_url)
-    end
+    
 
     def searching_for_message_button_succeed
       allow(session).to receive(:has_selector?)
         .with(message_button_css, text: message_button_text, wait: 0).and_return(true)
     end
-
+  
+   
     def lead_is_not_friended
-      allow(session).to receive(:has_selector?).with(degree_css, wait: 5).and_return(true)
-      allow(session).to receive(:has_selector?).with(degree_css, text: degree_text, wait: 5).and_return(false)
+      has_selector(degree_css, wait: 5)
+      has_not_selector(degree_css, text: degree_text, wait: 5)
     end
 
-    def click_message_link_succeed
-      allow(session).to receive(:click_button).with(message_button_text).and_return(true)
-    end
+    
 
     def write_subject_succeed
       subject_field = instance_double('Capybara::Node::Element')

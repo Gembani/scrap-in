@@ -13,6 +13,7 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+  config.include SendInmailHelpers
   config.include SendInmailHelpers::Success
   config.include SendInmailHelpers::Fail
 end

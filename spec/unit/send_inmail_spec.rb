@@ -47,10 +47,10 @@ RSpec.describe Salesnavot::SendInmail do
     end
 
     # Mocking (you can see all the methods in spec/unit/helpers/send_inmail_helpers.rb)
-    visit_succeed
-    searching_for_message_button_succeed
+    visit_succeed(profile_url)
+    has_selector(message_button_css, text: message_button_text, wait: 0)
     lead_is_not_friended
-    click_message_link_succeed
+    click_button_success(message_button_text)
     write_subject_succeed
     write_message_succeed
     send_message_succeed
