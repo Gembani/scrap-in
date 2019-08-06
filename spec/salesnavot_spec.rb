@@ -193,6 +193,18 @@ RSpec.describe Salesnavot do
     end
   end
 
+
+  describe '#send_inmail' do
+    it 'sends inmail' do
+      url = 'https://www.linkedin.com/sales/people/ACwAABoqzPMBkNjA1A2yhrvf3CmyLD3fQWqTLCg,NAME_SEARCH,Q68x'
+      message = 'Hello from Paris. I\'m'
+      subject = 'Introduction'
+      send_inmail = @session.send_inmail(url, subject, message)
+      expect(send_inmail.execute).to be true
+    end
+  end
+
+
   before do
     allow(@session).to receive(count).and_return(10)
   end
@@ -228,6 +240,7 @@ RSpec.describe Salesnavot do
     end
     expect(count).to eq(0)
   end
+
 
   xit 'scrap messages' do
     #messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')

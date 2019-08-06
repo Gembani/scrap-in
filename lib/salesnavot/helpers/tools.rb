@@ -7,6 +7,14 @@ module Tools
     @session.driver.browser.execute_script(script, element.native)
   end
 
+  def check_until(amount_of_time)
+    amount_of_time.times do
+      return true if yield
+      sleep(0.001)
+    end
+    return false
+  end
+
   def find_and_click(css)
     unless @session.has_selector?(css)
       @error = css_error(css)
