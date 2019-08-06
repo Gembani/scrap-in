@@ -17,6 +17,11 @@
 #byebug history
 .byebug_history
 
+
+
 .env
 
-Gemfile.lock
+# Vscode -> Window color configuration
+
+.vscode/settings.json
+
