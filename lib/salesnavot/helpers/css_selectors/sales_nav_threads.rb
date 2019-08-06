@@ -9,7 +9,6 @@ module CssSelectors
       threads_list_css + ' li'
     end
 
-    end
     def loaded_threads_css
       '.list-style-none .conversation-list-item'  
     end
