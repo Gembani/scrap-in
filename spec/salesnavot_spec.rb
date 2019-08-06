@@ -193,6 +193,12 @@ RSpec.describe Salesnavot do
     end
   end
 
+  it 'scraps threads' do #for now we don't care
+    @session.sales_nav_threads.execute(70) do |name, thread|
+      puts "#{name}, #{thread}"
+    end
+  end
+
 
   describe '#send_inmail' do
     it 'sends inmail' do
@@ -205,9 +211,6 @@ RSpec.describe Salesnavot do
   end
 
 
-  before do
-    allow(@session).to receive(count).and_return(10)
-  end
   xit 'scraps threads when threads < open conversations' do #for now we don't care
     count = 0
     @session.sales_nav_threads.execute(5) do |name, thread|
@@ -217,9 +220,6 @@ RSpec.describe Salesnavot do
     expect(count).to eq(5)
   end
 
-  before do
-    allow(@session).to receive(count).and_return(5)
-  end
   xit 'scraps threads when threads > open conversations' do
     count = 0
     @session.sales_nav_threads.execute(10) do |name, thread|
@@ -229,9 +229,6 @@ RSpec.describe Salesnavot do
     expect(count).to eq(5)
   end
 
-  before do
-    allow(@session).to receive(count).and_return(0)
-  end
   xit 'does not scrap any threads if no open conversations' do
     count = 0
     @session.sales_nav_threads.execute(100) do |name, thread|

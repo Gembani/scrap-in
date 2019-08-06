@@ -12,19 +12,23 @@ module Salesnavot
 
       num_times.times.each do
         sleep(2)
-        break unless @session.all(threads_list_css).nil?
+        # byebug
+        break if @session.all(threads_list_css).nil?
         item = @session.find(threads_list_css).all(loaded_threads_css).first
         item_limit = @session.find(threads_list_css).all(loaded_threads_css).count
+        # byebug
         if count >= item_limit
-          puts 'item = nil'
+          # puts 'item = nil'
           # count = 0
           break
         else
-          name = @session.find(threads_list_elements_css)[count].find(thread_name_css).text
-          name_click = @session.find(threads_list_elements_css)[count].find(thread_name_css).click
+          # byebug
+          name = @session.find(threads_list_css).all(threads_list_elements_css)[count].find(thread_name_css).text
+          name_click = @session.find(threads_list_css).all(threads_list_elements_css)[count].find(thread_name_css).click
           thread_link = @session.current_url
           yield name, thread_link
           count += 1
+          # byebug
         end
         sleep(0.5)
       end
@@ -32,8 +36,8 @@ module Salesnavot
     end
 
     def visit_messages_link
-      @session.all(threads_access_button_css)[0].click
-      byebug
+      click = @session.all(threads_access_button_css)[0].click
+      # byebug
       wait_messages_page_to_load
       puts 'Messages have been visited.'
     end
