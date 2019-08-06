@@ -46,6 +46,9 @@ RSpec.describe Salesnavot::SendInmail do
       allow_any_instance_of(CssSelectors::SendInmail).to receive(key.to_s).and_return(value)
     end
 
+    # For more clear results without all the logs
+    disable_puts_for_class(Salesnavot::SendInmail)
+
     # Mocking (you can see all the methods in spec/unit/helpers/send_inmail_helpers.rb)
     visit_succeed(profile_url)
     has_selector(message_button_css, text: message_button_text, wait: 0)
@@ -53,8 +56,8 @@ RSpec.describe Salesnavot::SendInmail do
     click_button_success(message_button_text)
     write_subject_succeed
     write_message_succeed
-    send_message_succeed
-    message_has_been_sent_successfully
+    click_button_success(send_button_text)
+    has_selector(message_container, text: inmail_message, wait: 5)
   end
 
   describe '.initialize' do
@@ -70,44 +73,45 @@ RSpec.describe Salesnavot::SendInmail do
     end
 
     context "Can't find message button" do
-      before { message_button_not_found }
-
+      before { has_not_selector(message_button_css, text: message_button_text, wait: 0) }
+      
       it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{message_button_css}/) }
     end
 
     context 'the selector for friend degree was not found' do
-      before { friend_degree_selector_not_found }
+      before { has_not_selector(degree_css, wait: 5) }
       it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{degree_css}/) }
     end
+
     context 'the selector for friend degree was found but the lead is a friend' do
-      before { lead_is_friended }
+      before { has_selector(degree_css, text: degree_text, wait: 5) }
       it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::LeadIsFriend) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{profile_url}/) }
     end
     context 'when we are unable to click on message button' do
-      before { click_on_message_button_fails }
+      before { click_button_fails(message_button_text)}
       it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{message_button_text}/) }
     end
     context 'when we are unable to find the subject field' do
-      before { subject_field_not_found }
+      before { cannot_find_field_with_placeholder(subject_placeholder)}
       it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{subject_placeholder}/) }
     end
     context 'when we are unable to find the message field' do
-      before { message_field_not_found }
+      before { cannot_find_field_with_placeholder(message_placeholder)}
       it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{message_placeholder}/) }
     end
     context 'when we are unable to click on send button' do
-      before { send_button_not_found }
+      before { click_button_fails(send_button_text) }
       it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{send_button_text}/) }
     end
     context 'the selector which should contain the sent message was not found' do
-      before { sent_message_not_found }
+      before { has_not_selector(message_container, text: inmail_message, wait: 5) }
       it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{message_container}/) }
     end
