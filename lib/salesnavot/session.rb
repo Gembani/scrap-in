@@ -4,6 +4,7 @@ module Salesnavot
     def initialize(username, password)
       # Capybara.default_max_wait_time = 10 # Seconds
       Capybara.default_max_wait_time = 60 # Seconds
+
       @capybara = Capybara::Session.new(ENV.fetch('driver').to_sym)
       # @capybara.driver.browser.manage.window.resize_to(1920, 1080)
       auth = Salesnavot::Auth.new(@capybara)
@@ -46,6 +47,10 @@ module Salesnavot
 
     def threads
       Salesnavot::Threads.new(@capybara)
+    end
+
+    def sales_nav_threads
+      Salesnavot::SalesNavThreads.new(@capybara)
     end
 
     def messages(thread_link)
