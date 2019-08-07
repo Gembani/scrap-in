@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Salesnavot::SendInmail do
+RSpec.describe ScrapIn::SendInmail do
   let(:subject) do
     described_class
   end
@@ -47,7 +47,7 @@ RSpec.describe Salesnavot::SendInmail do
     end
 
     # For more clear results without all the logs
-    disable_puts_for_class(Salesnavot::SendInmail)
+    disable_puts_for_class(ScrapIn::SendInmail)
 
     # Mocking (you can see all the methods in spec/unit/helpers/send_inmail_helpers.rb)
     visit_succeed(profile_url)
@@ -61,7 +61,7 @@ RSpec.describe Salesnavot::SendInmail do
   end
 
   describe '.initialize' do
-    it { is_expected.to eq Salesnavot::SendInmail }
+    it { is_expected.to eq ScrapIn::SendInmail }
   end
 
   describe '.execute' do
@@ -75,19 +75,19 @@ RSpec.describe Salesnavot::SendInmail do
     context "Can't find message button" do
       before { has_not_selector(message_button_css, text: message_button_text, wait: 0) }
       
-      it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound) }
+      it { expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{message_button_css}/) }
     end
 
     context 'the selector for friend degree was not found' do
       before { has_not_selector(degree_css, wait: 5) }
-      it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound) }
+      it { expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{degree_css}/) }
     end
 
     context 'the selector for friend degree was found but the lead is a friend' do
       before { has_selector(degree_css, text: degree_text, wait: 5) }
-      it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::LeadIsFriend) }
+      it { expect { send_inmail_instance.execute }.to raise_error(ScrapIn::LeadIsFriend) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{profile_url}/) }
     end
     context 'when we are unable to click on message button' do
@@ -112,7 +112,7 @@ RSpec.describe Salesnavot::SendInmail do
     end
     context 'the selector which should contain the sent message was not found' do
       before { has_not_selector(message_container, text: inmail_message, wait: 5) }
-      it { expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound) }
+      it { expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{message_container}/) }
     end
   end

@@ -1,7 +1,7 @@
 require 'colorize'
 require "byebug"
 require "bundler/setup"
-require "salesnavot"
+require "scrapin"
 require "dotenv/load"
 require 'faker'
 require 'unit/helpers/send_inmail_helpers'

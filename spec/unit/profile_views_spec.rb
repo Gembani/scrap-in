@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Salesnavot::ProfileViews do
+RSpec.describe ScrapIn::ProfileViews do
   include Tools
   let(:profile_views) do
     described_class.new(session)
@@ -13,7 +13,7 @@ RSpec.describe Salesnavot::ProfileViews do
   let(:profile_view_css) { Faker::Internet.slug }
   describe 'Initializer' do
     subject { described_class }
-    it { is_expected.to eq Salesnavot::ProfileViews }
+    it { is_expected.to eq ScrapIn::ProfileViews }
   end
 
   describe 'instance of described class' do
