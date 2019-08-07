@@ -187,16 +187,28 @@ RSpec.describe Salesnavot do
     expect(count).to eq(251)
   end
 
-  xit 'scraps threads' do #for now we don't care
+  xit 'scraps 70 threads' do #for now we don't care
     @session.threads.execute(70) do |name, thread|
       puts "#{name}, #{thread}"
     end
   end
 
-  it 'scraps threads' do #for now we don't care
-    @session.sales_nav_threads.execute(70) do |name, thread|
+  it 'scraps 10 threads' do #for now we don't care
+    count = 0
+    @session.sales_nav_threads.execute(10) do |name, thread|
       puts "#{name}, #{thread}"
+      count += 1
     end
+    expect(count).to eq(10)
+  end
+
+  it 'scraps 30 threads' do #for now we don't care
+    count = 0
+    @session.sales_nav_threads.execute(30) do |name, thread|
+      puts "#{name}, #{thread}"
+      count += 1
+    end
+    expect(count).to eq(30)
   end
 
 
@@ -240,6 +252,16 @@ RSpec.describe Salesnavot do
 
 
   xit 'scrap messages' do
+    messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
+    messages.execute(100) do | message, direction|
+
+      if direction == :incoming
+        print "CONTACT ->  "
+      else
+        print "YOU ->  "
+      end
+      puts message
+    end
     #messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
     #did_send = messages.send_greeting_message("hello world\n This message is long and blah blah blah")
     # messages.execute(100) do | message, direction|
