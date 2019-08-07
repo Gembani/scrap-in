@@ -13,6 +13,7 @@ require 'salesnavot/helpers/css_selectors/send_inmail.rb'
 require 'salesnavot/errors/css_not_found'
 require 'salesnavot/errors/lead_is_friend'
 require 'salesnavot/helpers/css_selectors/sales_nav_threads.rb'
+require 'salesnavot/helpers/css_selectors/sales_nav_messages.rb'
 
 require 'capybara/dsl'
 require 'salesnavot/search'
