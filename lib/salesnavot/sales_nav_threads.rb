@@ -15,6 +15,7 @@ module Salesnavot
         break if @session.all(threads_list_css).nil?
         item = @session.find(threads_list_css).all(loaded_threads_css).first
         item_limit = @session.find(threads_list_css).all(loaded_threads_css).count
+        byebug
         if count >= item_limit
           puts 'reach item_limit'
           break
@@ -39,7 +40,7 @@ module Salesnavot
       time = 0
       # Linkedin display first a first li with a text inside and the last perso we have talked to. The other conversation are loaded at the same time, or nearly almost.
       while @session.all(message_css).count < 2
-        puts 'waiting messages to appear'
+        puts 'Waiting messages to appear'
         sleep(0.2)
         time += 0.2
         raise 'Cannot scrap conversation. Timeout !' if time > 60

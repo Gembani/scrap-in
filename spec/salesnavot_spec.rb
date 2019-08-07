@@ -251,9 +251,9 @@ RSpec.describe Salesnavot do
   end
 
 
-  xit 'scrap messages' do
-    messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
-    messages.execute(100) do | message, direction|
+  it 'scrap messages' do
+    messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
+    messages.execute(100) do |message, direction|
 
       if direction == :incoming
         print "CONTACT ->  "

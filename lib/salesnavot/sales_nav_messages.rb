@@ -8,44 +8,59 @@ module Salesnavot
       @thread_link = thread_link
     end
 
-    # def execute(number_of_messages = 20)
-    #   visit_thread_link
-    #   count = 0
+    # Sales load the 10 latest messages at first, then it add older messages 10 by 10
+    # message_content = @session.first('.thread-container').all('li').last.find('p').text
+    # or message_content = @session.first('.thread-container').find('.infinite-scroll-container').all('li').last.find('p').text
+    # sender = @session.first('.thread-container').all('li').last.find('.relative').first('span').text
+    # or sender = @session.first('.thread-container').find('.infinite-scroll-container').all('li')[count].find("span", wait:2, visible: false)['aria-label']
 
-      # number_of_messages.times.each do
-      #   item = @session.all(css(0)).first
-      #   scroll_to(item)
-      #   sleep(1)
-      # end
+    def execute(number_of_messages = 20)
+      visit_thread_link
+      # count = 0
+      byebug
+      break if @session.first('.thread-container').find('.infinite-scroll-container').all('li').count < 1
+      loaded_messages = 0
+      byebug
+      while loaded_messages != @session.first('.thread-container').find('.infinite-scroll-container').all('li').count do
+        loaded_messages = @session.first('.thread-container').find('.infinite-scroll-container').all('li').count
+        item = @session.first('.thread-container').find('.infinite-scroll-container').all('li').first
+        item.click
+        sleep(1)
+      end
+      count = loaded_messages - 1
 
-      # number_of_messages.times.each do
-      #   item = @session.all(css(count)).last
-      #   count += 1
-      #   if item.nil?
-      #     count = 0
-      #     break
-      #   else
-      #     next unless item.all('.msg-s-event-listitem__message-bubble').count == 1
-      #     message = item.find('.msg-s-event-listitem__body').text
-      #     direction = item[:class].include?('msg-s-event-listitem--other') ? :incoming : :outgoing
-      #   end
-      #   yield message, direction
-      # end
-      # sleep(0.5)
-    # end
+      byebug
+      number_of_messages.times.each do
+        item = @session.first('.thread-container').find('.infinite-scroll-container').all('li')[count]
+        if count == 1
+          puts "Maximum scrapped messages reached, total [#{loaded_messages - count}]"
+          # count = 0
+          next
+        else
+          # next unless item.all('.msg-s-event-listitem__message-bubble').count == 1
+          message_content = @session.first('.thread-container').find('.infinite-scroll-container').all('li')[count].find('p').text
+          sender = @session.first('.thread-container').find('.infinite-scroll-container').all('li')[count].find("span", wait:2, visible: false)['aria-label']
+          direction = (sender == "Message from you") ? :outgoing : :incoming
+        end
+        yield message_content, direction
+        count -= 1
+      end
+      sleep(0.5)
+    end
 
-    # def visit_thread_link
-    #   @session.visit(@thread_link)
-    #   wait_messages_to_appear
-    #   puts 'Messages have been visited.'
-    # end
+    def visit_thread_link
+      @session.visit(@thread_link)
+      wait_messages_to_appear
+      puts 'Sales messages have been visited.'
+    end
 
-    # def wait_messages_to_appear
-    #   while @session.all('.msg-s-message-list-container').count != 1
-    #     puts 'waiting messages to appear'
-    #     sleep(0.2)
-    #   end
-    # end
+    def wait_messages_to_appear
+      while @session.all('.thread-container li').count < 1
+        puts 'Waiting messages to appear'
+        sleep(0.2)
+        byebug
+      end
+    end
   end
 end
 
