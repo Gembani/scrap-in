@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Salesnavot::SendInmail do
+RSpec.describe ScrapIn::SendInmail do
   let(:subject) do
     described_class
   end
@@ -78,7 +78,7 @@ RSpec.describe Salesnavot::SendInmail do
   end
 
   describe '.initialize' do
-    it { is_expected.to eq Salesnavot::SendInmail }
+    it { is_expected.to eq ScrapIn::SendInmail }
   end
 
   describe '.execute' do
@@ -94,7 +94,7 @@ RSpec.describe Salesnavot::SendInmail do
           .with(message_button_css, text: message_button_text, wait: 0).and_return(false)
       end
       it 'raises a CssNotFound error' do
-        expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound)
+        expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound)
       end
       it 'raises a CssNotFound error with the selector in the message' do
         expect { send_inmail_instance.execute }.to raise_error(/#{message_button_css}/)
@@ -105,7 +105,7 @@ RSpec.describe Salesnavot::SendInmail do
         allow(session).to receive(:has_selector?).with(degree_css, wait: 5).and_return(false)
       end
       it 'raises a CssNotFound error' do
-        expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound)
+        expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound)
       end
       it 'raises a CssNotFound error with the selector in the message' do
         expect { send_inmail_instance.execute }.to raise_error(/#{degree_css}/)
@@ -116,7 +116,7 @@ RSpec.describe Salesnavot::SendInmail do
         allow(session).to receive(:has_selector?).with(degree_css, text: degree_text, wait: 5).and_return(true)
       end
       it 'raises a CssNotFound' do
-        expect { send_inmail_instance.execute }.to raise_error(Salesnavot::LeadIsFriend)
+        expect { send_inmail_instance.execute }.to raise_error(ScrapIn::LeadIsFriend)
       end
       it 'raises a CssNotFound error with the selector in the message' do
         expect { send_inmail_instance.execute }.to raise_error(/#{profile_url}/)
@@ -177,7 +177,7 @@ RSpec.describe Salesnavot::SendInmail do
         allow(session).to receive(:has_selector?).with(message_container, text: inmail_message, wait: 5).and_return(false)
       end
       it 'raises a CssNotFound' do
-        expect { send_inmail_instance.execute }.to raise_error(Salesnavot::CssNotFound)
+        expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound)
       end
       it 'raises a CssNotFound error with the selector in the message' do
         expect { send_inmail_instance.execute }.to raise_error(/#{message_container}/)

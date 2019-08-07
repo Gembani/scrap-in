@@ -1,16 +1,16 @@
 require 'spec_helper'
 
-RSpec.describe Salesnavot do
+RSpec.describe ScrapIn do
   before(:all) do
     puts 'Capybara is creating a session for all tests...'
-    @session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
+    @session = ScrapIn::Session.new(ENV.fetch('username'), ENV.fetch('password'))
   end
 
   after(:all) do
     @session.driver.quit
   end
   it 'has a version number_of_invites' do
-    expect(Salesnavot::VERSION).not_to be nil
+    expect(ScrapIn::VERSION).not_to be nil
   end
 
   describe '#Search' do
@@ -155,11 +155,11 @@ RSpec.describe Salesnavot do
     expect(profile_views.profile_viewed_by.length).to be <= n
   end
 
-  describe '#Salesnavot::Invite' do
+  describe '#ScrapIn::Invite' do
     # before do
-    #   allow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
-    #   allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
-    #   allow_any_instance_of(Salesnavot::Invite).to receive(:pending_after_invite?).and_return(true)
+    #   allow_any_instance_of(ScrapIn::Invite).to receive(:click_and_connect).and_return(true)
+    #   allow_any_instance_of(ScrapIn::Invite).to receive(:lead_invited?).and_return(true)
+    #   allow_any_instance_of(ScrapIn::Invite).to receive(:pending_after_invite?).and_return(true)
     # end
     it 'sends invite and send a message' do ## Integration
       message = 'Hello there'
