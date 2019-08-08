@@ -33,7 +33,6 @@ module ScrapIn
 
     def visit_messages_link
       @session.all(threads_access_button_css)[0].click
-      byebug
       wait_messages_page_to_load
       puts 'Messages have been visited.'
     end

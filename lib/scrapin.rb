@@ -12,6 +12,7 @@ require 'scrapin/helpers/css_selectors/send_message.rb'
 require 'scrapin/helpers/css_selectors/send_inmail.rb'
 require 'scrapin/errors/css_not_found'
 require 'scrapin/errors/lead_is_friend'
+require 'scrapin/errors/out_of_network_error'
 require 'scrapin/errors/captcha_error'
 
 require 'scrapin/helpers/css_selectors/sales_nav_threads.rb'

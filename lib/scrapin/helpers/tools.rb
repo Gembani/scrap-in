@@ -23,6 +23,7 @@ module Tools
     @session.find(css).click 
   end
   
+  
   def find_xpath_and_click(xpath)
     unless @session.has_selector?(:xpath, xpath)
       @error = css_error(xpath)
@@ -35,8 +36,5 @@ module Tools
     "Wrong CSS, or it has been changed : #{css}"
   end
 
-  def out_of_network?(url, name = '')
-    url.include?('OUT_OF_NETWORK') || 
-    name.include?('LinkedIn')
-  end
+ 
 end

@@ -1,14 +1,80 @@
 require 'spec_helper'
 
-RSpec.describe ScrapIn::ScrapLead do
-  include Tools
-  let(:scrap_lead) do
-    described_class.new(config, session)
+
+RSpec.shared_examples "a popup closed method" do 
+  include CssSelectors::ScrapLead
+  context "not on leads page, go to lead page" do 
+    before do
+      allow(session).to receive(:current_url).with(no_args).and_return("google.com")
+      allow(session).to receive(:visit).with(sales_nav_url).and_return(true)
+      has_selector(:xpath, close_popup_css)          
+      run
+    end
+    it {
+      expect(session).to have_received(:visit).with(sales_nav_url)
+    }
   end
 
-  let(:phones_element) { instance_double('Capybara::Node::Element') }
+  context "on leads page popup closed" do 
+    let(:close_button) { instance_double('Capybara::Node::Element') }
+    before do
+      allow(session).to receive(:current_url).with(no_args).and_return(sales_nav_url)
+      allow(session).to receive(:visit).with(sales_nav_url).and_return(true)
+      has_selector(:xpath, close_popup_css)          
+      allow(close_button).to receive(:click)
+      subject.instance_variable_set(:@popup_open, true)
+      allow(session).to receive(:find).with(:xpath, close_popup_css).and_return(close_button)
+      run
+    end
+    it {
+      expect(session).not_to have_received(:visit).with(sales_nav_url)
+    }
+    it {
+      expect(close_button).to have_received(:click).with(no_args)
+    }
+  end    
+end
+
+
+RSpec.describe ScrapIn::ScrapLead do
+  include Tools
+  let(:sales_nav_url) { 'linkedin.com/sales/people/adsahsdfasd' }
   let(:session) { instance_double('Capybara::Session') }
-  let(:sales_nav_url) { Faker::Internet.url }
+  let(:subject) do
+    described_class.new(config, session)
+  end
+  describe '.name' do
+    
+    let(:name_div) { instance_double('Capybara::Node::Element') }
+    context "out of networks" do 
+      it_behaves_like "a popup closed method" do
+        before do
+          has_selector(name_css) 
+          allow(name_div).to receive(:text).with(no_args).and_return("LinkedIn asdfa")
+          allow(session).to receive(:find).with(name_css).and_return(name_div)
+        end
+        let(:run) do
+          expect{ subject.name }.to raise_error(OutOfNetworkError)
+        end
+      end
+
+      it_behaves_like "a popup closed method" do
+        let(:name) { "Nicholas Jamnes Stock" }
+        before do
+          has_selector(name_css) 
+          allow(name_div).to receive(:text).with(no_args).and_return(name)
+          allow(session).to receive(:find).with(name_css).and_return(name_div)
+        end
+        let(:run) do
+          expect(subject.name).to eq(name)
+        end
+      end
+    end
+    
+    
+    
+  end
+  let(:phones_element) { instance_double('Capybara::Node::Element') }
   let(:emails) do
     array = []
     9.times do
@@ -41,126 +107,7 @@ RSpec.describe ScrapIn::ScrapLead do
       links: links
     }
   end
+  
+    
 
-  let(:target_page) { 'Target.url' }
-  let(:name_css) { '.name-css' }
-  let(:infos_css) { '.infos-css' }
-  let(:phone_css) {'.phone-css'}
-  let(:location_css) {'.location-css'}
-  let(:degree_css) { '.degree-css' }
-  let(:phones_block_css) { '.phones-block-css' }
-  let(:links_block_css) { '.links-block-css' }
-  let(:emails_block_css) { '.emails-block-css' }
-
-  describe 'Initializer' do
-    subject { described_class }
-    it { is_expected.to eq ScrapIn::ScrapLead }
-  end
-
-  describe 'instance of described class' do
-    subject { scrap_lead.instance_variables }
-    it { is_expected.to include(:@session) }
-    it { is_expected.to include(:@emails) }
-    it { is_expected.to include(:@url) }
-    it { is_expected.to include(:@linkedin_url) }
-    it { is_expected.to include(:@sales_nav_url) }
-    it { is_expected.to include(:@links) }
-    it { is_expected.to include(:@phones) }
-    it { is_expected.to include(:@error) }
-  end
-
-  describe '.execute' do
-    context 'when the lead was not found' do
-      before do
-        allow(scrap_lead).to receive(:target_page).and_return(target_page)
-        allow(session).to receive(:visit).with(scrap_lead.sales_nav_url)
-        allow(scrap_lead).to receive(:name_css).and_return(name_css)
-        allow(session).to receive(:has_selector?).with(name_css).and_return(false)
-      end
-
-      xit 'raises a css error' do
-        expect do
-          scrap_lead.execute
-        end.to raise_error(css_error(name_css))
-      end
-    end
-    context 'when the lead was found' do
-      before do
-        allow(scrap_lead).to receive(:target_page).and_return(target_page)
-        allow(session).to receive(:visit).with(scrap_lead.sales_nav_url)
-        allow(scrap_lead).to receive(:find_lead_name)
-        allow(scrap_lead).to receive(:find_lead_degree)
-      end
-      context 'location was not found' do
-        before do
-          allow(scrap_lead).to receive(:location_css).and_return(location_css)
-          allow(session).to receive(:has_selector?).with(location_css).and_return(false)
-        end
-        xit 'raises an error' do
-          expect do
-            scrap_lead.execute
-          end.to raise_error(css_error(location_css))
-        end
-      end
-      context 'when the location was found' do
-        before do
-          allow(scrap_lead).to receive(:find_location)
-        end
-        context 'but infos button not found' do
-          before do
-            allow(scrap_lead).to receive(:infos_css).and_return(infos_css)
-            allow(session).to receive(:has_selector?).with(infos_css).and_return(false)
-          end
-          xit 'raises an error' do
-            expect do
-              scrap_lead.execute
-            end.to raise_error(css_error(infos_css))
-            puts "Error: #{scrap_lead.error}"
-          end
-        end
-        context 'when infos button was found' do
-          before do
-            allow(scrap_lead).to receive(:infos_css).and_return(infos_css)
-            allow(scrap_lead).to receive(:find_and_click).with(infos_css)
-          end
-          context 'but phones css was not found' do
-            before do
-              allow(scrap_lead).to receive(:phones_block_css).and_return(phones_block_css)
-              allow(scrap_lead).to receive(:scrap_emails)
-              allow(scrap_lead).to receive(:scrap_links)
-              allow(session).to receive(:has_selector?).with(phones_block_css, wait: 1).and_return(false)
-            end
-            xit 'writes an error' do
-                scrap_lead.execute
-                expect(scrap_lead.error).not_to be_empty
-            end
-          end
-          context 'but links css was not found' do
-            before do
-              allow(scrap_lead).to receive(:scrap_phones)
-              allow(scrap_lead).to receive(:scrap_emails)
-              allow(scrap_lead).to receive(:links_block_css).and_return(links_block_css)
-              allow(session).to receive(:has_selector?).with(links_block_css, wait: 1).and_return(false)
-            end
-            xit 'writes an error' do
-                scrap_lead.execute
-                expect(scrap_lead.error).not_to be_empty
-            end
-          end
-          context 'but emails css was not found' do
-            before do
-              allow(scrap_lead).to receive(:scrap_phones)
-              allow(scrap_lead).to receive(:scrap_links)
-              allow(scrap_lead).to receive(:emails_block_css).and_return(emails_block_css)
-              allow(session).to receive(:has_selector?).with(emails_block_css, wait: 1).and_return(false)
-            end
-            xit 'writes an error' do
-                scrap_lead.execute
-                expect(scrap_lead.error).not_to be_empty
-            end
-          end
-        end
-      end
-    end
-  end
 end

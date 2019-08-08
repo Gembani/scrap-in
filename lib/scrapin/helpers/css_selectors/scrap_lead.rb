@@ -20,6 +20,10 @@ module CssSelectors
     def infos_css
       'button.profile-topcard__contact-info-show-all'
     end
+    
+    def close_popup_css
+      "//*[@role='dialog']/button[@aria-label='Dismiss']"
+    end
 
     def phone_css
       '.contact-info-form__phone-readonly-text a'
