@@ -14,7 +14,7 @@ module Salesnavot
 
       loaded_messages = load
       count = loaded_messages - 1
-      
+
       number_of_messages.times.each do
         if count < 1
           puts "Maximum scrapped messages reached, total [#{loaded_messages - count}]"
@@ -53,7 +53,7 @@ module Salesnavot
         loaded_messages = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
         item = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).first
         item.click
-        sleep(1)
+        sleep(2)
       end
       loaded_messages
     end
