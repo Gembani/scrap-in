@@ -9,37 +9,33 @@ module Salesnavot
     end
 
     # Sales load the 10 latest messages at first, then it add older messages 10 by 10
-    # message_content = @session.first('.thread-container').all('li').last.find('p').text
-    # or message_content = @session.first('.thread-container').find('.infinite-scroll-container').all('li').last.find('p').text
-    # sender = @session.first('.thread-container').all('li').last.find('.relative').first('span').text
-    # or sender = @session.first('.thread-container').find('.infinite-scroll-container').all('li')[count].find("span", wait:2, visible: false)['aria-label']
+    # message_content = @session.first(sales_messages_css).all(message_thread_elements_css).last.find('p').text
+    # or message_content = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).last.find('p').text
+    # sender = @session.first(sales_messages_css).all(message_thread_elements_css).last.find('.relative').first('span').text
+    # or sender = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].find("span", wait:2, visible: false)['aria-label']
 
     def execute(number_of_messages = 20)
       visit_thread_link
       # count = 0
-      byebug
-      break if @session.first('.thread-container').find('.infinite-scroll-container').all('li').count < 1
-      loaded_messages = 0
-      byebug
-      while loaded_messages != @session.first('.thread-container').find('.infinite-scroll-container').all('li').count do
-        loaded_messages = @session.first('.thread-container').find('.infinite-scroll-container').all('li').count
-        item = @session.first('.thread-container').find('.infinite-scroll-container').all('li').first
-        item.click
-        sleep(1)
-      end
-      count = loaded_messages - 1
+      # byebug
+      return if @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count < 1
 
-      byebug
+      # byebug
+      loaded_messages = load
+      count = loaded_messages - 1
+      
+      # byebug
       number_of_messages.times.each do
-        item = @session.first('.thread-container').find('.infinite-scroll-container').all('li')[count]
-        if count == 1
+        # item = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count]
+        if count < 1
           puts "Maximum scrapped messages reached, total [#{loaded_messages - count}]"
           # count = 0
-          next
+          # byebug
+          break
         else
-          # next unless item.all('.msg-s-event-listitem__message-bubble').count == 1
-          message_content = @session.first('.thread-container').find('.infinite-scroll-container').all('li')[count].find('p').text
-          sender = @session.first('.thread-container').find('.infinite-scroll-container').all('li')[count].find("span", wait:2, visible: false)['aria-label']
+          # byebug
+          message_content = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].find(content_css).text
+          sender = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].first(sender_css, wait:2, visible: false)[police_css]
           direction = (sender == "Message from you") ? :outgoing : :incoming
         end
         yield message_content, direction
@@ -47,19 +43,32 @@ module Salesnavot
       end
       sleep(0.5)
     end
-
+    
     def visit_thread_link
       @session.visit(@thread_link)
       wait_messages_to_appear
       puts 'Sales messages have been visited.'
     end
-
+    
     def wait_messages_to_appear
-      while @session.all('.thread-container li').count < 1
+      time = 0
+      while @session.all(sales_loaded_messages_css).count < 1
         puts 'Waiting messages to appear'
         sleep(0.2)
-        byebug
+        time += 0.2
+        raise 'Cannot scrap conversation. Timeout !' if time > 60
       end
+    end
+
+    def load
+      loaded_messages = 0
+      while loaded_messages != @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count do
+        loaded_messages = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
+        item = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).first
+        item.click
+        sleep(1)
+      end
+      loaded_messages
     end
   end
 end

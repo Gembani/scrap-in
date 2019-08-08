@@ -193,7 +193,7 @@ RSpec.describe Salesnavot do
     end
   end
 
-  it 'scraps 10 threads' do #for now we don't care
+  xit 'scraps 10 threads' do # ???
     count = 0
     @session.sales_nav_threads.execute(10) do |name, thread|
       puts "#{name}, #{thread}"
@@ -202,7 +202,7 @@ RSpec.describe Salesnavot do
     expect(count).to eq(10)
   end
 
-  it 'scraps 30 threads' do #for now we don't care
+  xit 'scraps 30 threads' do # ???
     count = 0
     @session.sales_nav_threads.execute(30) do |name, thread|
       puts "#{name}, #{thread}"
@@ -223,7 +223,7 @@ RSpec.describe Salesnavot do
   end
 
 
-  xit 'scraps threads when threads < open conversations' do #for now we don't care
+  xit 'scraps threads when threads < open conversations' do # ???
     count = 0
     @session.sales_nav_threads.execute(5) do |name, thread|
       puts "#{name}, #{thread}"
@@ -232,7 +232,7 @@ RSpec.describe Salesnavot do
     expect(count).to eq(5)
   end
 
-  xit 'scraps threads when threads > open conversations' do
+  xit 'scraps threads when threads > open conversations' do # ???
     count = 0
     @session.sales_nav_threads.execute(10) do |name, thread|
       puts "#{name}, #{thread}"
@@ -241,7 +241,7 @@ RSpec.describe Salesnavot do
     expect(count).to eq(5)
   end
 
-  xit 'does not scrap any threads if no open conversations' do
+  xit 'does not scrap any threads if no open conversations' do # ???
     count = 0
     @session.sales_nav_threads.execute(100) do |name, thread|
       puts "#{name}, #{thread}"
@@ -251,9 +251,11 @@ RSpec.describe Salesnavot do
   end
 
 
-  it 'scrap messages' do
+  it 'scraps all messages from thread_url if the number of messages < scrap value' do
+    count = 0
+    scrap_value = 100
     messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
-    messages.execute(100) do |message, direction|
+    messages.execute(scrap_value) do |message, direction|
 
       if direction == :incoming
         print "CONTACT ->  "
@@ -261,17 +263,37 @@ RSpec.describe Salesnavot do
         print "YOU ->  "
       end
       puts message
+      count += 1
     end
-    #messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
-    #did_send = messages.send_greeting_message("hello world\n This message is long and blah blah blah")
-    # messages.execute(100) do | message, direction|
-    #
-    #   if direction == :incoming
-    #     print "CONTACT ->  "
-    #   else
-    #     print "YOU ->  "
-    #   end
-    #   puts message
-    # end
+    expect(count).to be < scrap_value
+  end
+
+  it 'scraps the scrap_value last messages from thread_url' do
+    count = 0
+    scrap_value = 2
+    messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
+    messages.execute(scrap_value) do |message, direction|
+
+      if direction == :incoming
+        print "CONTACT ->  "
+      else
+        print "YOU ->  "
+      end
+      puts message
+      count += 1
+    end
+    expect(count).to eq(scrap_value) 
   end
 end
+
+#messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
+#did_send = messages.send_greeting_message("hello world\n This message is long and blah blah blah")
+# messages.execute(100) do | message, direction|
+#
+#   if direction == :incoming
+#     print "CONTACT ->  "
+#   else
+#     print "YOU ->  "
+#   end
+#   puts message
+# end

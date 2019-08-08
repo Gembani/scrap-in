@@ -54,11 +54,11 @@ module Salesnavot
     end
 
     def sales_nav_messages(thread_link)
-      Salesnavot::Messages.new(@capybara, thread_link)
+      Salesnavot::SalesNavMessages.new(@capybara, thread_link)
     end
 
     def messages(thread_link)
-      Salesnavot::SalesNavMessages.new(@capybara, thread_link)
+      Salesnavot::Messages.new(@capybara, thread_link)
     end
 
     def profile_views
