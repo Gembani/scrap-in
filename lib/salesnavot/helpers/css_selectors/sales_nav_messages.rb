@@ -17,10 +17,6 @@ module CssSelectors
       '.thread-container li'
     end
 
-    def police_css
-      'aria-label'
-    end
-
     def content_css
       'p'
     end
