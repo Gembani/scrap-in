@@ -12,13 +12,10 @@ module Salesnavot
       count = 0
       
       num_times.times.each do
-        sleep(2)
-        break if @session.all(threads_list_css).nil?
         item = @session.find(threads_list_css).all(loaded_threads_css).first
         item_limit = @session.find(threads_list_css).all(loaded_threads_css).count
-        byebug
         if count >= item_limit
-          puts 'reach item_limit'
+          puts 'reach max open conversations'
           break
         else
           name = @session.find(threads_list_css).all(threads_list_elements_css)[count].find(thread_name_css).text
@@ -27,7 +24,7 @@ module Salesnavot
           yield name, thread_link
           count += 1
         end
-        sleep(0.5)
+        sleep(1.5)
       end
     end
     
@@ -48,7 +45,7 @@ module Salesnavot
 
     def wait_messages_page_to_load
       time = 0
-      # Linkedin display first a first li with a text inside and the last perso we have talked to. The other conversation are loaded at the same time, or nearly almost.
+      # Linkedin display first a first li with a text inside and the last person we have talked to. The other conversations are loaded at the same time, or nearly almost.
       while @session.all(message_css).count < 2
         puts 'Waiting messages to appear'
         sleep(0.2)

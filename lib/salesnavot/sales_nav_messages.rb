@@ -22,7 +22,8 @@ module Salesnavot
         else
           message_content = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].find(content_css).text
           sender = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].first(sender_css, wait: 2, visible: false).text
-          direction = (sender == "You") ? :outgoing : :incoming
+          # byebug
+          direction = (sender == "You" || sender.empty?) ? :outgoing : :incoming
         end
         yield message_content, direction
         count -= 1
@@ -33,7 +34,7 @@ module Salesnavot
     def check_all_css
       raise CssNotFound.new(sales_messages_css) unless @session.has_selector?(sales_messages_css, wait: 5)
       raise CssNotFound.new(message_thread_css) unless @session.has_selector?(message_thread_css, wait: 5)
-      raise CssNotFound.new(message_thread_elements_css) unless @session.has_selector?(message_thread_elements_css, wait: 5, minimum: 4)
+      raise CssNotFound.new(message_thread_elements_css) unless @session.has_selector?(message_thread_elements_css, wait: 5, minimum: 4) # The 3 first are for 'Forward', 'Archive' and 'Mark as unread'
       raise CssNotFound.new(content_css) unless @session.has_selector?(content_css, wait: 5)
       raise CssNotFound.new(sender_css) unless @session.has_selector?(sender_css, wait: 5)
     end
@@ -63,7 +64,7 @@ module Salesnavot
         loaded_messages = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
         item = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).first
         item.click
-        sleep(3)
+        sleep(4)
       end
       loaded_messages
     end
