@@ -8,8 +8,9 @@ module Salesnavot
 
     def execute(num_times = 500)
       visit_messages_link
+      check_all_css
       count = 0
-
+      
       num_times.times.each do
         sleep(2)
         break if @session.all(threads_list_css).nil?
@@ -29,8 +30,17 @@ module Salesnavot
         sleep(0.5)
       end
     end
-
+    
+    def check_all_css
+      raise CssNotFound.new(threads_list_css) unless @session.has_selector?(threads_list_css, wait: 5)
+      raise CssNotFound.new(threads_list_elements_css) unless @session.has_selector?(threads_list_elements_css, wait: 5)
+      raise CssNotFound.new(loaded_threads_css) unless @session.has_selector?(loaded_threads_css, wait: 5)
+      raise CssNotFound.new(thread_name_css) unless @session.has_selector?(thread_name_css, wait: 5)
+      raise CssNotFound.new(message_css) unless @session.has_selector?(message_css, wait: 5)
+    end
+    
     def visit_messages_link
+      raise CssNotFound.new(threads_access_button_css) unless @session.has_selector?(threads_access_button_css, wait: 5)
       click = @session.all(threads_access_button_css)[0].click
       wait_messages_page_to_load
       puts 'Messages have been visited.'
