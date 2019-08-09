@@ -254,8 +254,8 @@ RSpec.describe Salesnavot do
   it 'scraps all messages from thread_url if the number of messages < scrap value' do
     count = 0
     scrap_value = 100
-    messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
-    messages.execute(scrap_value) do |message, direction|
+    seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
+    seb_messages.execute(scrap_value) do |message, direction|
 
       if direction == :incoming
         print "CONTACT ->  "
@@ -273,6 +273,23 @@ RSpec.describe Salesnavot do
     scrap_value = 2
     messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
     messages.execute(scrap_value) do |message, direction|
+
+      if direction == :incoming
+        print "CONTACT ->  "
+      else
+        print "YOU ->  "
+      end
+      puts message
+      count += 1
+    end
+    expect(count).to eq(scrap_value) 
+  end
+
+  it 'scraps the scrap_value last messages from thread_url and scroll only for these messages to load' do
+    count = 0
+    scrap_value = 25
+    seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
+    seb_messages.execute(scrap_value) do |message, direction|
 
       if direction == :incoming
         print "CONTACT ->  "
