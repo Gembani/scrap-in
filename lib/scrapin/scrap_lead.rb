@@ -16,29 +16,29 @@ module ScrapIn
       @session = session  
     end
 
-  
+    def execute 
+      warn "[DEPRECATION] `execute` is deprecated. This call can safely be removed"
+    end
 
     def to_hash
       {
         name: name,
         location: location,
         sales_nav_url: @sales_nav_url,
-        first_degree: first_degree?,
-        
+        first_degree: first_degree?
       }.merge(scrap_datas)
     end
 
-    def to_json
-      to_hash.to_json
-    end
-
-   
     def scrap_datas
       data = {}
       %w[phones links emails].each do |name|
         data[name.to_sym] = method("scrap_#{name}").call
       end
       data
+    end
+
+    def to_json
+      to_hash.to_json
     end
 
     def scrap_phones
@@ -69,7 +69,6 @@ module ScrapIn
       open_popup
       css = links_block_css
       unless @session.has_selector?(css, wait: 1)
-       
         return []
       end
       links = @session.all(links_block_css)
@@ -80,9 +79,8 @@ module ScrapIn
 
     def name
       close_popup
-      
       unless @session.has_selector?(name_css)
-        raise css_error(name_css)
+        raise CssNotFound.new(name_css)
       end
       current_name = @session.find(name_css).text
       if out_of_network?(current_name)
@@ -94,8 +92,7 @@ module ScrapIn
     def location
       close_popup
       unless @session.has_selector?(location_css)
-        @error = 'No location found'
-        raise css_error(location_css)
+        raise CssNotFound.new(location_css)
       end
       @session.find(location_css).text
     end
@@ -103,7 +100,7 @@ module ScrapIn
     def first_degree?
       close_popup
       unless @session.has_selector?(degree_css, wait: 1)
-         return false
+        raise CssNotFound.new(degree_css)
       end
       (@session.find(degree_css).text == '1st')
     end
@@ -127,6 +124,7 @@ module ScrapIn
       find_and_click(infos_css)
       @popup_open = true
     end
+
     def close_popup
       go_to_url
       return false unless @popup_open 

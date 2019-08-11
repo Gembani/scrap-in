@@ -1,3 +1,5 @@
 #captcha error
-class OutOfNetworkError < StandardError
+module ScrapIn
+  class OutOfNetworkError < StandardError
+  end
 end

@@ -42,7 +42,7 @@ module CssSelectors
     end
 
     def degree_css
-      '.m-type--degree'
+      '.label-16dp'
     end
   end
 end

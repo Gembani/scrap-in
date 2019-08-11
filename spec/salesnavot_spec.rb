@@ -104,12 +104,12 @@ RSpec.describe ScrapIn do
     data = scrap.to_hash
     puts "Error: #{scrap.error}" unless scrap.error.empty?
 
-    expect(scrap.sales_nav_url).not_to be_nil
-    expect(scrap.name).not_to be_nil
-    expect(scrap.location).not_to be_nil
-    expect(scrap.emails.count).to be > 0
-    expect(scrap.phones.count).to be > 0
-    expect(scrap.links.count).to eq(0)
+    expect(data[:sales_nav_url]).not_to be_nil
+    expect(scrap[:name]).not_to be_nil
+    expect(scrap[:location]).not_to be_nil
+    expect(scrap[:emails].count).to be > 0
+    expect(scrap[:phones].count).to be > 0
+    expect(scrap[:links].count).to eq(0)
   end
 
   it 'scraps up to 40 leads names with pending invites' do
