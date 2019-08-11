@@ -14,7 +14,6 @@ module Salesnavot
 
       loaded_messages = load(number_of_messages)
       count = loaded_messages - 1
-      old_sender = nil
 
       number_of_messages.times.each do
         if count < 1
@@ -22,9 +21,7 @@ module Salesnavot
           break
         else
           message_content = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].find(content_css).text
-          sender = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].first(sender_css, wait: 2, visible: false).text
-          sender = old_sender if old_sender.nil?
-          old_sender = sender if sender.empty?
+          sender = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].first(sender_css, wait: 2, visible: false)['innerHTML'].strip
           direction = (sender == "You") ? :outgoing : :incoming
         end
         yield message_content, direction
