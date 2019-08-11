@@ -231,7 +231,7 @@ RSpec.describe Salesnavot do
     end
   end
 
-  it 'scraps all messages from thread_url if the number of messages < scrap_value' do
+  xit 'scraps all messages from thread_url if the number of messages < scrap_value' do
     count = 0
     scrap_value = 100
     seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
@@ -282,7 +282,7 @@ RSpec.describe Salesnavot do
     expect(count).to eq(scrap_value) 
   end
 
-  it 'Scraps correctly the sender\'s name' do
+  xit 'Scraps correctly the sender\'s name' do
     count = 0
     scrap_value = 25
     messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6560550015541043200')
@@ -296,7 +296,7 @@ RSpec.describe Salesnavot do
       puts message
       count += 1
     end
-    expect(count).to < scrap_value 
+    expect(count).to be < scrap_value 
   end
 end
 
