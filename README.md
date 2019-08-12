@@ -4,6 +4,9 @@
 @session.fill_in('verification-code',with: "002358")
 @session.click_on("Submit")
 
+# Run tests with code coverage
+
+COVERAGE=true bundle exec rspec spec/unit
 
 #Very Important link about methods that wait and do not wait (Capybara_)
 
