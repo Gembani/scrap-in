@@ -8,128 +8,129 @@ module ScrapIn
                 :sales_nav_url, :links, :phones, :error, :location
 
     def initialize(config, session)
-      @name = ''
-      @linkedin_url = ''
-      @url = ''
+      @popup_open = false
       @sales_nav_url = config[:sales_nav_url] || ''
-      @emails = config[:emails] || []
-      @phones = config[:phones] || []
-      @first_degree = config[:first_degree] || false
-      @links = config[:links] || []
-      @session = session
-      @error = ''
-      @location = config[:location] || ''
+      unless @sales_nav_url.include?("linkedin.com/sales/people/")
+        raise 'Lead\'s salesnav url is not valid'
+      end
+      @session = session  
     end
 
-    def execute
-      unless @sales_nav_url.include?("linkedin.com/sales/people/")
-        @error = 'Lead\'s salesnav url is not valid'
-      end
-      @session.visit @sales_nav_url
-      lead_name = @session.find(name_css).text
-      if out_of_network?(@sales_nav_url, name = lead_name)
-        @error = 'Lead is out of network.'
-        return
-      end
-
-      find_lead_name
-      find_lead_degree
-      find_location
-      scrap_datas
+    def execute 
+      warn "[DEPRECATION] `execute` is deprecated. This call can safely be removed"
     end
 
     def to_hash
       {
-        name: @name,
-        location: @location,
+        name: name,
+        location: location,
         sales_nav_url: @sales_nav_url,
-        emails: @emails,
-        phones: @phones,
-        first_degree: @first_degree,
-        links: @links
-      }
+        first_degree: first_degree?
+      }.merge(scrap_datas)
+    end
+
+    def scrap_datas
+      data = {}
+      %w[phones links emails].each do |name|
+        data[name.to_sym] = method("scrap_#{name}").call
+      end
+      data
     end
 
     def to_json
       to_hash.to_json
     end
 
-    private
-
-    def scrap_datas
-      begin
-        find_and_click(infos_css)
-      rescue
-        @error = 'No infos at all, or button has been changed'
-        raise css_error(infos_css)
-      end
-      %w[phones links emails].each do |name|
-        method("scrap_#{name}").call
-      end
-    end
-
     def scrap_phones
+      open_popup
       css = phones_block_css
       unless @session.has_selector?(css, wait: 1)
-        @error << 'No phones found.'
-        return
+        return []
       end
       phones = @session.all(css)
-      phones.each do |phone|
-        value = phone.find(phone_css).text
-        @phones << value
+      phones.collect do |phone|
+        phone.find(phone_css).text
       end
     end
 
     def scrap_emails
+      open_popup
       css = emails_block_css
       unless @session.has_selector?(css, wait: 1)
-        @error << 'No emails found.'
-        return
+        return []
       end
       emails = @session.all(emails_block_css)
-      emails.each do |email|
-        value = email.find(email_css).text
-        @emails << value
+      emails.collect do |email|
+        email.find(email_css).text
       end
     end
 
     def scrap_links
+      open_popup
       css = links_block_css
       unless @session.has_selector?(css, wait: 1)
-        @error << 'No links found.'
-        return
+        return []
       end
       links = @session.all(links_block_css)
-      links.each do |link|
-        value = link.find(link_css).text
-        @links << value
+      links.collect do |link|
+        link.find(link_css).text
       end
     end
 
-    def find_lead_name
+    def name
+      close_popup
       unless @session.has_selector?(name_css)
-        @error = 'No name found'
-        raise css_error(name_css)
+        raise CssNotFound.new(name_css)
       end
-      @name = @session.find(name_css).text
+      current_name = @session.find(name_css).text
+      if out_of_network?(current_name)
+        raise OutOfNetworkError.new(@sales_nav_url)
+      end
+      current_name
     end
 
-    def find_location
+    def location
+      close_popup
       unless @session.has_selector?(location_css)
-        @error = 'No location found'
-        raise css_error(location_css)
+        raise CssNotFound.new(location_css)
       end
-      @location = @session.find(location_css).text
-      location_css
+      @session.find(location_css).text
     end
 
-    def find_lead_degree
-      unless @session.has_selector?(degree_css)
-        @first_degree = false
-        return
+    def first_degree?
+      close_popup
+      unless @session.has_selector?(degree_css, wait: 1)
+        raise CssNotFound.new(degree_css)
       end
-      @first_degree = (@session.find(degree_css).text == '1st')
+      (@session.find(degree_css).text == '1st')
+    end
+
+    private
+    def go_to_url 
+      if @session.current_url != @sales_nav_url
+        @session.visit @sales_nav_url
+        return true
+      end
+      return false
+    end
+
+    def out_of_network?(name)
+      name.include?('LinkedIn')
+    end
+
+    def open_popup 
+      go_to_url
+      return false if @popup_open 
+      find_and_click(infos_css)
+      @popup_open = true
+    end
+
+    def close_popup
+      go_to_url
+      return false unless @popup_open 
+      find_xpath_and_click(close_popup_css)
+      @popup_open = false
+      return true
     end
   end
 end

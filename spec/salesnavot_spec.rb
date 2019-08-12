@@ -9,7 +9,7 @@ RSpec.describe ScrapIn do
   after(:all) do
     @session.driver.quit
   end
-  it 'has a version number_of_invites' do
+  xit 'has a version number_of_invites' do
     expect(ScrapIn::VERSION).not_to be nil
   end
 
@@ -99,18 +99,17 @@ RSpec.describe ScrapIn do
 
   it 'scraps location, phones, emails and website links for a lead' do
     seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'
-    byebug
+    
     scrap = @session.scrap_lead(sales_nav_url: seb_link)
-    scrap.execute
-    byebug
+    data = scrap.to_hash
     puts "Error: #{scrap.error}" unless scrap.error.empty?
 
-    expect(scrap.sales_nav_url).not_to be_nil
-    expect(scrap.name).not_to be_nil
-    expect(scrap.location).not_to be_nil
-    expect(scrap.emails.count).to be > 0
-    expect(scrap.phones.count).to be > 0
-    expect(scrap.links.count).to eq(0)
+    expect(data[:sales_nav_url]).not_to be_nil
+    expect(scrap[:name]).not_to be_nil
+    expect(scrap[:location]).not_to be_nil
+    expect(scrap[:emails].count).to be > 0
+    expect(scrap[:phones].count).to be > 0
+    expect(scrap[:links].count).to eq(0)
   end
 
   it 'scraps up to 40 leads names with pending invites' do
@@ -155,11 +154,11 @@ RSpec.describe ScrapIn do
     expect(profile_views.profile_viewed_by.length).to be <= n
   end
 
-  describe '#ScrapIn::Invite' do
+  describe '#Salesnavot::Invite' do
     # before do
-    #   allow_any_instance_of(ScrapIn::Invite).to receive(:click_and_connect).and_return(true)
-    #   allow_any_instance_of(ScrapIn::Invite).to receive(:lead_invited?).and_return(true)
-    #   allow_any_instance_of(ScrapIn::Invite).to receive(:pending_after_invite?).and_return(true)
+    #   allow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
+    #   allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
+    #   allow_any_instance_of(Salesnavot::Invite).to receive(:pending_after_invite?).and_return(true)
     # end
     it 'sends invite and send a message' do ## Integration
       message = 'Hello there'
@@ -206,7 +205,7 @@ RSpec.describe ScrapIn do
 
 
   before do
-    allow(@session).to receive(count).and_return(10)
+    #allow(@session).to receive(count).and_return(10)
   end
   xit 'scraps threads when threads < open conversations' do #for now we don't care
     count = 0
@@ -218,7 +217,7 @@ RSpec.describe ScrapIn do
   end
 
   before do
-    allow(@session).to receive(count).and_return(5)
+    #allow(@session).to receive(count).and_return(5)
   end
   xit 'scraps threads when threads > open conversations' do
     count = 0
@@ -230,7 +229,7 @@ RSpec.describe ScrapIn do
   end
 
   before do
-    allow(@session).to receive(count).and_return(0)
+    #allow(@session).to receive(count).and_return(0)
   end
   xit 'does not scrap any threads if no open conversations' do
     count = 0
@@ -241,7 +240,7 @@ RSpec.describe ScrapIn do
     expect(count).to eq(0)
   end
 
-
+  
   xit 'scrap messages' do
     #messages = @session.messages('https://www.linkedin.com/messaging/thread/6371701120393453568/')
     #did_send = messages.send_greeting_message("hello world\n This message is long and blah blah blah")
