@@ -17,10 +17,11 @@ module Salesnavot
 
       number_of_messages.times.each do
         if count < 1
+          count += 1 if loaded_messages <= 11 #The first loaded message for conversation shorter than 12 messages is the "beginning of the conversation" message and should be ignore
           puts "Maximum scrapped messages reached, total [#{loaded_messages - count}]"
           break
         else
-          message_content = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].find(content_css).text
+          message_content = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].find(content_css)['innerHTML']
           sender = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].first(sender_css, wait: 2, visible: false)['innerHTML'].strip
           direction = (sender == "You") ? :outgoing : :incoming
         end
@@ -57,13 +58,13 @@ module Salesnavot
 
     # Only the 10 first messages are loaded in Sales, then they are loaded 10 by 10
     def load(number_of_messages)
-      loaded_messages = 0
+      loaded_messages = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
       while loaded_messages < number_of_messages do
-        return loaded_messages if loaded_messages == @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
-        loaded_messages = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
         item = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).first
         item.click
         sleep(4)
+        return loaded_messages if loaded_messages == @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
+        loaded_messages = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
       end
       loaded_messages
     end
