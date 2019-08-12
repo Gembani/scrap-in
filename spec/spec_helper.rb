@@ -18,4 +18,5 @@ RSpec.configure do |config|
   config.include ToolsHelpers
   config.include MockCapybara
   config.include SendInmailHelpers
+  
 end
