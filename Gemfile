@@ -5,3 +5,4 @@ gemspec
 gem 'byebug'
 gem 'colorize'
 gem 'faker', '~> 1.9', '>= 1.9.1'
+gem 'simplecov', require: false, group: :test

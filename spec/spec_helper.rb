@@ -1,3 +1,9 @@
+require 'simplecov'
+if ENV["COVERAGE"]
+  SimpleCov.start do 
+    add_filter '/spec/'
+  end
+end
 require 'colorize'
 require "byebug"
 require "bundler/setup"
