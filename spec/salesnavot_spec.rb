@@ -1,16 +1,16 @@
 require 'spec_helper'
 
-RSpec.describe Salesnavot do
+RSpec.describe ScrapIn do
   before(:all) do
     puts 'Capybara is creating a session for all tests...'
-    @session = Salesnavot::Session.new(ENV.fetch('username'), ENV.fetch('password'))
+    @session = ScrapIn::Session.new(ENV.fetch('username'), ENV.fetch('password'))
   end
 
   after(:all) do
     @session.driver.quit
   end
-  it 'has a version number_of_invites' do
-    expect(Salesnavot::VERSION).not_to be nil
+  xit 'has a version number_of_invites' do
+    expect(ScrapIn::VERSION).not_to be nil
   end
 
   describe '#Search' do
@@ -99,18 +99,17 @@ RSpec.describe Salesnavot do
 
   it 'scraps location, phones, emails and website links for a lead' do
     seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'
-    byebug
+    
     scrap = @session.scrap_lead(sales_nav_url: seb_link)
-    scrap.execute
-    byebug
+    data = scrap.to_hash
     puts "Error: #{scrap.error}" unless scrap.error.empty?
 
-    expect(scrap.sales_nav_url).not_to be_nil
-    expect(scrap.name).not_to be_nil
-    expect(scrap.location).not_to be_nil
-    expect(scrap.emails.count).to be > 0
-    expect(scrap.phones.count).to be > 0
-    expect(scrap.links.count).to eq(0)
+    expect(data[:sales_nav_url]).not_to be_nil
+    expect(scrap[:name]).not_to be_nil
+    expect(scrap[:location]).not_to be_nil
+    expect(scrap[:emails].count).to be > 0
+    expect(scrap[:phones].count).to be > 0
+    expect(scrap[:links].count).to eq(0)
   end
 
   it 'scraps up to 40 leads names with pending invites' do

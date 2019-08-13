@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Salesnavot::Friends do
+RSpec.describe ScrapIn::Friends do
   let(:friends) do
     described_class.new(session)
   end
@@ -10,7 +10,7 @@ RSpec.describe Salesnavot::Friends do
   let(:nth_friend_css) { 'nth_friend_css' }
   describe 'Initializer' do
     subject { described_class }
-    it { is_expected.to eq Salesnavot::Friends }
+    it { is_expected.to eq ScrapIn::Friends }
   end
 
   describe 'instance of described class' do
