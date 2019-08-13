@@ -1,0 +1,43 @@
+version: 2 # use CircleCI 2.0
+jobs: # a collection of steps
+  build: # runs not using Workflows must have a `build` job as entry point
+    parallelism: 3 # run three instances of this job in parallel
+    docker: # run the steps with Docker
+      - image: circleci/ruby:2.6.3-jessie-node # ...with this image as the primary container; this is where all `steps` will run
+        environment: # environment variables for primary container
+          BUNDLE_JOBS: 3
+          BUNDLE_RETRY: 3
+          BUNDLE_PATH: vendor/bundle
+    steps: # a collection of executable commands
+      - checkout # special step to check out source code to working directory
+
+      # Which version of bundler?
+      - run:
+          name: Which bundler?
+          command: bundle -v
+
+      # Restore bundle cache
+      # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+      - restore_cache:
+          keys:
+            - scrapin-bundle-{{ checksum "Gemfile.lock" }}
+            - scrapin-bundle-
+
+      - run: # Install Ruby dependencies
+          name: Bundle Install
+          command: bundle check --path vendor/bundle || bundle install
+
+      # Store bundle cache for Ruby dependencies
+      - save_cache:
+          key: scrapin-bundle-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle    
+      - run:
+          name: Run rspec
+          command: |
+            bundle exec rspec spec/unit
+
+      # Save test results for timing analysis
+      - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: test_results
+      # See https://circleci.com/docs/2.0/deployment-integrations/ for example deploy configs
