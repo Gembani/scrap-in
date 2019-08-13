@@ -36,20 +36,3 @@ module Tools
     "Wrong CSS, or it has been changed : #{css}"
   end
 end
-
-has_selector?
-
-begin
- session.find('bidule') 
- session.find('bidule1') 
- session.find('bidule2') 
- session.find('bidule3') 
-  duhjfosird
-  sdlfjsdl
-rescue StandardError => exception
-  exception.class == Capybara::ElementNotFound
-end
-
-def find_message_content(count)
-  message_content = @session.first(sales_messages_css).all(message_thread_css + 'li')[count].find(content_css)['innerHTML'](count)(count)
-end
