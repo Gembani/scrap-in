@@ -21,8 +21,9 @@ module Salesnavot
           puts "Maximum scrapped messages reached, total [#{loaded_messages - count}]"
           break
         else
-          message_content = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].find(content_css)['innerHTML']
-          sender = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css)[count].first(sender_css, wait: 2, visible: false)['innerHTML'].strip
+          message = get_message(count)
+          message_content = message.find(content_css)['innerHTML']
+          sender = message.first(sender_css, wait: 2, visible: false)['innerHTML'].strip
           direction = (sender == "You") ? :outgoing : :incoming
         end
         yield message_content, direction
@@ -47,7 +48,6 @@ module Salesnavot
     
     def wait_messages_to_appear
       time = 0
-      raise CssNotFound.new(sales_loaded_messages_css) unless @session.has_selector?(sales_loaded_messages_css, wait: 5)
       while @session.all(sales_loaded_messages_css).count < 1
         puts 'Waiting messages to appear'
         sleep(0.2)
@@ -58,15 +58,35 @@ module Salesnavot
 
     # Only the 10 first messages are loaded in Sales, then they are loaded 10 by 10
     def load(number_of_messages)
-      loaded_messages = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
+      loaded_messages = count_loaded_messages
       while loaded_messages < number_of_messages do
-        item = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).first
+        message_thread = get_message_thread
+        item = message_thread.all(message_thread_elements_css).first
+        item_exist = check_until(500) do
+          !item.nil?
+        end
+        raise 'Item does not exsit. Cannot click!' unless item_exist
         item.click
         sleep(4)
-        return loaded_messages if loaded_messages == @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
-        loaded_messages = @session.first(sales_messages_css).find(message_thread_css).all(message_thread_elements_css).count
+        return loaded_messages if loaded_messages == count_loaded_messages
+        loaded_messages = count_loaded_messages
       end
       loaded_messages
+    end
+    
+    def get_message_thread
+      sales_messages = @session.first(sales_messages_css)
+      sales_messages.find(message_thread_css)
+    end
+
+    def count_loaded_messages
+      message_thread = get_message_thread
+      message_thread.all(message_thread_elements_css).count
+    end
+    
+    def get_message(count)
+      message_thread = get_message_thread
+      message_thread.all(message_thread_elements_css)[count]
     end
   end
 end

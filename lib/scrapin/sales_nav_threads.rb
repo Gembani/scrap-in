@@ -12,14 +12,14 @@ module ScrapIn
       count = 0
       
       num_times.times.each do
-        item = @session.find(threads_list_css).all(loaded_threads_css).first
-        item_limit = @session.find(threads_list_css).all(loaded_threads_css).count
+        item_limit = set_limit
         if count >= item_limit
           puts 'reach max open conversations'
           break
         else
-          name = @session.find(threads_list_css).all(threads_list_elements_css)[count].find(thread_name_css).text
-          name_click = @session.find(threads_list_css).all(threads_list_elements_css)[count].find(thread_name_css).click
+          conversation = find_conversation(count)
+          name = conversation.text
+          conversation.click
           thread_link = @session.current_url
           yield name, thread_link
           count += 1
@@ -33,7 +33,6 @@ module ScrapIn
       raise CssNotFound.new(threads_list_elements_css) unless @session.has_selector?(threads_list_elements_css, wait: 5)
       raise CssNotFound.new(loaded_threads_css) unless @session.has_selector?(loaded_threads_css, wait: 5)
       raise CssNotFound.new(thread_name_css) unless @session.has_selector?(thread_name_css, wait: 5)
-      raise CssNotFound.new(message_css) unless @session.has_selector?(message_css, wait: 5)
     end
     
     def visit_messages_link
@@ -52,6 +51,17 @@ module ScrapIn
         time += 0.2
         raise 'Cannot scrap conversation. Timeout !' if time > 60
       end
+    end
+
+    def find_conversation(count)
+      threads_list = @session.find(threads_list_css)
+      threads_list_elements = threads_list.all(threads_list_elements_css)[count]
+      threads_list_elements.find(thread_name_css)
+    end
+
+    def set_limit
+      threads_list = @session.find(threads_list_css)
+      threads_list.all(loaded_threads_css).count
     end
   end
 end
