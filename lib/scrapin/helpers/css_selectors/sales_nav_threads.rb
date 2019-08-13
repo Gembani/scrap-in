@@ -6,7 +6,7 @@ module CssSelectors
     end
 
     def threads_list_elements_css
-      threads_list_css + ' li'
+      'li'
     end
 
     def loaded_threads_css
