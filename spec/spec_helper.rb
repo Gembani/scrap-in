@@ -1,3 +1,4 @@
+require 'deep-cover'
 require 'simplecov'
 if ENV["COVERAGE"]
   SimpleCov.start do 

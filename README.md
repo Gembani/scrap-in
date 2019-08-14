@@ -4,11 +4,21 @@
 @session.fill_in('verification-code',with: "002358")
 @session.click_on("Submit")
 
-~~# Run tests with code coverage~~
 # Run tests with deep-cover
 
+## Launch it
 
-deep-cover clone bundle exec rspec spec/unit
+    The easiest way to actually start it is to use `deep-cover exec`
+
+    For example:
+
+    ```
+    $ deep-cover exec rspec
+    # ...all the output of rspec
+    # ...coverage report
+    ```
+
+~~# Run tests with code coverage~~
 ~~COVERAGE=true bundle exec rspec spec/unit~~
 
 #Very Important link about methods that wait and do not wait (Capybara_)
