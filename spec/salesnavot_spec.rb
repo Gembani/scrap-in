@@ -203,8 +203,16 @@ RSpec.describe ScrapIn do
 
   xit 'scraps 10 threads, does not need to scroll down to load older conversations' do
     count = 0
-    @session.sales_nav_threads.execute(10) do |name, thread|
-      puts "#{name}, #{thread}"
+    scrap_value = 2
+    messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
+    messages.execute(scrap_value) do |message, direction|
+
+      if direction == :incoming
+        print "CONTACT ->  "
+      else
+        print "YOU ->  "
+      end
+      puts message
       count += 1
     end
     expect(count).to eq(10)

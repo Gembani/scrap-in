@@ -35,8 +35,8 @@ module Salesnavot
     end
 
     def check_all_css
-      # raise CssNotFound.new(sales_messages_css) unless @session.has_selector?(sales_messages_css, wait: 5)
-      # raise CssNotFound.new(message_thread_css) unless @session.has_selector?(message_thread_css, wait: 5)
+      raise CssNotFound.new(sales_messages_css) unless @session.has_selector?(sales_messages_css, wait: 5)
+      raise CssNotFound.new(message_thread_css) unless @session.has_selector?(message_thread_css, wait: 5)
       raise CssNotFound.new(message_thread_elements_css) unless @session.has_selector?(message_thread_elements_css, wait: 5, minimum: 4) # The 3 first are for 'Forward', 'Archive' and 'Mark as unread'
       raise CssNotFound.new(content_css) unless @session.has_selector?(content_css, wait: 5)
       raise CssNotFound.new(sender_css) unless @session.has_selector?(sender_css, wait: 5)
@@ -50,6 +50,7 @@ module Salesnavot
     
     def wait_messages_to_appear
       time = 0
+      raise CssNotFound.new(sales_loaded_messages_css) unless @session.has_selector?(sales_loaded_messages_css, wait: 5)
       while @session.all(sales_loaded_messages_css).count < 1
         puts 'Waiting messages to appear'
         sleep(0.2)
