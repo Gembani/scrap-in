@@ -231,7 +231,7 @@ RSpec.describe ScrapIn do
   end
 
   
-  context 'test' do
+  context 'when ' do
     it 'scraps all messages from thread_url if the number of messages < scrap_value' do
       30.times do
         count = 0
