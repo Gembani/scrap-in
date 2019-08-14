@@ -19,9 +19,10 @@
     ```
 
 ~~# Run tests with code coverage~~
+
 ~~COVERAGE=true bundle exec rspec spec/unit~~
 
-#Very Important link about methods that wait and do not wait (Capybara_)
+# Very Important link about methods that wait and do not wait (Capybara_)
 
 http://stefan.haflidason.com/testing-with-rails-and-capybara-methods-that-wait-method-that-wont/
 
