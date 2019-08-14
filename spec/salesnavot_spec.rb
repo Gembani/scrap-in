@@ -230,72 +230,83 @@ RSpec.describe ScrapIn do
     end
   end
 
-  xit 'scraps all messages from thread_url if the number of messages < scrap_value' do
-    count = 0
-    scrap_value = 100
-    seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
-    seb_messages.execute(scrap_value) do |message, direction|
-
-      if direction == :incoming
-        print "CONTACT ->  "
-      else
-        print "YOU ->  "
+  
+  context 'test' do
+    it 'scraps all messages from thread_url if the number of messages < scrap_value' do
+      30.times do
+        count = 0
+        scrap_value = 100
+        seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
+        seb_messages.execute(scrap_value) do |message, direction|
+          
+          if direction == :incoming
+            print "CONTACT ->  "
+          else
+            print "YOU ->  "
+          end
+          puts message
+          count += 1
+        end
+        expect(count).to be < scrap_value
       end
-      puts message
-      count += 1
     end
-    expect(count).to be < scrap_value
-  end
 
-  xit 'scraps the scrap_value last messages from thread_url' do
-    count = 0
-    scrap_value = 2
-    messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
-    messages.execute(scrap_value) do |message, direction|
-
-      if direction == :incoming
-        print "CONTACT ->  "
-      else
-        print "YOU ->  "
+    it 'scraps the scrap_value last messages from thread_url' do
+      30.times do
+        count = 0
+        scrap_value = 2
+        messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
+        messages.execute(scrap_value) do |message, direction|
+          
+          if direction == :incoming
+            print "CONTACT ->  "
+          else
+            print "YOU ->  "
+          end
+          puts message
+          count += 1
+        end
+        expect(count).to eq(scrap_value) 
       end
-      puts message
-      count += 1
     end
-    expect(count).to eq(scrap_value) 
-  end
 
-  xit 'scraps the scrap_value last messages from thread_url and scroll only for these messages to load' do
-    count = 0
-    scrap_value = 25
-    seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
-    seb_messages.execute(scrap_value) do |message, direction|
-
-      if direction == :incoming
-        print "CONTACT ->  "
-      else
-        print "YOU ->  "
+    it 'scraps the scrap_value last messages from thread_url and scroll only for these messages to load' do
+      30.times do
+        count = 0
+        scrap_value = 25
+        seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
+        seb_messages.execute(scrap_value) do |message, direction|
+          
+          if direction == :incoming
+            print "CONTACT ->  "
+          else
+            print "YOU ->  "
+          end
+          puts message
+          count += 1
+        end
+        expect(count).to eq(scrap_value) 
       end
-      puts message
-      count += 1
     end
-    expect(count).to eq(scrap_value) 
-  end
 
-  xit 'Scraps correctly the sender\'s name' do
-    count = 0
-    scrap_value = 25
-    messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6560550015541043200')
-    messages.execute(scrap_value) do |message, direction|
+    it 'Scraps correctly the sender\'s name' do
+      30.times do
+        count = 0
+        scrap_value = 25
+        messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6560550015541043200')
+        messages.execute(scrap_value) do |message, direction|
 
-      if direction == :incoming
-        print "CONTACT ->  "
-      else
-        print "YOU ->  "
+          if direction == :incoming
+            print "CONTACT ->  "
+          else
+            print "YOU ->  "
+          end
+          puts message
+          count += 1
+        end
+        expect(count).to be < scrap_value 
       end
-      puts message
-      count += 1
     end
-    expect(count).to be < scrap_value 
   end
 end
 
