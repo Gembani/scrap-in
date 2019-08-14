@@ -1,0 +1,39 @@
+AllCops:
+  Exclude:
+    - bin/**/*
+    - config/**/*
+    - db/**/*
+    - tmp/**/*
+    - public/*
+    - vendor/*
+    - log/*
+    - Gemfile
+    - Rakefile
+Metrics/BlockLength:
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'spec/**/*.rb'
+    - 'app/admin/*.rb'
+
+Metrics/AbcSize:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 120  
+
+Metrics/MethodLength:
+  Max: 20
+
+Style/Documentation:
+  Exclude:
+    - 'app/controllers/*.rb'
+    - 'app/admin/*.rb'
+    - 'app/admin/**/.rb'
+    - 'app/models/.rb'
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
