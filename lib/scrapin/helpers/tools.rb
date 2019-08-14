@@ -30,6 +30,21 @@ module Tools
     @session.find(css).click 
   end
   
+  def check_and_find_first(*config)
+    css = config.first
+    unless @session.has_selector?(*config)
+      raise CssNotFound.new(css)
+    end
+    @session.first(*config)
+  end
+
+  def check_and_find(*config)
+    css = config.first
+    unless @session.has_selector?(*config)
+      raise CssNotFound.new(css)
+    end
+    @session.find(*config)
+  end
   
   def find_xpath_and_click(xpath)
     unless @session.has_selector?(:xpath, xpath)
