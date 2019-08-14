@@ -6,6 +6,13 @@ module Tools
     JS
     @session.driver.browser.execute_script(script, element.native)
   end
+  
+  def scroll_down_to(element)
+    script = <<-JS
+        arguments[0].scrollIntoView({block: "end", inline: "nearest", behavior: "smooth"});
+    JS
+    @session.driver.browser.execute_script(script, element.native)
+  end
 
   def check_until(amount_of_time)
     amount_of_time.times do

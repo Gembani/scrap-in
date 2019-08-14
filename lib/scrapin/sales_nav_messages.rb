@@ -65,8 +65,8 @@ module Salesnavot
         item_exist = check_until(500) do
           !item.nil?
         end
-        raise 'Item does not exsit. Cannot click!' unless item_exist
-        item.click
+        raise 'Item does not exist. Cannot click!' unless item_exist
+        scroll_down_to(item)
         sleep(4)
         return loaded_messages if loaded_messages == count_loaded_messages
         loaded_messages = count_loaded_messages
@@ -81,6 +81,7 @@ module Salesnavot
 
     def count_loaded_messages
       message_thread = get_message_thread
+      sleep(2)
       message_thread.all(message_thread_elements_css).count
     end
     
