@@ -17,7 +17,9 @@ module Salesnavot
 
       number_of_messages.times.each do
         if count < 1
-          count += 1 if loaded_messages <= 11 #The first loaded message for conversation shorter than 12 messages is the "beginning of the conversation" message and should be ignore
+          # The first loaded message for conversation shorter than 12 messages is the "beginning
+          # of the conversation" message and should be ignore
+          count += 1 if loaded_messages <= 11 
           puts "Maximum scrapped messages reached, total [#{loaded_messages - count}]"
           break
         else
@@ -33,8 +35,8 @@ module Salesnavot
     end
 
     def check_all_css
-      raise CssNotFound.new(sales_messages_css) unless @session.has_selector?(sales_messages_css, wait: 5)
-      raise CssNotFound.new(message_thread_css) unless @session.has_selector?(message_thread_css, wait: 5)
+      # raise CssNotFound.new(sales_messages_css) unless @session.has_selector?(sales_messages_css, wait: 5)
+      # raise CssNotFound.new(message_thread_css) unless @session.has_selector?(message_thread_css, wait: 5)
       raise CssNotFound.new(message_thread_elements_css) unless @session.has_selector?(message_thread_elements_css, wait: 5, minimum: 4) # The 3 first are for 'Forward', 'Archive' and 'Mark as unread'
       raise CssNotFound.new(content_css) unless @session.has_selector?(content_css, wait: 5)
       raise CssNotFound.new(sender_css) unless @session.has_selector?(sender_css, wait: 5)
@@ -75,13 +77,13 @@ module Salesnavot
     end
     
     def get_message_thread
-      sales_messages = @session.first(sales_messages_css)
+      # sales_messages = @session.first(sales_messages_css)
+      sales_messages = check_and_find_first(sales_messages_css, wait: 5)
       sales_messages.find(message_thread_css)
     end
 
     def count_loaded_messages
       message_thread = get_message_thread
-      sleep(2)
       message_thread.all(message_thread_elements_css).count
     end
     
