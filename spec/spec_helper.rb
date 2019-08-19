@@ -1,9 +1,11 @@
 require 'deep-cover'
 require 'simplecov'
 if ENV["COVERAGE"]
-  SimpleCov.start do 
-    add_filter '/spec/'
-  end
+  DeepCover.start
+  DeepCover::AutoRun.run!('.').report!(**DeepCover.config)
+  # SimpleCov.start do 
+  #   add_filter '/spec/'
+  # end
 end
 require 'colorize'
 require "byebug"
