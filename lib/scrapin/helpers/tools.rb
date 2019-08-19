@@ -6,6 +6,13 @@ module Tools
     JS
     @session.driver.browser.execute_script(script, element.native)
   end
+  
+  def scroll_down_to(element)
+    script = <<-JS
+        arguments[0].scrollIntoView({block: "end", inline: "nearest", behavior: "smooth"});
+    JS
+    @session.driver.browser.execute_script(script, element.native)
+  end
 
   def check_until(amount_of_time)
     amount_of_time.times do
@@ -23,6 +30,29 @@ module Tools
     @session.find(css).click 
   end
   
+  def check_and_find_first(node, *config)
+    css = config.first
+    unless @session.has_selector?(*config)
+      raise CssNotFound.new(css)
+    end
+    node.first(*config)
+  end
+
+  def check_and_find(node, *config)
+    css = config.first
+    unless @session.has_selector?(*config)
+      raise CssNotFound.new(css)
+    end
+    node.find(*config)
+  end
+
+  def check_and_find_all(node, *config)
+    css = config.first
+    unless @session.has_selector?(*config)
+      raise CssNotFound.new(css)
+    end
+    node.all(*config)
+  end
   
   def find_xpath_and_click(xpath)
     unless @session.has_selector?(:xpath, xpath)
