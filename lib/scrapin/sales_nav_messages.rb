@@ -9,6 +9,7 @@ module ScrapIn
     end
 
     def execute(number_of_messages = 20)
+      byebug
       visit_thread_link
 
       loaded_messages = load(number_of_messages)
@@ -57,7 +58,7 @@ module ScrapIn
         item_exist = check_until(500) do
           !item.nil?
         end
-        raise 'Item does not exist. Cannot click!' unless item_exist
+        raise 'Item does not exist. Cannot scroll!' unless item_exist
         scroll_down_to(item)
         sleep(4)
         return loaded_messages if loaded_messages == count_loaded_messages
