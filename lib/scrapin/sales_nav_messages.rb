@@ -40,8 +40,7 @@ module ScrapIn
     
     def wait_messages_to_appear
       time = 0
-      raise CssNotFound.new(sales_loaded_messages_css) unless @session.has_selector?(sales_loaded_messages_css, wait: 5)
-      while @session.all(sales_loaded_messages_css).count < 1
+      while check_and_find_all(@session, sales_loaded_messages_css, wait: 5).count < 1
         puts 'Waiting messages to appear'
         sleep(0.2)
         time += 0.2
