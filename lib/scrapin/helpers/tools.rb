@@ -30,20 +30,28 @@ module Tools
     @session.find(css).click 
   end
   
-  def check_and_find_first(*config)
+  def check_and_find_first(node, *config)
     css = config.first
     unless @session.has_selector?(*config)
       raise CssNotFound.new(css)
     end
-    @session.first(*config)
+    node.first(*config)
   end
 
-  def check_and_find(*config)
+  def check_and_find(node, *config)
     css = config.first
     unless @session.has_selector?(*config)
       raise CssNotFound.new(css)
     end
-    @session.find(*config)
+    node.find(*config)
+  end
+
+  def check_and_find_all(node, *config)
+    css = config.first
+    unless @session.has_selector?(*config)
+      raise CssNotFound.new(css)
+    end
+    node.all(*config)
   end
   
   def find_xpath_and_click(xpath)
