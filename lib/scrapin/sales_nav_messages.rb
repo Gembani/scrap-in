@@ -9,7 +9,6 @@ module ScrapIn
     end
 
     def execute(number_of_messages = 20)
-      byebug
       visit_thread_link
 
       loaded_messages = load(number_of_messages)
