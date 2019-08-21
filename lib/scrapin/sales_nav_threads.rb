@@ -7,6 +7,7 @@ module ScrapIn
     end
 
     def execute(num_times = 500)
+      # return true if num_times.zero?
       visit_messages_link
       count = 0
       
@@ -25,6 +26,8 @@ module ScrapIn
         end
         sleep(1.5)
       end
+      true
+		
     end
     
     def visit_messages_link

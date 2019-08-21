@@ -24,13 +24,13 @@ RSpec.describe ScrapIn::SendInmail do
 
     # Mocking (you can see all the methods in spec/unit/helpers/send_inmail_helpers.rb)
     visit_succeed(profile_url)
-    has_selector(message_button_css, text: message_button_text, wait: 0)
-    lead_is_not_friended
+    has_selector(session, message_button_css, text: message_button_text, wait: 0)
+    lead_is_not_friended(session)
     click_button_success(message_button_text)
     write_subject_succeed
     write_message_succeed
     click_button_success(send_button_text)
-    has_selector(message_container, text: inmail_message, wait: 5)
+    has_selector(session, message_container, text: inmail_message, wait: 5)
   end
 
   describe '.initialize' do
@@ -46,20 +46,20 @@ RSpec.describe ScrapIn::SendInmail do
     end
 
     context "Can't find message button" do
-      before { has_not_selector(message_button_css, text: message_button_text, wait: 0) }
+      before { has_not_selector(session, message_button_css, text: message_button_text, wait: 0) }
       
       it { expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{message_button_css}/) }
     end
 
     context 'the selector for friend degree was not found' do
-      before { has_not_selector(degree_css, wait: 5) }
+      before { has_not_selector(session, degree_css, wait: 5) }
       it { expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{degree_css}/) }
     end
 
     context 'the selector for friend degree was found but the lead is a friend' do
-      before { has_selector(degree_css, text: degree_text, wait: 5) }
+      before { has_selector(session, degree_css, text: degree_text, wait: 5) }
       it { expect { send_inmail_instance.execute }.to raise_error(ScrapIn::LeadIsFriend) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{profile_url}/) }
     end
@@ -85,7 +85,7 @@ RSpec.describe ScrapIn::SendInmail do
       it { expect { send_inmail_instance.execute }.to raise_error(/#{send_button_text}/) }
     end
     context 'the selector which should contain the sent message was not found' do
-      before { has_not_selector(message_container, text: inmail_message, wait: 5) }
+      before { has_not_selector(session, message_container, text: inmail_message, wait: 5) }
       it { expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{message_container}/) }
     end

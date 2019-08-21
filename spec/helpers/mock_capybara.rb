@@ -1,11 +1,11 @@
 module MockCapybara
-  def has_selector(*config)
-    allow(session).to receive(:has_selector?)
+  def has_selector(node, *config)
+    allow(node).to receive(:has_selector?)
       .with(*config).and_return(true)
   end
 
-  def has_not_selector(*config)
-    allow(session).to receive(:has_selector?)
+  def has_not_selector(node, *config)
+    allow(node).to receive(:has_selector?)
       .with(*config).and_return(false)
   end
 
