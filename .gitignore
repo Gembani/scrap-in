@@ -26,3 +26,5 @@
 .vscode/settings.json
 
 coverage
+
+deep_cover

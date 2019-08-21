@@ -6,7 +6,7 @@ RSpec.shared_examples "a popup closed method" do
     before do
       allow(session).to receive(:current_url).with(no_args).and_return("google.com")
       allow(session).to receive(:visit).with(sales_nav_url).and_return(true)
-      has_selector(:xpath, close_popup_css)          
+      has_selector(session, :xpath, close_popup_css)          
       run
     end
     it {
@@ -19,7 +19,7 @@ RSpec.shared_examples "a popup closed method" do
     before do
       allow(session).to receive(:current_url).with(no_args).and_return(sales_nav_url)
       allow(session).to receive(:visit).with(sales_nav_url).and_return(true)
-      has_selector(:xpath, close_popup_css)          
+      has_selector(session, :xpath, close_popup_css)          
       allow(close_button).to receive(:click)
       subject.instance_variable_set(:@popup_open, true)
       allow(session).to receive(:find).with(:xpath, close_popup_css).and_return(close_button)
@@ -41,7 +41,7 @@ RSpec.shared_examples "a popup open method" do
     before do
       allow(session).to receive(:current_url).with(no_args).and_return("google.com")
       allow(session).to receive(:visit).with(sales_nav_url).and_return(true)
-      has_selector(infos_css)          
+      has_selector(session, infos_css)          
       allow(more_info_button).to receive(:click)
       allow(session).to receive(:find).with(infos_css).and_return(more_info_button)
       run
@@ -59,7 +59,7 @@ RSpec.shared_examples "a popup open method" do
       allow(session).to receive(:current_url).with(no_args).and_return(sales_nav_url)
       allow(session).to receive(:visit).with(sales_nav_url).and_return(true)
       subject.instance_variable_set(:@popup_open, true)
-      has_selector(infos_css)          
+      has_selector(session, infos_css)          
       allow(more_info_button).to receive(:click)
       allow(session).to receive(:find).with(:xpath, infos_css).and_return(more_info_button)
       run
@@ -91,7 +91,7 @@ RSpec.describe ScrapIn::ScrapLead do
     context "out of network" do 
       it_behaves_like "a popup closed method" do
         before do
-          has_selector(name_css) 
+          has_selector(session, name_css) 
           allow(name_div).to receive(:text).with(no_args).and_return("LinkedIn asdfa")
           allow(session).to receive(:find).with(name_css).and_return(name_div)
         end
@@ -102,7 +102,7 @@ RSpec.describe ScrapIn::ScrapLead do
       context "css not found" do 
         it_behaves_like "a popup closed method" do
           before do
-            has_not_selector(name_css) 
+            has_not_selector(session, name_css) 
            end
           let(:run) do
             
@@ -115,7 +115,7 @@ RSpec.describe ScrapIn::ScrapLead do
         it_behaves_like "a popup closed method" do
           let(:name) { "Nicholas Jamnes Stock" }
           before do
-            has_selector(name_css) 
+            has_selector(session, name_css) 
             allow(name_div).to receive(:text).with(no_args).and_return(name)
             allow(session).to receive(:find).with(name_css).and_return(name_div)
           end
@@ -131,7 +131,7 @@ RSpec.describe ScrapIn::ScrapLead do
     context "location css not found" do 
       it_behaves_like "a popup closed method" do
         before do
-          has_not_selector(location_css)
+          has_not_selector(session, location_css)
         end
         let(:run) do
           expect{ subject.location }.to raise_error(ScrapIn::CssNotFound)
@@ -144,7 +144,7 @@ RSpec.describe ScrapIn::ScrapLead do
         let(:location_node) { instance_double('Capybara::Node::Element') }
         
         before do
-          has_selector(location_css)
+          has_selector(session, location_css)
           allow(location_node).to receive(:text).and_return(location)
           allow(session).to receive(:find).with(location_css).and_return(location_node)
         end
@@ -159,7 +159,7 @@ RSpec.describe ScrapIn::ScrapLead do
     context "first degree css not found" do
       it_behaves_like "a popup closed method" do
         before do
-          has_not_selector(degree_css, wait: 1)
+          has_not_selector(session, degree_css, wait: 1)
         end
         let(:run) do
           expect{ subject.first_degree? }.to raise_error(ScrapIn::CssNotFound)
@@ -170,7 +170,7 @@ RSpec.describe ScrapIn::ScrapLead do
       it_behaves_like "a popup closed method" do
         let(:degree_node) { instance_double('Capybara::Node::Element')}
         before do
-          has_selector(degree_css, wait: 1)
+          has_selector(session, degree_css, wait: 1)
           allow(degree_node).to receive(:text).with(no_args).and_return("1st")
           allow(session).to receive(:find).with(degree_css).and_return(degree_node)
         end
@@ -184,7 +184,7 @@ RSpec.describe ScrapIn::ScrapLead do
       it_behaves_like "a popup closed method" do
         let(:degree_node) { instance_double('Capybara::Node::Element')}
         before do
-          has_selector(degree_css, wait: 1)
+          has_selector(session, degree_css, wait: 1)
           allow(degree_node).to receive(:text).with(no_args).and_return("2nd")
           allow(session).to receive(:find).with(degree_css).and_return(degree_node)
         end
@@ -198,7 +198,7 @@ RSpec.describe ScrapIn::ScrapLead do
     context "does not have block selector" do 
       it_behaves_like "a popup open method" do
         before do
-          has_not_selector(phones_block_css, wait: 1)
+          has_not_selector(session, phones_block_css, wait: 1)
         end
         let(:run) do 
           expect(subject.scrap_phones).to eq([])
@@ -224,7 +224,7 @@ RSpec.describe ScrapIn::ScrapLead do
     
       it_behaves_like "a popup open method" do
         before do
-          has_selector(phones_block_css, wait: 1)
+          has_selector(session, phones_block_css, wait: 1)
           allow(session).to receive(:all).with(phones_block_css).and_return(phone_nodes)
         end
         let(:run) do
@@ -237,7 +237,7 @@ RSpec.describe ScrapIn::ScrapLead do
     context "does not have block selector" do 
       it_behaves_like "a popup open method" do
         before do
-          has_not_selector(emails_block_css, wait: 1)
+          has_not_selector(session, emails_block_css, wait: 1)
         end
         let(:run) do 
           expect(subject.scrap_emails).to eq([])
@@ -263,7 +263,7 @@ RSpec.describe ScrapIn::ScrapLead do
     
       it_behaves_like "a popup open method" do
         before do
-          has_selector(emails_block_css, wait: 1)
+          has_selector(session, emails_block_css, wait: 1)
           allow(session).to receive(:all).with(emails_block_css).and_return(email_nodes)
         end
         let(:run) do
@@ -277,7 +277,7 @@ RSpec.describe ScrapIn::ScrapLead do
     context "does not have block selector" do 
       it_behaves_like "a popup open method" do
         before do
-          has_not_selector(links_block_css, wait: 1)
+          has_not_selector(session, links_block_css, wait: 1)
         end
         let(:run) do 
           expect(subject.scrap_links).to eq([])
@@ -303,7 +303,7 @@ RSpec.describe ScrapIn::ScrapLead do
     
       it_behaves_like "a popup open method" do
         before do
-          has_selector(links_block_css, wait: 1)
+          has_selector(session, links_block_css, wait: 1)
           allow(session).to receive(:all).with(links_block_css).and_return(link_nodes)
         end
         let(:run) do
