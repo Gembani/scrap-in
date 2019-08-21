@@ -9,11 +9,12 @@ module ScrapIn
     end
 
     def execute(number_of_messages = 20)
+      return true if number_of_messages.zero?
       visit_thread_link
 
       loaded_messages = load(number_of_messages)
       count = loaded_messages - 1
-
+      
       number_of_messages.times.each do
         if count < 1
           count += 1 # When there is not enough messages to scrap the first one is "beginnning of the conversation"
@@ -21,15 +22,18 @@ module ScrapIn
           puts "Maximum scrapped messages reached, total [#{loaded_messages - count}]"
           break
         else
-          message = get_message(count)
-          message_content = check_and_find(message, content_css, wait: 5)['innerHTML']
-          sender = check_and_find_first(message, sender_css, wait: 2, visible: false)['innerHTML'].strip
+          message = get_message
+          byebug
+          message_content = check_and_find(message[count], content_css, wait: 5)['innerHTML']
+          sender = check_and_find_first(message[count], sender_css, wait: 2, visible: false)['innerHTML'].strip
           direction = (sender == "You") ? :outgoing : :incoming
+          byebug
         end
         yield message_content, direction
         count -= 1
       end
       sleep(0.5)
+      true
     end
     
     def visit_thread_link
@@ -76,9 +80,9 @@ module ScrapIn
       check_and_find_all(message_thread, message_thread_elements_css, wait: 5).count
     end
     
-    def get_message(count)
+    def get_message
       message_thread = get_message_thread
-      check_and_find_all(message_thread, message_thread_elements_css, wait: 5)[count]
+      check_and_find_all(message_thread, message_thread_elements_css, wait: 5)
     end
   end
 end
