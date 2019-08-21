@@ -1,7 +1,7 @@
 module SendInmailHelpers
-  def lead_is_not_friended
-    has_selector(degree_css, wait: 5)
-    has_not_selector(degree_css, text: degree_text, wait: 5)
+  def lead_is_not_friended(node)
+    has_selector(node, degree_css, wait: 5)
+    has_not_selector(node, degree_css, text: degree_text, wait: 5)
   end
 
   def write_subject_succeed
