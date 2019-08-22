@@ -65,7 +65,7 @@ RSpec.describe ScrapIn::SalesNavThreads do
 
 	include CssSelectors::SalesNavThreads
 	before do
-		# disable_puts_for_class(ScrapIn::SalesNavThreads)
+		disable_puts_for_class(ScrapIn::SalesNavThreads)
 		# Click messages button to access all threads
 		# allow(session).to receive(:has_selector?).with(threads_access_button_css, wait: 5).and_return(true)
 		has_selector(session, threads_access_button_css, wait: 5)
@@ -107,16 +107,52 @@ RSpec.describe ScrapIn::SalesNavThreads do
 	describe '.execute' do
     context 'everything is ok in order to scrap threads links' do
 			it 'scraps successfully threads and names' do
-				result = sales_nav_threads_instance.execute() { |name, thread_link| }
+				result = sales_nav_threads_instance.execute() { |_name, _thread_link| }
         expect(result).to be(true)
       end
 		end
 		
 		context 'num_times eq 0' do
 			it 'scraps nothing and return' do
-				result = sales_nav_threads_instance.execute(num_times = 0)
+				result = sales_nav_threads_instance.execute(num_times = 0) { |_name, _thread_link| }
         expect(result).to be(true)
 			end
 		end
+
+		xcontext 'the selector for threads list was not found' do
+      before { has_not_selector(session, threads_list_css, wait: 5) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(ScrapIn::CssNotFound) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(/#{threads_list_css}/) }
+		end
+		
+		xcontext 'the selector for threads list elements was not found' do
+      before { has_not_selector(session, threads_list_elements_css, wait: 5) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(ScrapIn::CssNotFound) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(/#{threads_list_elements_css}/) }
+		end
+		
+		xcontext 'the selector for loaded threads was not found' do
+      before { has_not_selector(session, loaded_threads_css, wait: 5) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(ScrapIn::CssNotFound) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(/#{loaded_threads_css}/) }
+		end
+		
+		xcontext 'the selector for thread name was not found' do
+      before { has_not_selector(session, thread_name_css, wait: 5) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(ScrapIn::CssNotFound) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(/#{thread_name_css}/) }
+		end
+		
+		xcontext 'the selector for message list was not found' do
+      before { has_not_selector(session, message_css, wait: 5) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(ScrapIn::CssNotFound) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(/#{message_css}/) }
+		end
+
+		xcontext 'the selector for thread access button was not found' do
+      before { has_not_selector(session, threads_access_button_css, wait: 5) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(ScrapIn::CssNotFound) }
+      it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(/#{threads_access_button_css}/) }
+    end
 	end
 end
