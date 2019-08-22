@@ -8,8 +8,8 @@ RSpec.describe ScrapIn::SalesNavMessages do
   let(:session) { instance_double('Capybara::Session') }
   let(:sales_messages) { instance_double('Capybara::Node::Element') }
   let(:message_thread) { instance_double('Capybara::Node::Element') }
-  let(:content_css) { instance_double('Capybara::Node::Element') }
-  let(:sender_css) { instance_double('Capybara::Node::Element') }
+  let(:content_css) { instance_double('Capybara::Node::Element', 'Content') }
+  let(:sender_css) { instance_double('Capybara::Node::Element', 'Sender') }
 
   let(:subject) do
     described_class
@@ -22,6 +22,8 @@ RSpec.describe ScrapIn::SalesNavMessages do
   let(:node_array) { [] }
   let(:message_thread_elements) { [] }
   let(:sales_loaded_messages) { [] }
+  let(:content_array) { [] }
+  let(:sender_array) { [] }
 
   let(:thread_link) { ('Conversation link to scrap') }
 
@@ -49,19 +51,19 @@ RSpec.describe ScrapIn::SalesNavMessages do
     has_selector(sales_messages, message_thread_css, wait: 5)
     allow(sales_messages).to receive(:find).and_return(message_thread)
 
-    has_selector(message_thread_elements, content_css, wait: 5)
-    has_selector(message_thread_elements, sender_css, wait: 2, visible: false)
-    message_thread_elements.each do
-      allow(message_thread_elements).to receive(:find).and_return(content_css)
-      allow(message_thread_elements).to receive(:first).and_return(sender_css)
-      allow(content_css).to receive(:fill_in)
-      allow(sender_css).to receive(:fill_in)
-      content_css.fill_in("innerHTML", with: "Message content")
-      sender_css.fill_in("innerHTML", with: "   You   ")
-      # content_css = { 'innerHTML' => "Message content" }
-      # sender_css = { 'innerHTML' => "   You   " }
+    create_node_array(content_array)
+    create_node_array(sender_array)
+    count = 0
+    message_thread_elements.each do |message|
+      has_selector(message, content_css, wait: 5)
+      has_selector(message, sender_css, wait: 2, visible: false)
+      content_array[count] = { 'innerHTML' => "Message content" }
+      sender_array[count] = { 'innerHTML' => "   You   " }
+      allow(message).to receive(:find).and_return(content_array[count])
+      allow(message).to receive(:first).and_return(sender_array[count])
+      count += 1
     end
-    byebug
+    # byebug
   end
 
   describe '.initialize' do
@@ -69,20 +71,20 @@ RSpec.describe ScrapIn::SalesNavMessages do
   end
 
   describe '.execute' do
-    context 'everything is ok in order to scrap conversation messages' do
+    context 'when everything is ok in order to scrap conversation messages' do
       it 'puts successfully messages and direction' do
-        salesnav_messages_instance.execute(1) do |message, direction|
-          if direction == :incoming
-            print "CONTACT ->  "
-          else
-            print "YOU ->  "
-          end
-          puts message
-        end
-        expect { salesnav_messages_instance.execute(1).to true }
-        # expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound)
-        # expect { send_inmail_instance.execute }.to raise_error(/#{message_container}/)
+        salesnav_messages_instance.execute(3) { |message, direction| }
+        expect { salesnav_messages_instance.execute(3).to true }
+      end
+    end
+
+    context 'when execute with 0 messages expected' do
+      it 'returns true' do
+        salesnav_messages_instance.execute(0) { |message, direction| }
+        expect { salesnav_messages_instance.execute(0).to true }
       end
     end
   end
 end
+# expect { send_inmail_instance.execute }.to raise_error(ScrapIn::CssNotFound)
+# expect { send_inmail_instance.execute }.to raise_error(/#{message_container}/)
