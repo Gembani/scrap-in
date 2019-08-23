@@ -33,7 +33,7 @@ module ScrapIn
     
     def check_and_find_first(node, *config)
       css = config.first
-      unless @session.has_selector?(*config)
+      unless node.has_selector?(*config)
         raise CssNotFound.new(css)
       end
       node.first(*config)
@@ -41,7 +41,7 @@ module ScrapIn
 
     def check_and_find(node, *config)
       css = config.first
-      unless @session.has_selector?(*config)
+      unless node.has_selector?(*config)
         raise CssNotFound.new(css)
       end
       node.find(*config)
@@ -49,7 +49,7 @@ module ScrapIn
 
     def check_and_find_all(node, *config)
       css = config.first
-      unless @session.has_selector?(*config)
+      unless node.has_selector?(*config)
         raise CssNotFound.new(css)
       end
       node.all(*config)
