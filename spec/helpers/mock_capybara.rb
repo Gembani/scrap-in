@@ -27,4 +27,10 @@ module MockCapybara
     allow(session).to receive(:find_field).with(placeholder: placeholder)
                                           .and_raise(Capybara::ElementNotFound, exception)
   end
+
+  def create_node_array(array, size = 1) 
+    size.times do
+      array << instance_double('Capybara::Node::Element')
+    end
+  end
 end
