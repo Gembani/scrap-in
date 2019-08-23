@@ -22,12 +22,10 @@ module ScrapIn
           puts "Maximum scrapped messages reached, total [#{loaded_messages - count}]"
           break
         else
-          message = get_message
-          byebug
-          message_content = check_and_find(message[count], content_css, wait: 5)['innerHTML']
-          sender = check_and_find_first(message[count], sender_css, wait: 2, visible: false)['innerHTML'].strip
+          message = get_message(count)
+          message_content = check_and_find(message, content_css, wait: 5)['innerHTML']
+          sender = check_and_find_first(message, sender_css, wait: 2, visible: false)['innerHTML'].strip
           direction = (sender == "You") ? :outgoing : :incoming
-          byebug
         end
         yield message_content, direction
         count -= 1
@@ -80,9 +78,9 @@ module ScrapIn
       check_and_find_all(message_thread, message_thread_elements_css, wait: 5).count
     end
     
-    def get_message
+    def get_message(count)
       message_thread = get_message_thread
-      check_and_find_all(message_thread, message_thread_elements_css, wait: 5)
+      check_and_find_all(message_thread, message_thread_elements_css, wait: 5)[count]
     end
   end
 end

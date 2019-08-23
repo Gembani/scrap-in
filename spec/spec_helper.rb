@@ -14,6 +14,7 @@ require "scrapin"
 require "dotenv/load"
 require 'faker'
 require 'unit/helpers/send_inmail_helpers'
+require 'unit/helpers/sales_nav_messages_helpers'
 require 'helpers/mock_capybara'
 require 'helpers/tools_helpers'
 
@@ -27,5 +28,6 @@ RSpec.configure do |config|
   config.include ToolsHelpers
   config.include MockCapybara
   config.include SendInmailHelpers
+  config.include SalesNavMessagesHelpers
   
 end
