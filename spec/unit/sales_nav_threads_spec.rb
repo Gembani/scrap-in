@@ -133,7 +133,7 @@ RSpec.describe ScrapIn::SalesNavThreads do
 		end
 
 		context 'the selector for threads list was not found' do
-      before { has_not_selector(session, threads_list_css, wait: 5) }
+      before { has_not_selector(session, threads_list_css) }
       it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(ScrapIn::CssNotFound) }
       it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(/#{threads_list_css}/) }
 		end
