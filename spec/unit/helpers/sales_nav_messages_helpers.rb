@@ -1,5 +1,5 @@
 module SalesNavMessagesHelpers
-  def create_conversation_array(array)
+  def create_conversation(array)
     count = 0
     array.each do |element|
       has_selector(element, content_css, wait: 5)
