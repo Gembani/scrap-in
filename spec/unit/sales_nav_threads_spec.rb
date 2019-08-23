@@ -16,8 +16,8 @@ RSpec.describe ScrapIn::SalesNavThreads do
 	end
 
 	let(:session) { instance_double('Capybara::Session') }
-	let(:element){ instance_double('Capybara::Node::Element') }
 	let(:threads_list){ instance_double('Capybara::Node::Element') }
+	let(:element){ instance_double('Capybara::Node::Element') }
 	let(:element_2){ instance_double('Capybara::Node::Element') }
 	let(:element_3){ instance_double('Capybara::Node::Element') }
 	let(:element_4){ instance_double('Capybara::Node::Element') }
@@ -30,6 +30,7 @@ RSpec.describe ScrapIn::SalesNavThreads do
 	let(:element_11){ instance_double('Capybara::Node::Element') }
 	let(:element_12){ instance_double('Capybara::Node::Element') }
 	let(:element_13){ instance_double('Capybara::Node::Element') }
+
 	let(:element_array_1) do
 		[
 			element,
@@ -68,23 +69,23 @@ RSpec.describe ScrapIn::SalesNavThreads do
 			element_13
 		]
 	end
-
-
+	
+	
 	include CssSelectors::SalesNavThreads
 	before do
 		disable_puts_for_class(ScrapIn::SalesNavThreads)
-
+		
 		has_selector(session, threads_access_button_css, wait: 5)
 		allow(session).to receive(:has_selector?).and_return(true)
-
+		
 		allow(session).to receive(:has_selector?).with(message_css, wait: 5).and_return(true)
 		allow(session).to receive(:all).with(threads_access_button_css, wait: 5).and_return(element_array_1)
-
+		
 		allow(element).to receive(:click)
-
+		
 		allow(session).to receive(:has_selector?).with(message_css, wait: 5).and_return(true)
 		allow(session).to receive(:all).with(message_css, wait: 5).and_return(element_array_2)
-
+		
 		allow(session).to receive(:has_selector?).with(threads_list_css).and_return(true)
 		allow(session).to receive(:find).with(threads_list_css).and_return(threads_list)
 
@@ -118,18 +119,25 @@ RSpec.describe ScrapIn::SalesNavThreads do
       end
 		end
 
+		context 'num_times eq 0' do
+			it 'scraps nothing and returns' do
+				result = sales_nav_threads_instance.execute(num_times = 0) { |_name, _thread_link| }
+				expect(result).to be(true)
+			end
+		end
+
+		context 'num_times eq 1' do
+			it 'scraps one thread' do
+				result = sales_nav_threads_instance.execute(num_times = 1) { |_name, _thread_link| }
+				expect(result).to be(true)
+			end
+		end
+
 		context 'wait_messages_page_to_load loop receive only one node at every loop' do
 			before do
 				allow(session).to receive(:all).with(message_css, wait: 5).and_return(element_array_6)
 			end
 			it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error('Cannot scrap conversation. Timeout !') }
-		end
-		
-		context 'num_times eq 0' do
-			it 'scraps nothing and return' do
-				result = sales_nav_threads_instance.execute(num_times = 0) { |_name, _thread_link| }
-        expect(result).to be(true)
-			end
 		end
 
 		context 'the selector for threads list was not found' do
