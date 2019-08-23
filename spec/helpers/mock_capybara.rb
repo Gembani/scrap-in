@@ -28,9 +28,12 @@ module MockCapybara
                                           .and_raise(Capybara::ElementNotFound, exception)
   end
 
-  def create_node_array(array, size = 1) 
+  def create_node_array(array, size = 1)
+    count = 0
     size.times do
-      array << instance_double('Capybara::Node::Element')
+      name = "Element #{count}"
+      array << instance_double('Capybara::Node::Element', name)
+      count += 1
     end
   end
 end
