@@ -32,7 +32,9 @@ module MockCapybara
     count = 0
     size.times do
       name = "Element #{count}"
-      array << instance_double('Capybara::Node::Element', name)
+      node = instance_double('Capybara::Node::Element', name)
+      allow(node).to receive(:native)
+      array << node
       count += 1
     end
   end
