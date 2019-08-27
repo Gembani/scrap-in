@@ -255,7 +255,9 @@ RSpec.describe ScrapIn do
       20.times do
         count = 0
         scrap_value = 2
-        messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
+        # messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
+        messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6572101845743910912')
+        
         messages.execute(scrap_value) do |message, direction|
           
           if direction == :incoming

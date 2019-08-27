@@ -20,6 +20,7 @@ RSpec.describe ScrapIn::Invite do
   let(:pending_connection_css) { 'pending_connection_css' }
   let(:form_invitation_id) { '#form_invitation_id' }
 
+
   describe 'Initializer' do
     subject { described_class }
     it { is_expected.to eq ScrapIn::Invite }
