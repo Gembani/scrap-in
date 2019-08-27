@@ -54,7 +54,7 @@ module ScrapIn
     end
 
     def sales_nav_messages(thread_link)
-      ScrapIn::SalesNavMessages.new(@capybara, thread_link)
+      ScrapIn::SalesNavigator::Messages.new(@capybara, thread_link)
     end
 
     def messages(thread_link)
