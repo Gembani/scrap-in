@@ -16,12 +16,12 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
   let(:session) { instance_double('Capybara::Session') }
   let(:threads_list) { instance_double('Capybara::Node::Element') }
   let(:threads_list_elements) { instance_double('Capybara::Node::Element') }
-  let(:element_array_1) { [] }
-  let(:element_array_2) { [] }
-  let(:element_array_3) { [] }
+  let(:thread_access_button_array) { [] }
+  let(:message_array) { [] }
+  let(:loaded_threads_array) { [] }
   let(:threads_list_array) { [] }
-  let(:element_array_5) { [] }
-  let(:element_array_6) { [] }
+  let(:thread_name_array) { [] }
+  let(:one_message_array) { [] }
 
   include CssSelectors::Threads
   before do
@@ -30,38 +30,38 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
 
     has_selector(session, threads_access_button_css, wait: 5)
     allow(session).to receive(:has_selector?).and_return(true)
-    create_node_array(element_array_1)
-    create_node_array(element_array_2, 3)
-    create_node_array(element_array_3, 3)
-    create_node_array(element_array_5, 3)
-    create_node_array(element_array_6)
+    create_node_array(thread_access_button_array)
+    create_node_array(message_array, 3)
+    create_node_array(loaded_threads_array, 3)
+    create_node_array(thread_name_array, 3)
+    create_node_array(one_message_array)
 
 
     allow(session).to receive(:has_selector?).with(message_css, wait: 5).and_return(true)
-    allow(session).to receive(:all).with(threads_access_button_css, wait: 5).and_return(element_array_1)
+    allow(session).to receive(:all).with(threads_access_button_css, wait: 5).and_return(thread_access_button_array)
 
-    allow(element_array_1[0]).to receive(:click)
+    allow(thread_access_button_array[0]).to receive(:click)
 
     allow(session).to receive(:has_selector?).with(message_css, wait: 5).and_return(true)
-    allow(session).to receive(:all).with(message_css, wait: 5).and_return(element_array_2)
+    allow(session).to receive(:all).with(message_css, wait: 5).and_return(message_array)
 
     allow(session).to receive(:has_selector?).with(threads_list_css).and_return(true)
     allow(session).to receive(:find).with(threads_list_css).and_return(threads_list)
 
     allow(threads_list).to receive(:has_selector?).with(loaded_threads_css, wait: 5).and_return(true)
-    allow(threads_list).to receive(:all).with(loaded_threads_css, wait: 5).and_return(element_array_3)
+    allow(threads_list).to receive(:all).with(loaded_threads_css, wait: 5).and_return(loaded_threads_array)
 
     allow(threads_list).to receive(:has_selector?).with(threads_list_elements_css, wait: 5).and_return(true)
     allow(threads_list).to receive(:all).with(threads_list_elements_css, wait: 5).and_return(threads_list_array)
 
     create_node_array(threads_list_array, 3)
-    # element_array_5
+    # thread_name_array
     count = 0
     threads_list_array.each do |threads_list_elements|
       allow(threads_list_elements).to receive(:has_selector?).with(thread_name_css, wait: 5).and_return(true)
-      allow(threads_list_elements).to receive(:find).with(thread_name_css, wait: 5).and_return(element_array_5[count])
-      allow(element_array_5[count]).to receive(:text)
-      allow(element_array_5[count]).to receive(:click)
+      allow(threads_list_elements).to receive(:find).with(thread_name_css, wait: 5).and_return(thread_name_array[count])
+      allow(thread_name_array[count]).to receive(:text)
+      allow(thread_name_array[count]).to receive(:click)
       allow(session).to receive(:current_url).and_return('Thread url')
       count += 1
     end
@@ -95,7 +95,7 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
 
     context 'wait_messages_page_to_load loop receive only one node at every loop' do
       before do
-        allow(session).to receive(:all).with(message_css, wait: 5).and_return(element_array_6)
+        allow(session).to receive(:all).with(message_css, wait: 5).and_return(one_message_array)
       end
       it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error('Cannot scrap conversation. Timeout !') }
     end
