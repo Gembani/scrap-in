@@ -15,54 +15,13 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
 
   let(:session) { instance_double('Capybara::Session') }
   let(:threads_list) { instance_double('Capybara::Node::Element') }
-  let(:element) { instance_double('Capybara::Node::Element') }
-  let(:element_2) { instance_double('Capybara::Node::Element') }
-  let(:element_3) { instance_double('Capybara::Node::Element') }
-  let(:element_4) { instance_double('Capybara::Node::Element') }
-  let(:element_5) { instance_double('Capybara::Node::Element') }
-  let(:element_6) { instance_double('Capybara::Node::Element') }
-  let(:element_7) { instance_double('Capybara::Node::Element') }
-  let(:element_8) { instance_double('Capybara::Node::Element') }
-  let(:element_9) { instance_double('Capybara::Node::Element') }
-  let(:element_10) { instance_double('Capybara::Node::Element', 'element_10') }
-  let(:element_11) { instance_double('Capybara::Node::Element', 'element_11')}
-  let(:element_12) { instance_double('Capybara::Node::Element', 'element_12')}
   let(:threads_list_elements) { instance_double('Capybara::Node::Element') }
-  let(:element_14) { instance_double('Capybara::Node::Element') }
-
-
-  let(:element_array_1) do
-    [
-      element
-    ]
-  end
-  let(:element_array_2) do
-    [
-      element,
-      element_2,
-      element_3
-    ]
-  end
-  let(:element_array_3) do
-    [
-      element_4,
-      element_5,
-      element_6
-    ]
-  end
+  let(:element_array_1) { [] }
+  let(:element_array_2) { [] }
+  let(:element_array_3) { [] }
   let(:threads_list_array) { [] }
-  let(:element_array_5) do
-    [
-      element_10,
-      element_11,
-      element_12
-    ]
-  end
-  let(:element_array_6) do
-    [
-      element_14
-    ]
-  end
+  let(:element_array_5) { [] }
+  let(:element_array_6) { [] }
 
   include CssSelectors::Threads
   before do
@@ -71,11 +30,17 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
 
     has_selector(session, threads_access_button_css, wait: 5)
     allow(session).to receive(:has_selector?).and_return(true)
+    create_node_array(element_array_1)
+    create_node_array(element_array_2, 3)
+    create_node_array(element_array_3, 3)
+    create_node_array(element_array_5, 3)
+    create_node_array(element_array_6)
+
 
     allow(session).to receive(:has_selector?).with(message_css, wait: 5).and_return(true)
     allow(session).to receive(:all).with(threads_access_button_css, wait: 5).and_return(element_array_1)
 
-    allow(element).to receive(:click)
+    allow(element_array_1[0]).to receive(:click)
 
     allow(session).to receive(:has_selector?).with(message_css, wait: 5).and_return(true)
     allow(session).to receive(:all).with(message_css, wait: 5).and_return(element_array_2)
@@ -90,7 +55,7 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
     allow(threads_list).to receive(:all).with(threads_list_elements_css, wait: 5).and_return(threads_list_array)
 
     create_node_array(threads_list_array, 3)
-    element_array_5
+    # element_array_5
     count = 0
     threads_list_array.each do |threads_list_elements|
       allow(threads_list_elements).to receive(:has_selector?).with(thread_name_css, wait: 5).and_return(true)
@@ -116,14 +81,14 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
 
     context 'num_times eq 0' do
       it 'scraps nothing and returns' do
-        result = sales_nav_threads_instance.execute(num_times = 0) { |_name, _thread_link| }
+        result = sales_nav_threads_instance.execute(0) { |_name, _thread_link| }
         expect(result).to be(true)
       end
     end
 
     context 'num_times eq 1' do
       it 'scraps one thread' do
-        result = sales_nav_threads_instance.execute(num_times = 1) { |_name, _thread_link| }
+        result = sales_nav_threads_instance.execute(1) { |_name, _thread_link| }
         expect(result).to be(true)
       end
     end

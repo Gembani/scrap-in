@@ -1,7 +1,7 @@
 module ScrapIn
   module SalesNavigator
     class Threads
-      include Tools
+      include ScrapIn::Tools
       include CssSelectors::Threads
       def initialize(session)
         @session = session
@@ -11,7 +11,7 @@ module ScrapIn
         return true if num_times.zero?
         visit_messages_link
         count = 0
-        
+
         num_times.times.each do
           item_limit = set_limit
           if count >= item_limit
@@ -29,9 +29,9 @@ module ScrapIn
         end
         true
       end
-      
+
       def visit_messages_link
-        click = check_and_find_all(@session, threads_access_button_css, wait: 5)[0].click
+        check_and_find_all(@session, threads_access_button_css, wait: 5)[0].click
         wait_messages_page_to_load
         puts 'Messages have been visited.'
       end
