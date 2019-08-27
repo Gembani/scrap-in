@@ -1,7 +1,7 @@
 module CssSelectors
   # All css selectors used in ScrapIn::ProfileViews Class
   module ProfileViews
-    def profile_view_css(count)
+    def public_profile_css(count)
       'section.me-wvmp-viewers-list '\
       "div[data-control-name=\"profileview_single\"]:nth-child(#{count})"
     end
