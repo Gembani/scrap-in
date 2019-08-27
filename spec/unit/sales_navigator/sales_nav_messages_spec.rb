@@ -102,7 +102,7 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
       context 'when cannot load messages' do
         before { allow(session).to receive(:all).with(sales_loaded_messages_css, wait: 5).and_return([]) }
         it do
-          expect { salesnav_messages_instance.execute(1) { |message, direction| } }
+          expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
             .to raise_error('Cannot scrap conversation. Timeout !')
         end
       end
@@ -110,11 +110,11 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
       context 'when cannot find the sales_loaded_messages_css' do
         before { has_not_selector(session, sales_loaded_messages_css, wait: 5) }
         it do
-          expect { salesnav_messages_instance.execute(1) { |message, direction| } }
+          expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
             .to raise_error(ScrapIn::CssNotFound)
         end
         it do
-          expect { salesnav_messages_instance.execute(1) { |message, direction| } }
+          expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
             .to raise_error(/#{sales_loaded_messages_css}/)
         end
       end
@@ -123,10 +123,10 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
     context 'when cannot find the sales_message_css' do
       before { has_not_selector(session, sales_messages_css, wait: 5) }
       it do
-        expect { salesnav_messages_instance.execute(1) { |message, direction| } }.to raise_error(ScrapIn::CssNotFound)
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |message, direction| } }
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
           .to raise_error(/#{sales_messages_css}/)
       end
     end
@@ -134,10 +134,10 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
     context 'when cannot find the message_thread_css' do
       before { has_not_selector(sales_messages, message_thread_css, wait: 5) }
       it do
-        expect { salesnav_messages_instance.execute(1) { |message, direction| } }.to raise_error(ScrapIn::CssNotFound)
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |message, direction| } }
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
           .to raise_error(/#{message_thread_css}/)
       end
     end
@@ -145,10 +145,10 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
     context 'when cannot find the message_thread_elements_css' do
       before { has_not_selector(message_thread, message_thread_elements_css, wait: 5) }
       it do
-        expect { salesnav_messages_instance.execute(1) { |message, direction| } }.to raise_error(ScrapIn::CssNotFound)
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |message, direction| } }
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
           .to raise_error(/#{message_thread_elements_css}/)
       end
     end
@@ -160,10 +160,10 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
         end
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |message, direction| } }.to raise_error(ScrapIn::CssNotFound)
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |message, direction| } }.to raise_error(/#{content_css}/)
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(/#{content_css}/)
       end
     end
 
@@ -174,10 +174,10 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
         end
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |message, direction| } }.to raise_error(ScrapIn::CssNotFound)
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |message, direction| } }.to raise_error(/#{sender_css}/)
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(/#{sender_css}/)
       end
     end
 
@@ -188,7 +188,7 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
                                                 .and_return(message_thread_elements, [])
         end
         it do
-          expect { salesnav_messages_instance.execute(10) { |message, direction| } }
+          expect { salesnav_messages_instance.execute(10) { |_message, _direction| } }
             .to raise_error('Item does not exist. Cannot scroll!')
         end
       end
