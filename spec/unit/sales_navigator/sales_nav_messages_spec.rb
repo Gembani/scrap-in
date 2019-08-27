@@ -58,9 +58,15 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
     context 'when everything is ok in order to scrap conversation messages' do
       context 'when all the messages have been loaded' do
         it 'puts successfully messages and direction and returns true' do
+          count = 4 # because the conversation size is 5 (-1, the first one does not count)
           result = salesnav_messages_instance.execute(10) do |message, direction|
-            print direction
-            puts " #{message}"
+            expect(message).to eq(message_content(count))
+            if count.even?
+              expect(direction).to eq(:outgoing)
+            else
+              expect(direction).to eq(:incoming)
+            end
+            count -= 1
           end
           expect(result).to be(true)
         end
@@ -75,7 +81,16 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
             .and_return(message_thread_elements, bigger_conversation)
         end
         it 'puts successfully messages and direction and returns true' do
-          result = salesnav_messages_instance.execute(10) { |message, direction| }
+          count = 10 - 1
+          result = salesnav_messages_instance.execute(10) do |message, direction|
+            expect(message).to eq(message_content(count))
+            if count.even?
+              expect(direction).to eq(:outgoing)
+            else
+              expect(direction).to eq(:incoming)
+            end
+            count -= 1
+          end
           expect(result).to be(true)
         end
       end
@@ -89,7 +104,16 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
 
       context 'when execute with no number of messages argument' do
         it 'returns true' do
-          result = salesnav_messages_instance.execute { |message, direction| }
+          count = 5 - 1
+          result = salesnav_messages_instance.execute(10) do |message, direction|
+            expect(message).to eq(message_content(count))
+            if count.even?
+              expect(direction).to eq(:outgoing)
+            else
+              expect(direction).to eq(:incoming)
+            end
+            count -= 1
+          end
           expect(result).to be(true)
         end
       end
