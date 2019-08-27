@@ -1,6 +1,6 @@
 module CssSelectors
   # All css selectors used in ScrapIn::Invite Class
-  module SalesNavThreads
+  module Threads
     def threads_list_css
       '.infinite-scroller ul'
     end

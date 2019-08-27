@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe ScrapIn::SalesNavThreads do
+RSpec.describe ScrapIn::SalesNavigator::Threads do
   let(:subject) do
     described_class
   end
@@ -21,13 +21,15 @@ RSpec.describe ScrapIn::SalesNavThreads do
   let(:element_4) { instance_double('Capybara::Node::Element') }
   let(:element_5) { instance_double('Capybara::Node::Element') }
   let(:element_6) { instance_double('Capybara::Node::Element') }
-  let(:element_7) { instance_double('Capybara::Node::Element', 'Pierre') }
-  let(:element_8) { instance_double('Capybara::Node::Element', 'Paul') }
-  let(:element_9) { instance_double('Capybara::Node::Element', 'Jacques') }
-  let(:element_10) { instance_double('Capybara::Node::Element') }
-  let(:element_11) { instance_double('Capybara::Node::Element') }
-  let(:element_12) { instance_double('Capybara::Node::Element') }
-  let(:element_13) { instance_double('Capybara::Node::Element') }
+  let(:element_7) { instance_double('Capybara::Node::Element') }
+  let(:element_8) { instance_double('Capybara::Node::Element') }
+  let(:element_9) { instance_double('Capybara::Node::Element') }
+  let(:element_10) { instance_double('Capybara::Node::Element', 'element_10') }
+  let(:element_11) { instance_double('Capybara::Node::Element', 'element_11')}
+  let(:element_12) { instance_double('Capybara::Node::Element', 'element_12')}
+  let(:threads_list_elements) { instance_double('Capybara::Node::Element') }
+  let(:element_14) { instance_double('Capybara::Node::Element') }
+
 
   let(:element_array_1) do
     [
@@ -48,13 +50,7 @@ RSpec.describe ScrapIn::SalesNavThreads do
       element_6
     ]
   end
-  let(:threads_list_elements) do
-    [
-      element_7,
-      element_8,
-      element_9
-    ]
-  end
+  let(:threads_list_array) { [] }
   let(:element_array_5) do
     [
       element_10,
@@ -64,13 +60,14 @@ RSpec.describe ScrapIn::SalesNavThreads do
   end
   let(:element_array_6) do
     [
-      element_13
+      element_14
     ]
   end
 
-  include CssSelectors::SalesNavThreads
+  include CssSelectors::Threads
   before do
-    disable_puts_for_class(ScrapIn::SalesNavThreads)
+    disable_puts_for_class(ScrapIn::SalesNavigator::Threads)
+    disable_sleep_for_class(ScrapIn::SalesNavigator::Threads)
 
     has_selector(session, threads_access_button_css, wait: 5)
     allow(session).to receive(:has_selector?).and_return(true)
@@ -90,13 +87,14 @@ RSpec.describe ScrapIn::SalesNavThreads do
     allow(threads_list).to receive(:all).with(loaded_threads_css, wait: 5).and_return(element_array_3)
 
     allow(threads_list).to receive(:has_selector?).with(threads_list_elements_css, wait: 5).and_return(true)
-    allow(threads_list).to receive(:all).with(threads_list_elements_css, wait: 5).and_return(threads_list_elements)
+    allow(threads_list).to receive(:all).with(threads_list_elements_css, wait: 5).and_return(threads_list_array)
 
+    create_node_array(threads_list_array, 3)
     element_array_5
     count = 0
-    threads_list_elements.each do |thread|
-      allow(thread).to receive(:has_selector?).with(thread_name_css, wait: 5).and_return(true)
-      allow(thread).to receive(:find).with(thread_name_css, wait: 5).and_return(element_array_5[count])
+    threads_list_array.each do |threads_list_elements|
+      allow(threads_list_elements).to receive(:has_selector?).with(thread_name_css, wait: 5).and_return(true)
+      allow(threads_list_elements).to receive(:find).with(thread_name_css, wait: 5).and_return(element_array_5[count])
       allow(element_array_5[count]).to receive(:text)
       allow(element_array_5[count]).to receive(:click)
       allow(session).to receive(:current_url).and_return('Thread url')
@@ -105,7 +103,7 @@ RSpec.describe ScrapIn::SalesNavThreads do
   end
 
   describe '.initialize' do
-    it { is_expected.to eq ScrapIn::SalesNavThreads }
+    it { is_expected.to eq ScrapIn::SalesNavigator::Threads }
   end
 
   describe '.execute' do
@@ -144,19 +142,23 @@ RSpec.describe ScrapIn::SalesNavThreads do
     end
 
     context 'the selector for threads list elements was not found' do
-      before { has_not_selector(session, threads_list_elements_css, wait: 5) }
+      before { has_not_selector(threads_list, threads_list_elements_css, wait: 5) }
       it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(ScrapIn::CssNotFound) }
       it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(/#{threads_list_elements_css}/) }
     end
 
     context 'the selector for loaded threads was not found' do
-      before { has_not_selector(session, loaded_threads_css, wait: 5) }
+      before { has_not_selector(threads_list, loaded_threads_css, wait: 5) }
       it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(ScrapIn::CssNotFound) }
       it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(/#{loaded_threads_css}/) }
     end
 
     context 'the selector for thread name was not found' do
-      before { has_not_selector(session, thread_name_css, wait: 5) }
+      before do
+        threads_list_array.each do |threads_list_elements|
+          has_not_selector(threads_list_elements, thread_name_css, wait: 5)
+        end
+      end
       it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(ScrapIn::CssNotFound) }
       it { expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }.to raise_error(/#{thread_name_css}/) }
     end

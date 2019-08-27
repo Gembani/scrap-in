@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe ScrapIn::ProfileViews do
-  include Tools
+  include ScrapIn::Tools
   let(:profile_views) do
     described_class.new(session)
   end
