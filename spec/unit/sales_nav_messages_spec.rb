@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-RSpec.describe ScrapIn::SalesNavMessages do
-  include CssSelectors::SalesNavMessages
+RSpec.describe ScrapIn::SalesNavigator::Messages do
+  include CssSelectors::SalesNavigator::Messages
   include ScrapIn::Tools
 
   let(:session) { instance_double('Capybara::Session') }
@@ -27,7 +27,6 @@ RSpec.describe ScrapIn::SalesNavMessages do
   before do
     # For more clear and fast results without all the logs nor sleeps
     disable_method(:puts)
-    disable_method(:sleep)
     disable_script
 
     visit_succeed(thread_link)
@@ -52,7 +51,7 @@ RSpec.describe ScrapIn::SalesNavMessages do
   end
 
   describe '.initialize' do
-    it { is_expected.to eq ScrapIn::SalesNavMessages }
+    it { is_expected.to eq ScrapIn::SalesNavigator::Messages }
   end
 
   describe '.execute' do

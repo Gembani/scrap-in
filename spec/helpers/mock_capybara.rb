@@ -31,13 +31,11 @@ module MockCapybara
   end
 
   def create_node_array(array, size = 1, array_name = 'Default')
-    count = 0
-    size.times do
+    size.times do |count|
       name = "#{array_name} #{count}"
       node = instance_double('Capybara::Node::Element', name)
       allow(node).to receive(:native)
       array << node
-      count += 1
     end
   end
 
