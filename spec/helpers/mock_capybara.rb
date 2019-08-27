@@ -9,6 +9,10 @@ module MockCapybara
       .with(*config).and_return(false)
   end
 
+  def find(node, *config, return_value)
+    allow(node).to receive(:find).with(*config).and_return(return_value)
+  end
+
   def visit_succeed(url)
     allow(session).to receive(:visit).with(url)
   end
@@ -30,7 +34,7 @@ module MockCapybara
 
   def create_node_array(array, size = 1)
     count = 0
-    size.times do
+    size.times do |count|
       name = "Element #{count}"
       array << instance_double('Capybara::Node::Element', name)
       count += 1
