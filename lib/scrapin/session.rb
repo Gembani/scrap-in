@@ -46,11 +46,11 @@ module ScrapIn
     end
 
     def threads
-      ScrapIn::Threads.new(@capybara)
+      ScrapIn::SalesNavigator::Threads.new(@capybara)
     end
 
     def sales_nav_threads
-      ScrapIn::SalesNavThreads.new(@capybara)
+      ScrapIn::SalesNavigator::Threads.new(@capybara)
     end
 
     def sales_nav_messages(thread_link)

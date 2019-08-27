@@ -74,7 +74,7 @@ RSpec.shared_examples "a popup open method" do
 end
 
 RSpec.describe ScrapIn::ScrapLead do
-  include Tools
+  include ScrapIn::Tools
   let(:session) { instance_double('Capybara::Session') }
   let(:sales_nav_url) { 'linkedin.com/sales/people/adsahsdfasd' }
   let(:config) do

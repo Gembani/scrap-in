@@ -9,6 +9,10 @@ module MockCapybara
       .with(*config).and_return(false)
   end
 
+  def find(node, *config, return_value)
+    allow(node).to receive(:find).with(*config).and_return(return_value)
+  end
+
   def visit_succeed(url)
     allow(session).to receive(:visit).with(url)
   end
@@ -26,5 +30,14 @@ module MockCapybara
     exception = "Unable to find field that is not disabled with placeholder #{placeholder}"
     allow(session).to receive(:find_field).with(placeholder: placeholder)
                                           .and_raise(Capybara::ElementNotFound, exception)
+  end
+
+  def create_node_array(array, size = 1)
+    count = 0
+    size.times do |count|
+      name = "Element #{count}"
+      array << instance_double('Capybara::Node::Element', name)
+      count += 1
+    end
   end
 end
