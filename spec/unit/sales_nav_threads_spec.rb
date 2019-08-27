@@ -23,7 +23,7 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
   let(:thread_name_array) { [] }
   let(:one_message_array) { [] }
 
-  include CssSelectors::Threads
+  include CssSelectors::SalesNavigator::Threads
   before do
     disable_puts_for_class(ScrapIn::SalesNavigator::Threads)
     disable_sleep_for_class(ScrapIn::SalesNavigator::Threads)
