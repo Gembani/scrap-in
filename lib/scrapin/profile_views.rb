@@ -13,22 +13,41 @@ module ScrapIn
 
     def execute(num_times = 50)
       visit_target_page(target_page)
-      search_for_leads(num_times) { |name, time_ago| yield name, time_ago }
+
+      search_for_leads(num_times) do |name, time_ago|
+        yield name, time_ago
+      end
+      true
     end
 
-    def search_for_leads(num_times, count = 1, not_a_lead = 0) 
-      while count <= num_times
-        i = not_a_lead + count
-        if @session.has_selector?(profile_view_css(i), wait: 1)
-          find_name_and_time_ago(i) { |name, time_ago| yield name, time_ago }
+    def search_for_leads(num_times)
+      count = 0
+      bad_profile_count = 0 # semi private or last element (informative element)
+      until count == num_times
+        position = bad_profile_count + count + 1
+        if profile_is_public(position)
+          item = find_profile_view(position)
+          yield name(item), time_ago(item)
           count += 1
-        elsif @session.has_selector?(semi_private_css(i), wait: 1)
-          not_a_lead += 1
         else
-          break if @session.all(last_element_css(i)).count == 1
-          not_a_lead += 1
+          bad_profile_count += 1
+          break if current_profile_is_last_element(position)
         end
       end
+    end
+
+    def find_profile_view(position)
+      item = check_and_find(@session, public_profile_css(position), wait: 1)
+      scroll_to(item)
+      item
+    end
+
+    def profile_is_public(position)
+      @session.has_selector?(public_profile_css(position), wait: 1)
+    end
+
+    def current_profile_is_last_element(position)
+      @session.has_selector?(last_element_css(position), wait: 1)
     end
 
     def visit_target_page(link)
@@ -36,14 +55,14 @@ module ScrapIn
       raise CssNotFound.new(viewers_list_css) unless @session.has_selector?(viewers_list_css)
     end
 
-    def find_name_and_time_ago(number)
-      item = @session.find(profile_view_css(number))
-      scroll_to(item)
-      name = item.find(name_css).text
-      time_ago = item.find(time_ago_css).text
-      return if name.empty?
-      yield name, time_ago
+    def name(item)
+      name = check_and_find(item, name_css).text
       @profile_viewed_by.push name
+      name
+    end
+
+    def time_ago(item)
+      check_and_find(item, time_ago_css).text
     end
 
     def target_page
