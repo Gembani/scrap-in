@@ -173,7 +173,7 @@ RSpec.describe ScrapIn do
       puts "#{count} -> #{name} , #{time_ago} ago."
       count += 1
     end
-    expect(profile_views.profile_viewed_by.length).to be <= n
+    expect(profile_views.profile_viewed_by.length).to eq(n)
   end
 
   it 'shows the profiles of up to 100 people who viewed our profile recently' do
@@ -184,6 +184,7 @@ RSpec.describe ScrapIn do
       puts "#{count} -> #{name} , #{time_ago} ago."
       count += 1
     end
+    byebug
     expect(profile_views.profile_viewed_by.length).to be <= n
   end
 
