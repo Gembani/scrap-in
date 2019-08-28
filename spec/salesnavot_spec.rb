@@ -231,6 +231,15 @@ RSpec.describe ScrapIn do
     end
   end
 
+  describe '#invite' do
+    it 'invite someone' do
+      lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
+      invite = @session.invite(lead_url)
+      value = invite.execute(lead_url)
+      expect(value).to be(true)
+    end
+  end
+
   context 'when a lead as an open conversation' do
     it 'scraps all messages from thread_url if the number of messages < scrap_value' do
       20.times do
