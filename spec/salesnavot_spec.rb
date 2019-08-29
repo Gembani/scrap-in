@@ -102,14 +102,31 @@ RSpec.describe ScrapIn do
     
     scrap = @session.scrap_lead(sales_nav_url: seb_link)
     data = scrap.to_hash
-    puts "Error: #{scrap.error}" unless scrap.error.empty?
+    # puts "Error: #{scrap.error}" unless scrap.error.empty?
 
     expect(data[:sales_nav_url]).not_to be_nil
-    expect(scrap[:name]).not_to be_nil
-    expect(scrap[:location]).not_to be_nil
-    expect(scrap[:emails].count).to be > 0
-    expect(scrap[:phones].count).to be > 0
-    expect(scrap[:links].count).to eq(0)
+    expect(data[:name]).not_to be_nil
+    expect(data[:location]).not_to be_nil
+    expect(data[:emails].count).to be > 0
+    expect(data[:phones].count).to be > 0
+    expect(data[:links].count).to eq(0)
+    byebug
+  end
+
+  it 'scraps location, phones, emails and website links for a lead' do
+    seb_link = 'https://www.linkedin.com/in/scebula/'
+    
+    scrap = @session.linkedin_scrap_lead(linkedin_url: seb_link)
+    data = scrap.to_hash
+    # puts "Error: #{scrap.error}" unless scrap.error.empty?
+
+    expect(data[:sales_nav_url]).not_to be_nil
+    expect(data[:name]).not_to be_nil
+    expect(data[:location]).not_to be_nil
+    expect(data[:emails].count).to be > 0
+    expect(data[:phones].count).to be > 0
+    expect(data[:links].count).to eq(0)
+    byebug
   end
 
   it 'scraps up to 40 leads names with pending invites' do
