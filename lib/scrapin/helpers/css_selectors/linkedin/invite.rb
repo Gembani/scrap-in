@@ -9,7 +9,7 @@ module CssSelectors
 				'.artdeco-button__text'
 			end
 
-			def more_button_css
+			def buttons_css
 				'.artdeco-button__text'
 			end
 
@@ -18,7 +18,7 @@ module CssSelectors
 			end
 
 			def send_now_button_css
-				'.artdeco-button artdeco-button--3 ml1'
+				'button.artdeco-button artdeco-button--3 ml1'
 			end
 
 			def confirm_invite_css

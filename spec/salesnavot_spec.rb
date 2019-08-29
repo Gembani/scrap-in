@@ -233,7 +233,8 @@ RSpec.describe ScrapIn do
 
   describe '#invite' do
     it 'invite someone' do
-      lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
+      # lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
+      lead_url = 'https://www.linkedin.com/in/thomas-pinaud-35941aa7/'
       invite = @session.invite(lead_url)
       value = invite.execute(lead_url)
       expect(value).to be(true)
