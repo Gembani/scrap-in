@@ -12,13 +12,16 @@ module ScrapIn
 				buttons = @session.all('.artdeco-button')
 				puts 'Search for Connect button'
 				connect_worked = click_connect(buttons)
-				byebug
+				# byebug
 				unless connect_worked
 					puts 'Connect not found. Search for More… button'
 					click_more(buttons)
 					puts 'Search for Connect button'
+					byebug
+					new_buttons = @session.all('.artdeco-button')
+					click_connect(new_buttons)
+				end
 				puts 'Search for Send now button'
-				new_buttons = @session.all('.artdeco-button')
 				click_send_now(new_buttons)
 				true
 			end
@@ -33,7 +36,7 @@ module ScrapIn
 				end
 				return false
 			end
-			
+	
 			def click_more(buttons)
 				buttons.each do |button|
 					if button.text == 'More…'
