@@ -7,22 +7,25 @@ module ScrapIn
         @session = session
 			end
 			
-			def execute(lead_url)
+			def execute(lead_url, *note)
 				visit_lead_url(lead_url)
-				buttons = @session.all('.artdeco-button')
+				buttons = check_and_find_all(@session, buttons_css)
 				puts 'Search for Connect button'
 				connect_worked = click_connect(buttons)
-				# byebug
 				unless connect_worked
 					puts 'Connect not found. Search for More… button'
 					click_more(buttons)
 					puts 'Search for Connect button'
-					byebug
-					new_buttons = @session.all('.artdeco-button')
-					click_connect(new_buttons)
+					check_and_find_all(@session, connect_in_more_button_css, visible: false)[3].click
 				end
 				puts 'Search for Send now button'
-				click_send_now(new_buttons)
+				new_buttons = check_and_find_all(@session, buttons_css)
+				byebug
+				if note.empty?
+					click_send_now(new_buttons)
+				else
+					click_add_note(new_buttons)
+				end
 				true
 			end
 			
@@ -53,6 +56,17 @@ module ScrapIn
 					if button.text == 'Send now'
 						button.click
 						puts 'Clicked on Send now'
+						return true
+					end
+				end
+				return false
+			end
+
+			def click_add_note(buttons)
+				buttons.each do |button|
+					if button.text == 'Add a note'
+						button.click
+						puts 'Clicked on Add a note'
 						return true
 					end
 				end

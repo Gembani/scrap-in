@@ -232,12 +232,22 @@ RSpec.describe ScrapIn do
   end
 
   describe '#invite' do
-    it 'invite someone' do
-      # lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
-      lead_url = 'https://www.linkedin.com/in/de-rekeneire-benoit-forbo/'
-      invite = @session.invite(lead_url)
-      value = invite.execute(lead_url)
-      expect(value).to be(true)
+    context 'Connect button is visible and no note is added' do
+      it 'invite the lead' do
+        lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
+        invite = @session.invite(lead_url)
+        value = invite.execute(lead_url)
+        expect(value).to be(true)
+      end
+    end
+    
+    context 'Connect button is in \'More...\' section and no note is added' do
+      it 'invite the lead' do
+        lead_url = 'https://www.linkedin.com/in/scrap-in-b72a77192/'
+        invite = @session.invite(lead_url)
+        value = invite.execute(lead_url)
+        expect(value).to be(true)
+      end
     end
   end
 
