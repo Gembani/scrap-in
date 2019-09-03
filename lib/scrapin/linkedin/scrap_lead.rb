@@ -1,6 +1,6 @@
 module ScrapIn
   module LinkedIn
-    
+    # Goes to lead profile and scrap his phones, emails and websites on LinkedIn
     class ScrapLead
       include Tools
       include CssSelectors::LinkedIn::ScrapLead
@@ -23,7 +23,6 @@ module ScrapIn
       end
       
       def to_hash
-        byebug
         {
           name: name,
           location: location,
@@ -34,7 +33,7 @@ module ScrapIn
 
       def scrap_datas
         data = {}
-        %w[phone links emails].each do |name|
+        %w[phones links emails].each do |name|
           data[name.to_sym] = method("scrap_#{name}").call
         end
         data
@@ -50,7 +49,7 @@ module ScrapIn
         check_and_find(@session, location_css, wait: 5).text
       end
 
-      def first_degree?
+      def first_degree? # We expect the user to only scrap 1st degree leads
         close_popup
         check_and_find(@session, degree_css, wait: 5).text
       end
@@ -58,7 +57,8 @@ module ScrapIn
       def scrap_emails
         open_popup
         email_list = []
-        email = check_and_find(@session, emails_css, wait: 5).text
+        return email_list unless @session.has_selector?(emails_css, wait: 5)
+        email = @session.find(emails_css, wait: 5).text
         email_list << email
         email_list
       end
@@ -66,17 +66,20 @@ module ScrapIn
       def scrap_links
         open_popup
         links_list = []
-        websites = check_and_find_all(@session, websites_css, wait: 5)
-        websites.each_with_index do |link, index|
+        return links_list unless @session.has_selector?(websites_css, wait: 5)
+        websites = @session.all(websites_css, wait: 5)
+        websites.each_with_index do |_link, index|
           links_list << websites[index].text.split[0]
         end
         links_list
       end
 
-      def scrap_phone
+      def scrap_phones
         open_popup
-        phone = []
-        phone << check_and_find_first(@session, phone_css, wait: 5).text
+        phones = []
+        return phones unless @session.has_selector?(phone_css, wait: 5)
+        phones << @session.first(phone_css, wait: 5).text
+        phones
       end
 
       private
