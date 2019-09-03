@@ -19,12 +19,17 @@ module ScrapIn
 					check_and_find_all(@session, connect_in_more_button_css, visible: false)[3].click
 				end
 				puts 'Search for Send now button'
-				new_buttons = check_and_find_all(@session, buttons_css)
-				byebug
+				buttons_popup = check_and_find_all(@session, buttons_css)
 				if note.empty?
-					click_button(new_buttons, 'Send now')
+					click_button(buttons_popup, 'Send now')
 				else
-					click_button(new_buttons, 'Add a note')
+					click_button(buttons_popup, 'Add a note')
+					input_note_area = check_and_find(@session, note_area_css)
+					input_note_area.send_keys(note)
+					puts 'Sending invitation message'
+					new_buttons_popup = check_and_find_all(@session, buttons_css)
+					click_button(new_buttons_popup, 'Send invitation')
+					puts 'Message sent'
 				end
 				true
 			end

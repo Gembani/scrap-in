@@ -8,6 +8,10 @@ module CssSelectors
 			def connect_in_more_button_css
 				'span.display-flex.t-normal.pv-s-profile-actions__label'
 			end
+
+			def note_area_css
+				'.send-invite__custom-message'
+			end
 		end
 	end
 end
