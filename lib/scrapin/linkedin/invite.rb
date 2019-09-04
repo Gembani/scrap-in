@@ -31,7 +31,8 @@ module ScrapIn
 					click_button(new_buttons_popup, 'Send invitation')
 					puts 'Message sent'
 				end
-				true
+				return true if check_and_find(@session, confirm_sending_css)
+				false
 			end
 			
 			def click_button(buttons_array, button_name)

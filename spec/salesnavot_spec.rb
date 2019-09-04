@@ -243,7 +243,7 @@ RSpec.describe ScrapIn do
     
     context 'Connect button is in \'More...\' section and no note is added' do
       it 'invite the lead' do
-        lead_url = 'https://www.linkedin.com/in/scrap-notconnected-870513192/'
+        lead_url = 'https://www.linkedin.com/in/nenad-akanovic-460aa9174/'
         invite = @session.invite(lead_url)
         value = invite.execute(lead_url)
         expect(value).to be(true)
@@ -262,7 +262,7 @@ RSpec.describe ScrapIn do
 
     context 'Connect button is in \'More...\' section and a note is added' do
       it 'invite the lead with a message' do
-        lead_url = 'https://www.linkedin.com/in/scrap-notconnected-870513192/'
+        lead_url = 'https://www.linkedin.com/in/nenad-akanovic-460aa9174/'
         note = 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.'
         invite = @session.invite(lead_url, note)
         value = invite.execute(lead_url, note)

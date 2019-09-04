@@ -12,6 +12,10 @@ module CssSelectors
 			def note_area_css
 				'.send-invite__custom-message'
 			end
+
+			def confirm_sending_css
+				'.mn-heathrow-org-toast__icon--success'
+			end
 		end
 	end
 end
