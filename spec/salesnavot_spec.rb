@@ -125,7 +125,7 @@ RSpec.describe ScrapIn do
     expect(data[:location]).not_to be_nil
     expect(data[:emails].count).to be > 0
     expect(data[:phones].count).to be > 0
-    expect(data[:links].count).to eq(0)
+    expect(data[:links].count).to eq(1)
     byebug
   end
 
@@ -141,7 +141,7 @@ RSpec.describe ScrapIn do
     expect(data[:location]).not_to be_nil
     expect(data[:emails].count).to be > 0
     expect(data[:phones].count).to be > 0
-    expect(data[:links].count).to eq(0)
+    expect(data[:links].count).to eq(2)
     byebug
   end
 
