@@ -38,7 +38,6 @@ module MockCapybara
     size.times do |count|
       name = "#{array_name} #{count}"
       node = instance_double('Capybara::Node::Element', name)
-      allow(node).to receive(:native)
       array << node
     end
   end
