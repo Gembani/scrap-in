@@ -8,6 +8,7 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 	let(:lead_url) { 'lead_url' }
 	let(:note) { 'notenotenotenotenote' }
 	let(:invite_instance) { subject.new(session, lead_url) }
+	let(:buttons_array) { [] }
 
 	
 	include CssSelectors::LinkedIn::Invite
@@ -15,9 +16,11 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 	before do
 		disable_puts_for_class(ScrapIn::LinkedIn::Invite)
 		
+		# create_node_array(buttons_array, 5)
+
 		allow(session).to receive(:visit).with(lead_url)
 		has_selector(session, buttons_css)
-		allow(session).to receive(:all).with()
+		allow(session).to receive(:all).with(buttons_css).and_return(buttons_array)
 	end
 
 	describe '.initialize' do
