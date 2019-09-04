@@ -3,18 +3,32 @@
 require 'spec_helper'
 
 RSpec.describe ScrapIn::LinkedIn::Invite do
-	let(:subject) do
-		described_class
+	let(:subject) { described_class }
+	let(:session) { instance_double('Capybara::Session') }
+	let(:lead_url) { 'lead_url' }
+	let(:note) { 'notenotenotenotenote' }
+	let(:invite_instance) { subject.new(session, lead_url) }
+
+	
+	include CssSelectors::LinkedIn::Invite
+	
+	before do
+		disable_puts_for_class(ScrapIn::LinkedIn::Invite)
+		
+		allow(session).to receive(:visit).with(lead_url)
+		has_selector(session, buttons_css)
+		allow(session).to receive(:all).with()
 	end
 
-	let(:invite_instance) do
-		subject.new(session)
+	describe '.initialize' do
+    it { is_expected.to eq ScrapIn::LinkedIn::Invite }
 	end
-
+	
 	describe '.execute' do
-		context 'try it' do
-			it 'should do something' do
-				expect(0).to eq(0)
+		context 'everything is ok in order to invite someone with a note' do
+			it 'succesfully invites someone' do
+				result = invite_instance.execute(lead_url, note)
+				expect(result).to eq(true)
 			end
 		end
 	end
