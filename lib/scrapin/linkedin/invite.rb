@@ -7,7 +7,7 @@ module ScrapIn
         @session = session
 			end
 			
-			def execute(lead_url, *note)
+			def execute(lead_url, note = '')
 				visit_lead_url(lead_url)
 				buttons = check_and_find_all(@session, buttons_css)
 				puts 'Search for Connect button'
@@ -31,7 +31,7 @@ module ScrapIn
 					click_button(new_buttons_popup, 'Send invitation')
 					puts 'Message sent'
 				end
-				return true if check_and_find(@session, confirm_sending_css)
+				return true if check_and_find(@session, 'span', text: confirmation_text)
 				false
 			end
 			
