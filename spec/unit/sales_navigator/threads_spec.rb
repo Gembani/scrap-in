@@ -60,7 +60,7 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
 
     has_selector(session, threads_list_css)
 
-    find(session, threads_list_css, threads_list)
+    find(session, threads_list, threads_list_css)
 
     has_selector(threads_list, loaded_threads_css, wait: 5)
     allow(threads_list).to receive(:all).with(loaded_threads_css, wait: 5).and_return(loaded_threads_array)

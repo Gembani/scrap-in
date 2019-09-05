@@ -10,7 +10,7 @@ module MockCapybara
       .with(*config).and_return(false)
   end
 
-  def find(node, *config, return_value)
+  def find(node, return_value, *config)
     allow(node).to receive(:find).with(*config).and_return(return_value)
   end
 
