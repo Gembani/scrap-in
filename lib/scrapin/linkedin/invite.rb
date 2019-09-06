@@ -31,7 +31,7 @@ module ScrapIn
 					click_button(new_buttons_popup, 'Send invitation')
 					puts 'Message sent'
 				end
-				return true if check_and_find(@session, 'span', text: confirmation_text)
+				return true if @session.find('span', text: confirmation_text)
 				false
 			end
 			

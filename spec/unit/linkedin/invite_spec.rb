@@ -32,6 +32,7 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 		
 		buttons_array.each do | button |
 			allow(button).to receive(:text)
+			allow(button).to receive(:click)
 		end
 
 		allow(session).to receive(:all).with(connect_in_more_button_css, visible: false).and_return(more_buttons_array)
@@ -56,6 +57,24 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 			end
 		end
 
+		context 'everything is ok in order to invite someone without a note' do
+			it 'succesfully invites someone' do
+				result = invite_instance.execute(lead_url)
+				expect(result).to eq(true)
+			end
+		end
+
+		context 'the confirmation message was not found' do
+			before do
+				has_not_selector(session, 'span', text: confirmation_text)
+				allow(session).to receive(:find).with('span', text: confirmation_text).and_return(false)
+			end
+			it 'did not send the invitation' do
+				result = invite_instance.execute(lead_url)
+				expect(result).to eq(false)
+			end
+		end
+
 		context 'the selector for buttons was not found' do
       before { has_not_selector(session, buttons_css) }
       it do
@@ -65,7 +84,7 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
       it do
         expect { invite_instance.execute(lead_url, note) }
           .to raise_error(/#{buttons_css}/)
-      end
+			end
 		end
 		
 		context 'the selector for connect in more button was not found' do
@@ -92,16 +111,16 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
       end
 		end
 		
-		context 'the selector for confirmation text was not found' do
-      before { has_not_selector(session, 'span', text: confirmation_text) }
-      it do
-        expect { invite_instance.execute(lead_url, note) }
-          .to raise_error(ScrapIn::CssNotFound)
-      end
-      it do
-        expect { invite_instance.execute(lead_url, note) }
-          .to raise_error(/span/)
-      end
-    end
+		# context 'the selector for confirmation text was not found' do
+    #   before { has_not_selector(session, 'span', text: confirmation_text) }
+    #   it do
+    #     expect { invite_instance.execute(lead_url, note) }
+    #       .to raise_error(ScrapIn::CssNotFound)
+    #   end
+    #   it do
+    #     expect { invite_instance.execute(lead_url, note) }
+    #       .to raise_error(/span/)
+    #   end
+    # end
 	end
 end
