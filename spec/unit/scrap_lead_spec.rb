@@ -92,7 +92,7 @@ RSpec.describe ScrapIn::ScrapLead do
       it_behaves_like "a popup closed method" do
         before do
           has_selector(session, name_css) 
-          allow(name_div).to receive(:text).with(no_args).and_return("LinkedIn asdfa")
+          allow(name_div).to receive(:text).with(no_args).and_return("LinkedIn Member")
           allow(session).to receive(:find).with(name_css).and_return(name_div)
         end
         let(:run) do
