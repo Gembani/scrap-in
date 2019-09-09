@@ -31,7 +31,7 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 		allow(session).to receive(:all).with(buttons_css).and_return(buttons_array)
 		
 		buttons_array.each do | button |
-			allow(button).to receive(:text)
+			allow(button).to receive(:text).and_return('More…')
 			allow(button).to receive(:click)
 		end
 
@@ -111,16 +111,4 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
       end
 		end
 		
-		# context 'the selector for confirmation text was not found' do
-    #   before { has_not_selector(session, 'span', text: confirmation_text) }
-    #   it do
-    #     expect { invite_instance.execute(lead_url, note) }
-    #       .to raise_error(ScrapIn::CssNotFound)
-    #   end
-    #   it do
-    #     expect { invite_instance.execute(lead_url, note) }
-    #       .to raise_error(/span/)
-    #   end
-    # end
-	end
 end
