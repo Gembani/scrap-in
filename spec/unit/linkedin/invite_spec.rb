@@ -110,5 +110,5 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
           .to raise_error(/#{note_area_css}/)
       end
 		end
-		
+	end
 end

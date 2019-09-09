@@ -13,10 +13,6 @@ module CssSelectors
 				'.send-invite__custom-message'
 			end
 
-			def confirm_sending_css
-				'.mn-heathrow-org-toast__icon--success'
-			end
-
 			def confirmation_text
 				'Your invitation to'
 			end
