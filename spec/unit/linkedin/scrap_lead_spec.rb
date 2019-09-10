@@ -77,15 +77,6 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
     end
   end
 
-  # describe 'warning when use execute' do
-  #   before { allow(subject).to receive(:warn).with("[DEPRECATION] `execute` is deprecated. This call can safely be removed") }
-  #   before do
-  #   allow(subject).to receive(:warn).and_call_original
-  #     subject.execute
-  #   end
-  #   it { expect(Kernel).to have_received(:warn).with("[DEPRECATION] `execute` is deprecated. This call can safely be removed") }
-  # end
-
   context 'when the informations need to be scraped on the profile lead\'s page' do
     context 'when on the lead\'s info page' do
       before do
