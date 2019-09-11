@@ -13,6 +13,10 @@ module CssSelectors
       def message_button_css
         'button.pv-s-profile-actions--message'
       end
+
+      def sent_message_css
+        '.msg-s-event-listitem p'
+      end
     end
   end
 end

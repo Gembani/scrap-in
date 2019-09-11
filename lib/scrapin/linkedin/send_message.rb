@@ -25,7 +25,6 @@ module ScrapIn
 
         @session.visit(@profile)
         time = 0
-        byebug
         while check_and_find_all(@session, message_button_css).count.zero?
           puts 'sleeping'
           sleep(0.2)
@@ -58,9 +57,7 @@ module ScrapIn
 
       def message_sent?
         puts 'Checking the message has been sent...'
-        byebug
-        if check_and_find_all(@session, '.msg-s-event-listitem p')[-1].text == @message
-          byebug
+        if check_and_find_all(@session, sent_message_css)[-1].text == @message
           puts 'Confirmed'
           return true
         else
