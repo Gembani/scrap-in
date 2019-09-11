@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ScrapIn::Invite do
+RSpec.describe ScrapIn::SalesNavigator::Invite do
   include ScrapIn::Tools
   let(:invite) do
     described_class.new(sales_nav_url, session, content)
@@ -23,7 +23,7 @@ RSpec.describe ScrapIn::Invite do
 
   describe 'Initializer' do
     subject { described_class }
-    it { is_expected.to eq ScrapIn::Invite }
+    it { is_expected.to eq ScrapIn::SalesNavigator::Invite }
   end
 
   describe 'instance of described class' do

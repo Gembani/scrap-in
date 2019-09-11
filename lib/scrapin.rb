@@ -14,6 +14,7 @@ require 'scrapin/helpers/css_selectors/linkedin/scrap_lead.rb'
 
 require 'scrapin/helpers/css_selectors/sales_navigator/messages.rb'
 require 'scrapin/helpers/css_selectors/sales_navigator/threads.rb'
+require 'scrapin/helpers/css_selectors/linkedin/invite.rb'
 
 require 'scrapin/errors/captcha_error'
 require 'scrapin/errors/css_not_found'
@@ -26,10 +27,12 @@ require 'scrapin/linkedin/scrap_lead'
 
 require 'scrapin/sales_navigator/auth'
 require 'scrapin/sales_navigator/messages'
+require 'scrapin/sales_navigator/invite'
+
 
 require 'capybara/dsl'
 require 'scrapin/driver'
-require 'scrapin/invite'
+require 'scrapin/linkedin/invite'
 require 'scrapin/friends'
 require 'scrapin/linkedin_data_from_name'
 require 'scrapin/linkedin_salesnav_converter'
