@@ -50,7 +50,7 @@ module ScrapIn
     end
 
     def send_inmail(profile_url, subject, message)
-      ScrapIn::SendInmail.new(@capybara, profile_url, subject, message)
+      ScrapIn::SalesNavigator::SendInmail.new(@capybara, profile_url, subject, message)
     end
 
     def threads
