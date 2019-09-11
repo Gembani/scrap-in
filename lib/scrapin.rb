@@ -23,6 +23,8 @@ require 'scrapin/sales_navigator/css_selectors/auth'
 
 require 'scrapin/sales_navigator/auth'
 require 'scrapin/sales_navigator/messages'
+require 'scrapin/sales_navigator/invite'
+
 
 require 'capybara/dsl'
 require 'scrapin/driver'
