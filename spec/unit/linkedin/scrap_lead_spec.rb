@@ -8,7 +8,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
   let(:info_url) { linkedin_url + 'detail/contact-info/' }
   let(:config) do
     {
-    linkedin_url: linkedin_url
+      linkedin_url: linkedin_url
     }
   end
   let(:subject) do
@@ -55,7 +55,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
 
     has_selector(session, websites_css, wait: 5)
     allow(session).to receive(:all).with(websites_css, wait: 5).and_return(links_array)
-    create_node_array(links_array, 9, "links")
+    create_node_array(links_array, 9, 'links')
     links_array.each_with_index do |link, index|
       allow(link).to receive(:text).and_return(links[index])
     end
@@ -77,7 +77,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
     end
   end
 
-  context 'when the informations need to be scraped on the profile lead\'s page' do
+  context 'when the informations need to be scraped on the lead\'s page' do
     context 'when on the lead\'s info page' do
       before do
         allow(session).to receive(:current_url).and_return(info_url)
@@ -101,8 +101,8 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
 
       context 'when no name_css' do
         before { has_not_selector(session, name_css, wait: 5) }
-        it { expect{ subject.name }.to raise_error(/#{name_css}/) }
-        it { expect{ subject.name }.to raise_error(ScrapIn::CssNotFound) }
+        it { expect { subject.name }.to raise_error(/#{name_css}/) }
+        it { expect { subject.name }.to raise_error(ScrapIn::CssNotFound) }
       end
 
       context 'when want the name' do
@@ -111,8 +111,8 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
 
       context 'when no location_css' do
         before { has_not_selector(session, location_css, wait: 5) }
-        it { expect{ subject.location }.to raise_error(/#{location_css}/) }
-        it { expect{ subject.location }.to raise_error(ScrapIn::CssNotFound) }
+        it { expect { subject.location }.to raise_error(/#{location_css}/) }
+        it { expect { subject.location }.to raise_error(ScrapIn::CssNotFound) }
       end
 
       context 'when want the location' do
@@ -121,8 +121,8 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
 
       context 'when no degree_css' do
         before { has_not_selector(session, degree_css, wait: 5) }
-        it { expect{ subject.first_degree? }.to raise_error(/#{degree_css}/) }
-        it { expect{ subject.first_degree? }.to raise_error(ScrapIn::CssNotFound) }
+        it { expect { subject.first_degree? }.to raise_error(/#{degree_css}/) }
+        it { expect { subject.first_degree? }.to raise_error(ScrapIn::CssNotFound) }
       end
 
       context 'when want the degree' do
@@ -131,12 +131,11 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
     end
   end
 
-  context 'when the informations need to be scraped on the profile lead\'s info page' do
+  context 'when the informations need to be scraped on the lead\'s info page' do
     context 'when on the lead\'s page' do
       before do
         allow(session).to receive(:current_url).and_return(linkedin_url)
         allow(session).to receive(:visit).with(info_url).and_return(true)
-        config = info_url
         subject.scrap_emails
       end
       it 'visits info page' do
@@ -191,32 +190,31 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
     end
 
     it {
-      expect(subject.scrap_datas).to eq({
+      expect(subject.scrap_datas).to eq(
         phones: [phone_number],
         links: [links],
         emails: [email]
-      })
+      )
     }
   end
 
   describe '.to_hash' do
-    let(:scrap_datas) { {scrap: 'datas'} }
+    let(:scrap_datas) { { scrap: 'datas' } }
     before do
       allow(subject).to receive(:name).and_return(name)
       allow(subject).to receive(:location).and_return(location)
       allow(subject).to receive(:first_degree?).and_return(degree)
       allow(subject).to receive(:scrap_datas).and_return(scrap_datas)
     end
-    
+
     it {
-      expect(subject.to_hash).to eq({
+      expect(subject.to_hash).to eq(
         linkedin_url: linkedin_url,
         name: name,
         location: location,
         first_degree: degree,
-        scrap: 'datas'})
+        scrap: 'datas'
+      )
     }
   end
 end
-
-# subject.instance_variable_set(:@popup_open, true)
