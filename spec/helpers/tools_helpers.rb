@@ -1,6 +1,6 @@
 module ToolsHelpers
   def disable_puts_for_class(class_name)
-    allow_any_instance_of(described_class).to receive(:puts)
+    allow_any_instance_of(Kernel).to receive(:puts)
   end
 
   def disable_method(name)

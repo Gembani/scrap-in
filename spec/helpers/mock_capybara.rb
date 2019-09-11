@@ -10,7 +10,7 @@ module MockCapybara
       .with(*config).and_return(false)
   end
 
-  def find(node, *config, return_value)
+  def find(node, return_value, *config)
     allow(node).to receive(:find).with(*config).and_return(return_value)
   end
 
@@ -38,7 +38,6 @@ module MockCapybara
     size.times do |count|
       name = "#{array_name} #{count}"
       node = instance_double('Capybara::Node::Element', name)
-      allow(node).to receive(:native)
       array << node
     end
   end

@@ -10,6 +10,8 @@ require 'scrapin/helpers/css_selectors/send_inmail.rb'
 require 'scrapin/helpers/css_selectors/send_message.rb'
 require 'scrapin/helpers/css_selectors/sent_invites'
 
+require 'scrapin/helpers/css_selectors/linkedin/scrap_lead.rb'
+
 require 'scrapin/helpers/css_selectors/sales_navigator/messages.rb'
 require 'scrapin/helpers/css_selectors/sales_navigator/threads.rb'
 
@@ -19,6 +21,8 @@ require 'scrapin/errors/lead_is_friend'
 require 'scrapin/errors/out_of_network_error'
 
 require 'scrapin/sales_navigator/css_selectors/auth'
+
+require 'scrapin/linkedin/scrap_lead'
 
 require 'scrapin/sales_navigator/auth'
 require 'scrapin/sales_navigator/messages'
