@@ -33,6 +33,9 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
     allow(session).to receive(:has_selector?).and_return(true)
 
     create_node_array(message_thread_elements, 5, 'message_thread_elements') # Create empty conversation thread
+    message_thread_elements.each do |node|
+      allow(node).to receive(:native) # Method used by scroll_down_to
+    end
     create_node_array(sales_loaded_messages, 1, 'sales_loaded_messages') # Create at least one message to load
     # otherwise infinite loop to load conversation
     create_conversation(message_thread_elements) # Create a conversation in an array with messages and senders
@@ -75,6 +78,9 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
       context 'when need to load more messages' do
         before do
           create_node_array(bigger_conversation, 10)
+          bigger_conversation.each do |node|
+            allow(node).to receive(:native) # Method used by scroll_down_to
+          end
           create_conversation(bigger_conversation)
           allow(message_thread).to receive(:all)
             .with(message_thread_elements_css, wait: 5)

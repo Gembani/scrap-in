@@ -1,6 +1,6 @@
 module CssSelectors
   module SalesNavigator
-    # All css selectors used in ScrapIn::Invite Class
+    # All css selectors used in ScrapIn::Messages Class
     module Messages
       def sales_messages_css
         '.thread-container'

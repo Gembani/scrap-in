@@ -1,5 +1,5 @@
 # Helpers for SalesNavMessages unit tests
-module SalesNavMessagesHelpers
+module MessagesHelpers
   def message_content(count)
     "Message content #{count}"
   end
