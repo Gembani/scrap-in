@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe ScrapIn::SendInmail do
+RSpec.describe ScrapIn::SalesNavigator::SendInmail do
   let(:subject) do
     described_class
   end
@@ -20,7 +20,7 @@ RSpec.describe ScrapIn::SendInmail do
   include CssSelectors::SendInmail
   before do
     # For more clear results without all the logs
-    disable_puts_for_class(ScrapIn::SendInmail)
+    disable_puts_for_class(ScrapIn::SalesNavigator::SendInmail)
 
     # Mocking (you can see all the methods in spec/unit/helpers/send_inmail_helpers.rb)
     visit_succeed(profile_url)
@@ -34,7 +34,7 @@ RSpec.describe ScrapIn::SendInmail do
   end
 
   describe '.initialize' do
-    it { is_expected.to eq ScrapIn::SendInmail }
+    it { is_expected.to eq ScrapIn::SalesNavigator::SendInmail }
   end
 
   describe '.execute' do
