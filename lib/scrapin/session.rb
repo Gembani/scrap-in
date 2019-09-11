@@ -20,7 +20,11 @@ module ScrapIn
     end
 
     def invite(sales_nav_profile_link, content)
-      ScrapIn::Invite.new(sales_nav_profile_link, @capybara, content)
+      ScrapIn::SalesNavigator::Invite.new(sales_nav_profile_link, @capybara, content)
+    end
+
+    def linkedin_invite(lead_url, *note)
+      ScrapIn::LinkedIn::Invite.new(@capybara, lead_url)
     end
 
     def convert_linkedin_to_salesnav(linkedin_url)

@@ -264,6 +264,46 @@ RSpec.describe ScrapIn do
     end
   end
 
+  describe '#invite' do
+    context 'Connect button is visible and no note is added' do
+      it 'invite the lead' do
+        lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
+        invite = @session.invite(lead_url)
+        value = invite.execute(lead_url)
+        expect(value).to be(true)
+      end
+    end
+    
+    context 'Connect button is in \'More...\' section and no note is added' do
+      it 'invite the lead' do
+        lead_url = 'https://www.linkedin.com/in/nenad-akanovic-460aa9174/'
+        invite = @session.invite(lead_url)
+        value = invite.execute(lead_url)
+        expect(value).to be(true)
+      end
+    end
+
+    context 'Connect button is visible and a note is added' do
+      it 'invite the lead with a message' do
+        lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
+        note = 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.'
+        invite = @session.invite(lead_url, note)
+        value = invite.execute(lead_url, note)
+        expect(value).to be(true)
+      end
+    end
+
+    context 'Connect button is in \'More...\' section and a note is added' do
+      it 'invite the lead with a message' do
+        lead_url = 'https://www.linkedin.com/in/nenad-akanovic-460aa9174/'
+        note = 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.'
+        invite = @session.invite(lead_url, note)
+        value = invite.execute(lead_url, note)
+        expect(value).to be(true)
+      end
+    end
+  end
+
   context 'when a lead as an open conversation' do
     it 'scraps all messages from thread_url if the number of messages < scrap_value' do
       20.times do

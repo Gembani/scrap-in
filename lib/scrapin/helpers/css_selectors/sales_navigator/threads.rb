@@ -1,5 +1,5 @@
 module CssSelectors
-  # All css selectors used in ScrapIn::Invite Class
+  # All css selectors used in ScrapIn::Threads Class
   module SalesNavigator
     module Threads
       def threads_list_css
