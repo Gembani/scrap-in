@@ -2,8 +2,8 @@ module ScrapIn
   # Capybara Session
   class Session
     def initialize(username, password)
-      # Capybara.default_max_wait_time = 10 # Seconds
-      Capybara.default_max_wait_time = 60 # Seconds
+      Capybara.default_max_wait_time = 10 # Seconds
+      # Capybara.default_max_wait_time = 60 # Seconds
 
       @capybara = Capybara::Session.new(ENV.fetch('driver').to_sym)
       # @capybara.driver.browser.manage.window.resize_to(1920, 1080)
@@ -45,8 +45,8 @@ module ScrapIn
       object.execute(name)
     end
 
-    def send_message(profile, message)
-      ScrapIn::SendMessage.new(@capybara, profile, message)
+    def linkedin_send_message(profile, message)
+      ScrapIn::LinkedIn::SendMessage.new(@capybara, profile, message)
     end
 
     def send_inmail(profile_url, subject, message)
