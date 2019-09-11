@@ -29,6 +29,7 @@ require 'scrapin/sales_navigator/auth'
 require 'scrapin/sales_navigator/invite'
 require 'scrapin/sales_navigator/messages'
 require 'scrapin/sales_navigator/send_inmail'
+require 'scrapin/sales_navigator/threads'
 
 require 'capybara/dsl'
 require 'scrapin/driver'
@@ -45,7 +46,6 @@ require 'scrapin/sent_invites'
 require 'scrapin/session'
 require 'scrapin/sales_navigator/threads'
 require 'scrapin/thread_from_name'
-require 'scrapin/threads'
 
 # Our gem which will pull informations from Linkedin
 module ScrapIn
