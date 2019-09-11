@@ -24,6 +24,7 @@ require 'scrapin/errors/out_of_network_error'
 require 'scrapin/sales_navigator/css_selectors/auth'
 
 require 'scrapin/linkedin/scrap_lead'
+require 'scrapin/linkedin/threads'
 
 require 'scrapin/sales_navigator/auth'
 require 'scrapin/sales_navigator/invite'
@@ -44,7 +45,6 @@ require 'scrapin/search'
 require 'scrapin/send_message'
 require 'scrapin/sent_invites'
 require 'scrapin/session'
-require 'scrapin/sales_navigator/threads'
 require 'scrapin/thread_from_name'
 
 # Our gem which will pull informations from Linkedin
