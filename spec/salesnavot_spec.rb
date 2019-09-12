@@ -220,13 +220,13 @@ RSpec.describe ScrapIn do
   end
 
   describe '#linkedin_threads' do
-    it 'wants to scrap 500 threads but there is less open conversations' do
+    xit 'wants to scrap 500 threads but there is less open conversations' do
       count = 0
       @session.linkedin_threads.execute(500) do |name, thread|
         puts "#{name}, #{thread}"
         count += 1
       end
-      expect(count).to be < 100
+      expect(count).to be < 500
     end
 
     it 'scraps 10 threads, does not need to scroll down to load older conversations' do

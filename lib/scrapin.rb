@@ -15,6 +15,7 @@ require 'scrapin/helpers/css_selectors/linkedin/scrap_lead.rb'
 require 'scrapin/helpers/css_selectors/sales_navigator/messages.rb'
 require 'scrapin/helpers/css_selectors/sales_navigator/threads.rb'
 require 'scrapin/helpers/css_selectors/linkedin/invite.rb'
+require 'scrapin/helpers/css_selectors/linkedin/threads.rb'
 
 require 'scrapin/errors/captcha_error'
 require 'scrapin/errors/css_not_found'
