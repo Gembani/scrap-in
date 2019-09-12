@@ -63,7 +63,7 @@ RSpec.describe ScrapIn::ProfileViews do
       it 'stops the research and raise error' do
         expect do
           profile_views.execute
-        end.to raise_error(css_error(viewers_list_css))
+        end.to raise_error(/#{viewers_list_css}/)
       end
     end
   end

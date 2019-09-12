@@ -27,7 +27,7 @@ module ScrapIn
 
     def visit_target_page
       @session.visit(@linked_url)
-      raise css_error(sales_nav_button_css) unless @session.has_selector?(sales_nav_button_css)
+      raise CssNotFound.new(sales_nav_button_css) unless @session.has_selector?(sales_nav_button_css)
     end
 
   end

@@ -91,7 +91,7 @@ module ScrapIn
     end
 
     def ensure_leads_are_loaded
-      raise css_error(name_css) unless @session.has_selector?(name_css)
+      raise CssNotFound.new(name_css) unless @session.has_selector?(name_css)
     end
 
     def find_leads_size_on_page
