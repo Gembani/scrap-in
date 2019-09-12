@@ -17,7 +17,7 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 	include CssSelectors::LinkedIn::Invite
 	
 	before do
-		disable_puts_for_class(ScrapIn::LinkedIn::Invite)
+		disable_puts_for_class
 
 		create_node_array(buttons_array, 5)
 		create_node_array(more_buttons_array, 5)
