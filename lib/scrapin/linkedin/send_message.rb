@@ -49,7 +49,7 @@ module ScrapIn
 
       def send_message
         puts 'Sending message...'
-        find_and_click(send_button_css)
+        find_and_click(@session, send_button_css)
         puts 'Message has been sent.'
         # check, for now we suppose the message has been sent correctly
         true

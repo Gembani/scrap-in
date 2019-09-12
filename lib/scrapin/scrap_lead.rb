@@ -121,7 +121,7 @@ module ScrapIn
     def open_popup 
       go_to_url
       return false if @popup_open 
-      find_and_click(infos_css)
+      find_and_click(@session, infos_css)
       @popup_open = true
     end
 
