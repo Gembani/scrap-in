@@ -203,7 +203,7 @@ RSpec.describe ScrapIn do
   end
 
   it ' sends a message from linkedin profile to a lead' do
-    send_message = @session.send_message('https://www.linkedin.com/in/scebula/',
+    send_message = @session.linkedin_send_message('https://www.linkedin.com/in/scebula/',
                                          'Hi, this is a test message at ' +
                                          Time.now.strftime('%H:%M:%S').to_s +
                                          '. Thanks!')

@@ -15,11 +15,11 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
     described_class.new(config, session)
   end
 
-  let(:name_node) { instance_double('Capybara::Node::Element') }
+  let(:name_node) { instance_double('Capybara::Node::Element', 'name_node') }
   let(:name) { 'Lead\'s name' }
-  let(:location_node) { instance_double('Capybara::Node::Element') }
+  let(:location_node) { instance_double('Capybara::Node::Element', 'location_node') }
   let(:location) { 'Here' }
-  let(:degree_node) { instance_double('Capybara::Node::Element') }
+  let(:degree_node) { instance_double('Capybara::Node::Element', 'degree_node') }
   let(:degree) { '1st' }
   let(:links_array) { [] }
   let(:links) do
@@ -27,9 +27,9 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
       Faker::Internet.url
     end
   end
-  let(:phones_node) { instance_double('Capybara::Node::Element') }
+  let(:phones_node) { instance_double('Capybara::Node::Element', 'phones_node') }
   let(:phone_number) { Faker::PhoneNumber.phone_number }
-  let(:emails) { instance_double('Capybara::Node::Element') }
+  let(:emails) { instance_double('Capybara::Node::Element', 'emails') }
   let(:email) { Faker::Internet.email }
 
   before do
