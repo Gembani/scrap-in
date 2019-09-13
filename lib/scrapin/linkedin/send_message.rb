@@ -61,7 +61,7 @@ module ScrapIn
           puts 'Confirmed'
           return true
         else
-          puts "#{@error.to_s}"
+          puts @error.to_s
           return false
         end
       end

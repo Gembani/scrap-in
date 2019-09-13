@@ -20,7 +20,7 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
   end
 
   before do
-    disable_puts_for_class
+    disable_puts
     allow(session).to receive(:visit).with(profile).and_return(true)
     allow(session).to receive(:click_button).and_return(true)
 

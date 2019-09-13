@@ -1,5 +1,5 @@
 module ToolsHelpers
-  def disable_puts_for_class
+  def disable_puts
     allow_any_instance_of(Kernel).to receive(:puts)
   end
 

@@ -25,7 +25,6 @@ module ScrapIn
 
     def find_and_click(node, css)
       unless node.has_selector?(css)
-        @error = css_error(css)
         raise CssNotFound.new(css)
       end
       node.find(css).click 
@@ -57,14 +56,9 @@ module ScrapIn
     
     def find_xpath_and_click(xpath)
       unless @session.has_selector?(:xpath, xpath)
-        @error = css_error(xpath)
         raise CssNotFound.new(xpath)
       end
       @session.find(:xpath, xpath).click
-    end
-
-    def css_error(css)
-      "Wrong CSS, or it has been changed : #{css}"
     end
   end
 end

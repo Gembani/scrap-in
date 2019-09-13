@@ -45,7 +45,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
       it 'raises an error' do
         expect do
           invite.execute
-        end.to raise_error(/#{profile_css}/)
+        end.to raise_error(ScrapIn::CssNotFound)
       end
     end
     context 'The lead is already a friend' do
@@ -100,7 +100,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
       it 'raises an error!' do
         expect do
           invite.execute
-        end.to raise_error(/#{send_button_css}/)
+        end.to raise_error(ScrapIn::CssNotFound)
       end
     end
     context 'when send button was found' do
@@ -134,7 +134,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
         it 'raises an error!' do
           expect do
             invite.execute
-          end.to raise_error(/#{action_button_xpath}/)
+          end.to raise_error(ScrapIn::CssNotFound)
         end
       end
       context 'but it cannot find pending connection button' do

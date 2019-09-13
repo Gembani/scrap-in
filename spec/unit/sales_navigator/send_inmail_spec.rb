@@ -20,7 +20,7 @@ RSpec.describe ScrapIn::SalesNavigator::SendInmail do
   include CssSelectors::SendInmail
   before do
     # For more clear results without all the logs
-    disable_puts_for_class
+    disable_puts
 
     # Mocking (you can see all the methods in spec/unit/helpers/send_inmail_helpers.rb)
     visit_succeed(profile_url)
