@@ -39,8 +39,7 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
 
   include CssSelectors::SalesNavigator::Threads
   before do
-    disable_puts_for_class(ScrapIn::SalesNavigator::Threads)
-    disable_sleep_for_class(ScrapIn::SalesNavigator::Threads)
+    disable_puts
 
     has_selector(session, threads_access_button_css, wait: 5)
     create_node_array(thread_access_button_array)

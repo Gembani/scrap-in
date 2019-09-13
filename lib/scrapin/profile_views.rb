@@ -33,7 +33,7 @@ module ScrapIn
 
     def visit_target_page(link)
       @session.visit(link)
-      raise css_error(viewers_list_css) unless @session.has_selector?(viewers_list_css)
+      raise CssNotFound.new(viewers_list_css) unless @session.has_selector?(viewers_list_css)
     end
 
     def find_name_and_time_ago(number)

@@ -56,7 +56,7 @@ module ScrapIn
 
       def visit_target_page(link)
         @session.visit(link)
-        raise css_error(profile_css) unless @session.has_selector?(profile_css)
+        raise CssNotFound.new(profile_css) unless @session.has_selector?(profile_css)
       end
 
       def friend?
@@ -88,14 +88,14 @@ module ScrapIn
       def click_and_connect
         find_xpath_and_click(action_button_xpath)
         puts 'clicking on the Connect button'
-        find_and_click(connect_button_css)
+        find_and_click(@session, connect_button_css)
         if lead_email_required?
           @error = :email_required
           return false
         end
         @session.fill_in form_invitation_id, with: @content
         puts 'Sending invitation message'
-        find_and_click(send_button_css)
+        find_and_click(@session, send_button_css)
         puts 'Message sent'
         true
       end

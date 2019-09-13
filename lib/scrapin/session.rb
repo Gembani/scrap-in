@@ -45,8 +45,8 @@ module ScrapIn
       object.execute(name)
     end
 
-    def send_message(profile, message)
-      ScrapIn::SendMessage.new(@capybara, profile, message)
+    def linkedin_send_message(profile, message)
+      ScrapIn::LinkedIn::SendMessage.new(@capybara, profile, message)
     end
 
     def send_inmail(profile_url, subject, message)
