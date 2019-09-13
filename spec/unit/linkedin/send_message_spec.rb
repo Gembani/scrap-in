@@ -48,7 +48,7 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
 
   context 'when too long to load buttons' do
     let(:message_button_array) { [] }
-    it { expect { subject.execute }.to raise_error('Cannot load profile. Timeout !')}
+    it { expect { subject.execute }.to raise_error('Cannot load profile. Timeout !') }
   end
 
   context 'when no message_field_css' do
@@ -71,13 +71,13 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
 
   context 'when an error occured when sending message' do
     before { allow(sent_message_node).to receive(:text).and_return('An error occured') }
-    it { expect(subject.message_sent?).to eq(false)}
+    it { expect(subject.message_sent?).to eq(false) }
   end
 
   context 'when everything is good' do
     before { subject.execute }
     it { expect(session).to have_received(:visit).with(profile) }
     it { expect(message_field_node).to have_received(:send_keys).with(message_content) }
-    it { expect(subject.message_sent?).to eq(true)}
+    it { expect(subject.message_sent?).to eq(true) }
   end
 end
