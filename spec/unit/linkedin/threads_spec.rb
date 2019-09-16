@@ -11,6 +11,9 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 
 	let(:session) { instance_double('Capybara::Session') }
 	let(:messages_link) { 'https://www.linkedin.com/messaging/' }
+	let(:thread_name) { instance_double('Capybara::Node::Element') }
+	let(:thread_link) { instance_double('Capybara::Node::Element') }
+	let(:item_href_hash) { { href: 'https://www.linkedin.com/messaging/threads/johnsmith' } }
 	let(:threads_block_array) { [] }
 	let(:item_array) { [] }
 
@@ -25,8 +28,21 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 		has_selector(session, threads_block_css)
 		allow(session).to receive(:all).with(threads_block_css).and_return(threads_block_array)
 
-		has_selector(session, threads_block_count_css
-		allow(session).to receive(:all).with(threads_block_count_css(12)).and_return(item_array)
+		count = 0
+		12.times.each do 
+			has_selector(session, threads_block_count_css(count))
+			allow(session).to receive(:all).with(threads_block_count_css(count)).and_return(item_array)
+			item = item_array.first
+			has_selector(item, one_thread_css)
+			allow(item).to receive(:find).with(one_thread_css).and_return(thread_name)
+			allow(thread_name).to receive(:text).and_return('John Smith')
+			name = thread_name
+			has_selector(item, href_css)
+			allow(item).to receive(:find).with(href_css).and_return(item_href_hash)
+			link = item_href_hash[:href]
+			
+			count += 1
+		end
 	end
 
 	context 'the selector for threads block was not found' do

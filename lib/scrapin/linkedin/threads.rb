@@ -19,7 +19,8 @@ module ScrapIn
             break
           else
             name = check_and_find(item, one_thread_css).text
-            thread_link = item.find('a')[:href]
+            # byebug
+            thread_link = check_and_find(item, href_css)[:href]
             yield name, thread_link
             scroll_to(item)
             count += 1

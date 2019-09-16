@@ -12,6 +12,10 @@ module CssSelectors
       def one_thread_css
         '.msg-conversation-listitem__participant-names'
       end
+
+      def href_css
+        'a'
+      end
     end
   end
 end
