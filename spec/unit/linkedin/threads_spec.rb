@@ -20,6 +20,7 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 	include CssSelectors::LinkedIn::Threads
 
 	before do
+		disable_script
 		create_node_array(threads_block_array, 3)
 		create_node_array(item_array, 3)
 
@@ -40,7 +41,7 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 			has_selector(item, href_css)
 			allow(item).to receive(:find).with(href_css).and_return(item_href_hash)
 			link = item_href_hash[:href]
-			
+			allow(item).to receive(:native)
 			count += 1
 		end
 	end
@@ -66,6 +67,18 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 		it do
 			expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
 				.to raise_error(/#{one_thread_css}/)
+		end
+	end
+
+	context 'the selector for href was not found' do
+		before { has_not_selector(session, href_css) }
+		it do
+			expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
+				.to raise_error(ScrapIn::CssNotFound)
+		end
+		it do
+			expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
+				.to raise_error(/#{href_css}/)
 		end
 	end
 end
