@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe ScrapIn::LinkedIn::Threads do
+	RSpec::Mocks.configuration.allow_message_expectations_on_nil = true
 	let(:subject) do
 		described_class
 	end
@@ -31,12 +32,12 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 		has_selector(session, threads_block_css)
 		allow(session).to receive(:all).with(threads_block_css).and_return(threads_block_array)
 
-		count = -1
+		count = 0
 		12.times do 
 			has_selector(session, threads_block_count_css(count))
 			allow(session).to receive(:all).with(threads_block_count_css(count)).and_return(item_array)
 			item = item_array.first
-			
+
 			has_selector(item, one_thread_css)
 			allow(item).to receive(:find).with(one_thread_css).and_return(thread_name)
 			allow(thread_name).to receive(:text).and_return('John Smith')
