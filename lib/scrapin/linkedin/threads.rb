@@ -12,19 +12,18 @@ module ScrapIn
         count = 0
 
         num_times.times.each do
-          item = check_and_find_all(@session, threads_block_count_css(count)).first
-          if item.nil?
-            puts 'item = nil'
-            count = 0
-            break
-          else
-            name = check_and_find(item, one_thread_css).text
-            # byebug
-            thread_link = check_and_find(item, href_css)[:href]
-            yield name, thread_link
-            scroll_to(item)
-            count += 1
+          # byebug
+          begin
+            item = @session.all(threads_block_count_css(count)).first
+          rescue ScrapIn::CssNotFound => exception    
+            #count = 0 => css n'existe pas
+            #count > 0 => css existe mais il n'y a plus de conversations
           end
+          name = check_and_find(item, one_thread_css).text
+          thread_link = check_and_find(item, href_css)[:href]
+          yield name, thread_link
+          scroll_to(item)
+          count += 1
           sleep(0.5)
         end
       end

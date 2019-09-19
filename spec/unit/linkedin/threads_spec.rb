@@ -90,9 +90,9 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 	end
 
 	context 'the selector for one thread was not found' do
-		before { has_not_selector(item, one_thread_css) }
+		before { 			has_not_selector(session, threads_block_count_css(10))		}
 		it do
-			expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
+			expect { linkedin_threads_instance.execute(12) { |_name, _thread_link| } }
 				.to raise_error(ScrapIn::CssNotFound)
 		end
 		it do
