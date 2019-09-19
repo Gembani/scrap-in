@@ -46,13 +46,13 @@ module ScrapIn
       node.find(*config)
     end
 
-    def check_and_find_all(node, *config)
-      css = config.first
-      unless node.has_selector?(*config)
-        raise CssNotFound.new(css)
-      end
-      node.all(*config)
-    end
+    # def check_and_find_all(node, *config)
+    #   css = config.first
+    #   unless node.has_selector?(*config)
+    #     raise CssNotFound.new(css)
+    #   end
+    #   node.all(*config)
+    # end
     
     def find_xpath_and_click(xpath)
       unless @session.has_selector?(:xpath, xpath)

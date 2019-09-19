@@ -45,7 +45,7 @@ module ScrapIn
 
       def wait_messages_to_appear
         time = 0
-        while check_and_find_all(@session, sales_loaded_messages_css, wait: 5).count < 1
+        while @session.all(sales_loaded_messages_css, wait: 5).count < 1
           puts 'Waiting messages to appear'
           sleep(0.2)
           time += 0.2
@@ -58,7 +58,7 @@ module ScrapIn
         loaded_messages = count_loaded_messages
         while loaded_messages < number_of_messages
           message_thread = find_message_thread
-          item = check_and_find_all(message_thread, message_thread_elements_css, wait: 5).first
+          item = message_thread.all(message_thread_elements_css, wait: 5).first
           item_exist = check_until(500) do
             !item.nil?
           end
@@ -80,12 +80,12 @@ module ScrapIn
 
       def count_loaded_messages
         message_thread = find_message_thread
-        check_and_find_all(message_thread, message_thread_elements_css, wait: 5).count
+        message_thread.all(message_thread_elements_css, wait: 5).count
       end
 
       def get_message(count)
         message_thread = find_message_thread
-        check_and_find_all(message_thread, message_thread_elements_css, wait: 5)[count]
+        message_thread.all(message_thread_elements_css, wait: 5)[count]
       end
     end
   end

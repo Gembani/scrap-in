@@ -9,17 +9,17 @@ module ScrapIn
 			
 			def execute(lead_url, note = '')
 				visit_lead_url(lead_url)
-				buttons = check_and_find_all(@session, buttons_css)
+				buttons = @session.all(buttons_css)
 				puts 'Search for Connect button'
 				connect_worked = click_button(buttons, 'Connect')
 				unless connect_worked
 					puts 'Connect not found. Search for More… button'
 					click_button(buttons, 'More…')
 					puts 'Search for Connect button'
-					check_and_find_all(@session, connect_in_more_button_css, visible: false)[3].click
+					@session.all(connect_in_more_button_css, visible: false)[3].click
 				end
 				puts 'Search for Send now button'
-				buttons_popup = check_and_find_all(@session, buttons_css)
+				buttons_popup = @session.all(buttons_css)
 				if note.empty?
 					click_button(buttons_popup, 'Send now')
 				else
@@ -27,7 +27,7 @@ module ScrapIn
 					input_note_area = check_and_find(@session, note_area_css)
 					input_note_area.send_keys(note)
 					puts 'Sending invitation message'
-					new_buttons_popup = check_and_find_all(@session, buttons_css)
+					new_buttons_popup = @session.all(buttons_css)
 					click_button(new_buttons_popup, 'Send invitation')
 					puts 'Message sent'
 				end
