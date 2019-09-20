@@ -58,12 +58,7 @@ module ScrapIn
         loaded_messages = count_loaded_messages
         while loaded_messages < number_of_messages
           message_thread = find_message_thread
-          item = message_thread.all(message_thread_elements_css, wait: 5).first
-          item_exist = check_until(500) do
-            !item.nil?
-          end
-          raise 'Item does not exist. Cannot scroll!' unless item_exist
-
+          item = check_and_find_first(message_thread, message_thread_elements_css, wait: 5)
           scroll_down_to(item)
           sleep(4)
           return loaded_messages if loaded_messages == count_loaded_messages
