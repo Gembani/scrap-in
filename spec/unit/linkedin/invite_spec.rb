@@ -96,30 +96,6 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 				expect { invite_instance.execute(lead_url, note) }.to raise_error(ScrapIn::CssNotFound)
 			end
 		end
-
-		# context 'the selector for buttons was not found' do
-    #   before { has_not_selector(session, buttons_css) }
-    #   it do
-    #     expect { invite_instance.execute(lead_url, note) }
-    #       .to raise_error(ScrapIn::CssNotFound)
-    #   end
-    #   it do
-    #     expect { invite_instance.execute(lead_url, note) }
-    #       .to raise_error(/#{buttons_css}/)
-		# 	end
-		# end
-		
-		# context 'the selector for connect in more button was not found' do
-    #   before { has_not_selector(session, connect_in_more_button_css, visible: false) }
-    #   it do
-    #     expect { invite_instance.execute(lead_url, note) }
-    #       .to raise_error(ScrapIn::CssNotFound)
-    #   end
-    #   it do
-    #     expect { invite_instance.execute(lead_url, note) }
-    #       .to raise_error(/#{connect_in_more_button_css}/)
-    #   end
-		# end
 		
 		context 'the selector for note area was not found' do
       before { has_not_selector(session, note_area_css) }

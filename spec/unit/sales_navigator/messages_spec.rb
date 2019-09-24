@@ -134,18 +134,6 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
             .to raise_error('Cannot scrap conversation. Timeout !')
         end
       end
-
-      # context 'when cannot find the sales_loaded_messages_css' do
-      #   before { has_not_selector(session, sales_loaded_messages_css, wait: 5) }
-      #   it do
-      #     expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
-      #       .to raise_error(ScrapIn::CssNotFound)
-      #   end
-      #   it do
-      #     expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
-      #       .to raise_error(/#{sales_loaded_messages_css}/)
-      #   end
-      # end
     end
 
     context 'when cannot find the sales_message_css' do
@@ -210,13 +198,5 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
         expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(/#{sender_css}/)
       end
     end
-
-    # context 'when have issues to load messages' do
-    #   context 'when cannot find first message to scroll' do
-    #     before { has_not_selector(message_thread, message_thread_elements_css, wait: 5) }
-    #     it { expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound) }
-    #     it { expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(/#{message_thread_elements_css}/) }
-    #   end
-    # end
   end
 end
