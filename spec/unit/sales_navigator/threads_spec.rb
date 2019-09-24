@@ -36,7 +36,6 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
     ]
   end
 
-
   include CssSelectors::SalesNavigator::Threads
   before do
     disable_puts
@@ -50,7 +49,7 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
 
     has_selector(session, message_css, wait: 5)
 
-    allow(session).to receive(:all).with(threads_access_button_css, wait: 5).and_return(thread_access_button_array)
+    allow(session).to receive(:first).with(threads_access_button_css, wait: 5).and_return(thread_access_button_array[0])
 
     allow(thread_access_button_array[0]).to receive(:click)
 
@@ -68,7 +67,6 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
     allow(threads_list).to receive(:all).with(threads_list_elements_css, wait: 5).and_return(threads_list_array)
 
     create_node_array(threads_list_array, 3)
-    # thread_name_array
     count = 0
     threads_list_array.each do |threads_list_elements|
       has_selector(threads_list_elements, thread_name_css, wait: 5)
@@ -88,7 +86,7 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
     context 'when everything is ok in order to scrap threads links' do
       it 'scraps successfully threads and names' do
         count = 0
-        result = sales_nav_threads_instance.execute do |name, thread_link| 
+        result = sales_nav_threads_instance.execute do |name, thread_link|
           expect(thread_link).to eq(thread_names[count])
           expect(name).to eq(names_array[count])
           count += 1
@@ -107,7 +105,7 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
     context 'num_times eq 1' do
       it 'scraps one thread' do
         count = 0
-        result = sales_nav_threads_instance.execute(1) do |name, thread_link| 
+        result = sales_nav_threads_instance.execute(1) do |name, thread_link|
           expect(thread_link).to eq(thread_names[count])
           expect(name).to eq(names_array[count])
           count += 1
@@ -138,28 +136,14 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
       end
     end
 
-    context 'the selector for threads list elements was not found' do
-      before { has_not_selector(threads_list, threads_list_elements_css, wait: 5) }
-      it {
+    context '' do
+      before do
+        allow(session).to receive(:all).and_return([])
+      end
+      it do
         expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }
-          .to raise_error(ScrapIn::CssNotFound)
-      }
-      it {
-        expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }
-          .to raise_error(/#{threads_list_elements_css}/)
-      }
-    end
-
-    context 'the selector for loaded threads was not found' do
-      before { has_not_selector(threads_list, loaded_threads_css, wait: 5) }
-      it {
-        expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }
-          .to raise_error(ScrapIn::CssNotFound)
-      }
-      it {
-        expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }
-          .to raise_error(/#{loaded_threads_css}/)
-      }
+          .to raise_error(StandardError)
+      end
     end
 
     context 'the selector for thread name was not found' do
@@ -178,28 +162,13 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
       }
     end
 
-    context 'the selector for message list was not found' do
-      before { has_not_selector(session, message_css, wait: 5) }
-      it {
-        expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }
-          .to raise_error(ScrapIn::CssNotFound)
-      }
-      it {
-        expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }
-          .to raise_error(/#{message_css}/)
-      }
-    end
-
-    context 'the selector for thread access button was not found' do
-      before { has_not_selector(session, threads_access_button_css, wait: 5) }
-      it {
-        expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }
-          .to raise_error(ScrapIn::CssNotFound)
-      }
-      it {
-        expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }
-          .to raise_error(/#{threads_access_button_css}/)
-      }
+    context 'when an error occurs while loading messages' do
+      before do
+        has_selector(threads_list, threads_list_elements_css, wait: 5)
+        allow(threads_list).to receive(:all).with(threads_list_elements_css, wait: 5).and_return([])
+        sales_nav_threads_instance.execute { |_name, _thread_link| }
+      end
+      it { expect(sales_nav_threads_instance.find_conversation(0)).to eq(false) }
     end
   end
 end
