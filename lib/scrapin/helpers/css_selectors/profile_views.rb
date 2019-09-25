@@ -16,6 +16,11 @@ module CssSelectors
        "div[data-control-name=\"profileview_private\"]:nth-child(#{count})"
     end
 
+    def aggregated_recruiter_css(count)
+      'section.me-wvmp-viewers-list '\
+       "div[data-control-name=\"AGGREGATED_RECRUITER\"]:nth-child(#{count})"
+    end
+
     def viewers_list_css
       'section.me-wvmp-viewers-list'
     end
