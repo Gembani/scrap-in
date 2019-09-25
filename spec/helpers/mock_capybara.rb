@@ -9,18 +9,22 @@ module MockCapybara
       .with(*config).and_return(false)
   end
 
+  def find(node, return_value, *config)
+    allow(node).to receive(:find).with(*config).and_return(return_value)
+  end
+
   def visit_succeed(url)
     allow(session).to receive(:visit).with(url)
   end
 
   def click_button_success(text)
     allow(session).to receive(:click_button).with(text).and_return(true)
-  end 
+  end
 
   def click_button_fails(text)
-      allow(session).to receive(:click_button).with(text)
-                                              .and_raise(Capybara::ElementNotFound, "Unable to find button '#{text}' that is not disabled")
-  end 
+    allow(session).to receive(:click_button).with(text)
+                                            .and_raise(Capybara::ElementNotFound, "Unable to find button '#{text}' that is not disabled")
+  end
 
   def cannot_find_field_with_placeholder(placeholder)
     exception = "Unable to find field that is not disabled with placeholder #{placeholder}"
