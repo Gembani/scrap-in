@@ -25,15 +25,26 @@ module ScrapIn
       bad_profile_count = 0 # semi private or last element (informative element)
       until count == num_times
         position = bad_profile_count + count + 1
-        if profile_is_public(position)
+        profile_type = verify_profile_type(position)
+        raise ScrapIn::CssNotFound.new(message: 'One of the 3 searched css has changed') if profile_type == :css_error
+
+        if profile_type == :public
           item = find_profile_view(position)
           yield name(item), time_ago(item)
           count += 1
         else
           bad_profile_count += 1
-          break if current_profile_is_last_element(position)
+          break if profile_type == :last
         end
       end
+    end
+
+    def verify_profile_type(position)
+      return :public if profile_is_public(position)
+      return :semi_private if current_profile_is_semi_private(position)
+      return :last if current_profile_is_last_element(position)
+
+      :css_error
     end
 
     def find_profile_view(position)
@@ -48,6 +59,10 @@ module ScrapIn
 
     def current_profile_is_last_element(position)
       @session.has_selector?(last_element_css(position), wait: 1)
+    end
+
+    def current_profile_is_semi_private(position)
+      @session.has_selector?(semi_private_css(position), wait: 1)
     end
 
     def visit_target_page(link)
