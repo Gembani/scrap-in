@@ -219,8 +219,8 @@ RSpec.describe ScrapIn do
     expect(count).to eq(251)
   end
 
-  xit 'scraps threads' do #For now we don't care
-    @session.threads.execute(70) do |name, thread|
+  it 'scraps threads' do #For now we don't care
+    @session.linkedin_threads.execute(70) do |name, thread|
       puts "#{name}, #{thread}"
     end
   end
