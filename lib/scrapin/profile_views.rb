@@ -24,7 +24,7 @@ module ScrapIn
       count = 0
       bad_profile_count = 0 # semi private or last element (informative element)
       until count == num_times
-        position = bad_profile_count + count + 1
+        position = bad_profile_count + count + 1 # +1 because nth-child starts at 1
         profile_type = verify_profile_type(position)
         raise ScrapIn::CssNotFound.new(message: 'One of the 3 searched css has changed') if profile_type == :css_error
 
@@ -41,8 +41,9 @@ module ScrapIn
 
     def verify_profile_type(position)
       return :public if profile_is_public(position)
-      return :semi_private if current_profile_is_semi_private(position)
-      return :last if current_profile_is_last_element(position)
+      return :semi_private if profile_is_semi_private(position)
+      return :last if profile_is_last_element(position)
+      return :aggregated if profile_is_aggregated(position)
 
       :css_error
     end
@@ -57,11 +58,15 @@ module ScrapIn
       @session.has_selector?(public_profile_css(position), wait: 1)
     end
 
-    def current_profile_is_last_element(position)
+    def profile_is_aggregated(position)
+      @session.has_selector?(aggregated_recruiter_css(position), wait: 5)
+    end
+
+    def profile_is_last_element(position)
       @session.has_selector?(last_element_css(position), wait: 1)
     end
 
-    def current_profile_is_semi_private(position)
+    def profile_is_semi_private(position)
       @session.has_selector?(semi_private_css(position), wait: 1)
     end
 

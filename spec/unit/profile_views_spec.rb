@@ -23,10 +23,18 @@ RSpec.describe ScrapIn::ProfileViews do
       allow(session).to receive(:visit).and_return(true)
       allow(session).to receive(:has_selector?).with(viewers_list_css).and_return(true)
 
-      50.times do |count|
-        has_selector(session, public_profile_css(count + 1), wait: 1)
-        has_not_selector(session, semi_private_css(count + 1), wait: 1)
-
+      60.times do |count|
+        if count.zero?
+          has_selector(session, aggregated_recruiter_css(count + 1), wait: 5)
+          has_not_selector(session, public_profile_css(count + 1), wait: 1)
+          has_not_selector(session, semi_private_css(count + 1), wait: 1)
+          has_not_selector(session, last_element_css(count + 1), wait: 1)
+        else
+          has_selector(session, public_profile_css(count + 1), wait: 1)
+          has_not_selector(session, semi_private_css(count + 1), wait: 1)
+          has_not_selector(session, aggregated_recruiter_css(count + 1), wait: 5)
+          has_not_selector(session, last_element_css(count + 1), wait: 1)
+        end
         profile_item = instance_double(Capybara::Node::Element)
 
         name_item = instance_double(Capybara::Node::Element)
@@ -71,7 +79,7 @@ RSpec.describe ScrapIn::ProfileViews do
       before do
         profile_item = instance_double(Capybara::Node::Element)
         has_not_selector(profile_item, name_css)
-        find(session, profile_item, public_profile_css(1), wait: 1)
+        find(session, profile_item, public_profile_css(2), wait: 1)
       end
 
       it { expect { profile_views.execute }.to raise_error(ScrapIn::CssNotFound) }
@@ -90,7 +98,7 @@ RSpec.describe ScrapIn::ProfileViews do
         allow(time_ago_item).to receive(:text).and_return("time_ago1")
         has_not_selector(profile_item, time_ago_css)
         find(profile_item, time_ago_item, time_ago_css)
-        find(session, profile_item, public_profile_css(1), wait: 1)
+        find(session, profile_item, public_profile_css(2), wait: 1)
       end
 
       it { expect { profile_views.execute }.to raise_error(ScrapIn::CssNotFound) }
@@ -98,9 +106,9 @@ RSpec.describe ScrapIn::ProfileViews do
 
     context 'when the profile item in neither public, private or last' do
       before do
-        has_not_selector(session, public_profile_css(1), wait: 1)
-        has_not_selector(session, last_element_css(1), wait: 1)
-        has_not_selector(session, semi_private_css(1), wait: 1)
+        has_not_selector(session, public_profile_css(2), wait: 1)
+        has_not_selector(session, last_element_css(2), wait: 1)
+        has_not_selector(session, semi_private_css(2), wait: 1)
       end
 
       it { expect { profile_views.execute }.to raise_error(ScrapIn::CssNotFound) }
@@ -111,19 +119,19 @@ RSpec.describe ScrapIn::ProfileViews do
         has_selector(session, last_element_css(30), wait: 1)
       end
 
-      it 'should find only 29 leads' do
+      it 'should find only 28 leads (30 - first element - last element)' do
         profile_views.execute(50) do |name, time_ago|
           expect(name).not_to be_empty
           expect(time_ago.to_s).not_to be_empty
         end
-        expect(profile_views.profile_viewed_by.count).to eq(29) # the last one does not count as lead
+        expect(profile_views.profile_viewed_by.count).to eq(28) # the last one does not count as lead
       end
     end
     context 'when the 30th profile is not public but is NOT the last' do
       before do
-        has_not_selector(session, public_profile_css(1), wait: 1)
-        has_not_selector(session, last_element_css(1), wait: 1)
-        has_selector(session, semi_private_css(1), wait: 1)
+        has_not_selector(session, public_profile_css(2), wait: 1)
+        has_not_selector(session, last_element_css(2), wait: 1)
+        has_selector(session, semi_private_css(2), wait: 1)
       end
 
       it 'should find 40 leads' do

@@ -184,7 +184,6 @@ RSpec.describe ScrapIn do
       puts "#{count} -> #{name} , #{time_ago} ago."
       count += 1
     end
-    byebug
     expect(profile_views.profile_viewed_by.length).to be <= n
   end
 
