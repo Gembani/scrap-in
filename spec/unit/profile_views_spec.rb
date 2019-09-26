@@ -1,19 +1,14 @@
 require 'spec_helper'
 
-RSpec.describe ScrapIn::ProfileViews do
-  include ScrapIn::Tools
-  let(:profile_views) do
-    described_class.new(session)
-  end
-
+RSpec.describe ScrapIn::LinkedIn::ProfileViews do
+  include CssSelectors::LinkedIn::ProfileViews
+  let(:profile_views) { described_class.new(session) }
   let(:session) { instance_double('Capybara::Session') }
-
   let(:target_page) { Faker::Internet.url }
-  let(:viewers_list_css) { Faker::Internet.slug }
-  let(:profile_view_css) { Faker::Internet.slug }
+
   describe 'Initializer' do
     subject { described_class }
-    it { is_expected.to eq ScrapIn::ProfileViews }
+    it { is_expected.to eq ScrapIn::LinkedIn::ProfileViews }
   end
 
   describe 'instance of described class' do
@@ -23,48 +18,130 @@ RSpec.describe ScrapIn::ProfileViews do
   end
 
   describe '.execute' do
-    context 'Viewers list was found' do
-      before do
-        allow(profile_views).to receive(:visit_target_page)
-        50.times do |i|
-          allow(profile_views).to receive(:profile_view_css).and_return(profile_view_css)
-          allow(session).to receive(:has_selector?).with(profile_view_css, wait: 1).and_return(true)
-          allow(profile_views).to receive(:find_name_and_time_ago).with(i + 1).and_yield(
-            Faker::Name.name,
-            Faker::Time.backward(14, :evening)
-          )
-        end
-      end
+    before do
+      allow_any_instance_of(ScrapIn::LinkedIn::ProfileViews).to receive(:scroll_to)
+      allow(session).to receive(:visit).and_return(true)
+      allow(session).to receive(:has_selector?).with(viewers_list_css).and_return(true)
 
-      it 'finds one lead' do
-        profile_views.execute(num_times = 1) do |name, time_ago|
-          expect(name).not_to be_empty
-          expect(time_ago.to_s).not_to be_empty
+      60.times do |count|
+        if count.zero?
+          has_selector(session, aggregated_recruiter_css(count + 1), wait: 5)
+          has_not_selector(session, public_profile_css(count + 1), wait: 1)
+          has_not_selector(session, semi_private_css(count + 1), wait: 1)
+          has_not_selector(session, last_element_css(count + 1), wait: 1)
+        else
+          has_selector(session, public_profile_css(count + 1), wait: 1)
+          has_not_selector(session, semi_private_css(count + 1), wait: 1)
+          has_not_selector(session, aggregated_recruiter_css(count + 1), wait: 5)
+          has_not_selector(session, last_element_css(count + 1), wait: 1)
         end
-      end
-      it 'finds multiple leads' do
-        count = 0
-        profile_views.execute do |name, time_ago|
-          expect(name).not_to be_empty
-          expect(time_ago.to_s).not_to be_empty
-          count += 1
-        end
-        expect(count).to eq(50)
+        profile_item = instance_double(Capybara::Node::Element)
+
+        name_item = instance_double(Capybara::Node::Element)
+        allow(name_item).to receive(:text).and_return("name #{count + 1}")
+        has_selector(profile_item, name_css)
+        find(profile_item, name_item, name_css)
+
+        time_ago_item = instance_double(Capybara::Node::Element)
+        allow(time_ago_item).to receive(:text).and_return("time_ago#{count + 1}")
+        has_selector(profile_item, time_ago_css)
+        find(profile_item, time_ago_item, time_ago_css)
+
+        find(session, profile_item, public_profile_css(count + 1), wait: 1)
       end
     end
-    context 'Viewers list was not found on target page' do
+
+    context 'Everything was found (up to 50 profiles)' do
+      it 'finds one lead' do
+        profile_views.execute(1) do |name, time_ago|
+          expect(name).not_to be_empty
+          expect(time_ago.to_s).not_to be_empty
+        end
+        expect(profile_views.profile_viewed_by.count).to eq(1)
+      end
+      it 'finds multiple leads' do
+        profile_views.execute(50) do |name, time_ago|
+          expect(name).not_to be_empty
+          expect(time_ago.to_s).not_to be_empty
+        end
+        expect(profile_views.profile_viewed_by.count).to eq(50)
+      end
+    end
+    context 'when viewers list cannot be found after visiting the page' do
       before do
-        allow(profile_views).to receive(:target_page).and_return(target_page)
-        allow(profile_views).to receive(:viewers_list_css).and_return(viewers_list_css)
-        allow(session).to receive(:visit).with(target_page)
-        allow(session).to receive(:has_selector?).with(viewers_list_css).and_return(false)
+        has_not_selector(session, viewers_list_css)
       end
 
-      it 'stops the research and raise error' do
-        expect do
-          profile_views.execute
-        end.to raise_error(ScrapIn::CssNotFound)
+      it { expect { profile_views.execute }.to raise_error(ScrapIn::CssNotFound) }
+    end
+
+    context 'when the name css cannot be found' do
+      before do
+        profile_item = instance_double(Capybara::Node::Element)
+        has_not_selector(profile_item, name_css)
+        find(session, profile_item, public_profile_css(2), wait: 1)
+      end
+
+      it { expect { profile_views.execute }.to raise_error(ScrapIn::CssNotFound) }
+    end
+
+    context 'when the time_ago css cannot be found' do
+      before do
+        profile_item = instance_double(Capybara::Node::Element)
+        name_item = instance_double(Capybara::Node::Element)
+
+        has_selector(profile_item, name_css)
+        find(profile_item, name_item, name_css)
+        allow(name_item).to receive(:text).and_return("name 1")
+
+        time_ago_item = instance_double(Capybara::Node::Element)
+        allow(time_ago_item).to receive(:text).and_return("time_ago1")
+        has_not_selector(profile_item, time_ago_css)
+        find(profile_item, time_ago_item, time_ago_css)
+        find(session, profile_item, public_profile_css(2), wait: 1)
+      end
+
+      it { expect { profile_views.execute }.to raise_error(ScrapIn::CssNotFound) }
+    end
+
+    context 'when the profile item in neither public, private or last' do
+      before do
+        has_not_selector(session, public_profile_css(2), wait: 1)
+        has_not_selector(session, last_element_css(2), wait: 1)
+        has_not_selector(session, semi_private_css(2), wait: 1)
+      end
+
+      it { expect { profile_views.execute }.to raise_error(ScrapIn::CssNotFound) }
+    end
+    context 'when the 30th profile is the last' do
+      before do
+        has_not_selector(session, public_profile_css(30), wait: 1)
+        has_selector(session, last_element_css(30), wait: 1)
+      end
+
+      it 'should find only 28 leads (30 - first element - last element)' do
+        profile_views.execute(50) do |name, time_ago|
+          expect(name).not_to be_empty
+          expect(time_ago.to_s).not_to be_empty
+        end
+        expect(profile_views.profile_viewed_by.count).to eq(28) # the last one does not count as lead
+      end
+    end
+    context 'when the 30th profile is not public but is NOT the last' do
+      before do
+        has_not_selector(session, public_profile_css(2), wait: 1)
+        has_not_selector(session, last_element_css(2), wait: 1)
+        has_selector(session, semi_private_css(2), wait: 1)
+      end
+
+      it 'should find 40 leads' do
+        profile_views.execute(40) do |name, time_ago|
+          expect(name).not_to be_empty
+          expect(time_ago.to_s).not_to be_empty
+        end
+        expect(profile_views.profile_viewed_by.count).to eq(40) # the last one does not count as lead
       end
     end
   end
 end
+
