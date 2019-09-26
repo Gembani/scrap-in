@@ -69,8 +69,8 @@ module ScrapIn
       ScrapIn::Messages.new(@capybara, thread_link)
     end
 
-    def profile_views
-      ScrapIn::ProfileViews.new(@capybara)
+    def linkedin_profile_views
+      ScrapIn::LinkedIn::ProfileViews.new(@capybara)
     end
 
     def driver
