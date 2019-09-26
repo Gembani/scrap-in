@@ -168,7 +168,7 @@ RSpec.describe ScrapIn do
   it 'shows the profiles of up to 5 people who viewed our profile recently' do
     count = 1
     n = 5
-    profile_views = @session.profile_views
+    profile_views = @session.linkedin_profile_views
     profile_views.execute(n) do |name, time_ago|
       puts "#{count} -> #{name} , #{time_ago} ago."
       count += 1
