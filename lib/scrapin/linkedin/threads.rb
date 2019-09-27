@@ -39,8 +39,8 @@ module ScrapIn
       end
 
       def find_conversation(count)
-        threads_list = check_and_find(@session, threads_block_count_css(count))
-        check_and_find(threads_list, one_thread_css, wait: 5)
+        threads_list_2 = check_and_find(@session, threads_block_count_css(count))
+        check_and_find(threads_list_2, one_thread_css, wait: 5)
       end
 
       def set_limit

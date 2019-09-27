@@ -12,55 +12,44 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 
 	let(:session) { instance_double('Capybara::Session') }
 	let(:messages_link) { 'https://www.linkedin.com/messaging/' }
-	let(:thread_name) { instance_double('Capybara::Node::Element', 'thread_name') }
-	let(:thread_link) { instance_double('Capybara::Node::Element', 'thread_link') }
-	let(:item_href_hash) { { href: 'https://www.linkedin.com/messaging/threads/johnsmith' } }
-	let(:threads_block_array) { [] }
-	let(:item_array) { [] }
-	let(:item) {}
+	let(:thread_link) { 'https://www.linkedin.com/messaging/johnsmith' }
+	let(:name) { 'John Smith' }
+	let(:threads_list) { instance_double('Capybara::Node::Element', 'threads_list') }
+	let(:threads_list_2) { instance_double('Capybara::Node::Element', 'threads_list_2') }
+	let(:conversation) { instance_double('Capybara::Node::Element', 'conversation') }
+	let(:threads_list_array) { [] }
 
 	include CssSelectors::LinkedIn::Threads
 
 	before do
-		disable_puts
-		disable_script
-		create_node_array(threads_block_array, 3)
-		create_node_array(item_array, 12)
-
+		create_node_array(threads_list_array, 12)
 		allow(session).to receive(:visit).with(messages_link)
 
-		
 		count = 0
-		12.times do 
+		12.times do
 			has_selector(session, threads_block_css)
-			allow(session).to receive(:all).with(threads_block_css).and_return(threads_block_array)
-			has_selector(session, threads_block_count_css(count))
-			allow(session).to receive(:all).with(threads_block_count_css(count)).and_return(item_array)
-			item = item_array[count]
+			allow(session).to receive(:find).with(threads_block_css).and_return(threads_list)
 
-			has_selector(item, one_thread_css)
-			allow(item).to receive(:find).with(one_thread_css).and_return(thread_name)
-			allow(thread_name).to receive(:text).and_return('John Smith')
-			name = thread_name
+			has_selector(threads_list, threads_list_css, wait: 5)
+			allow(threads_list).to receive(:all).with(threads_list_css, wait: 5).and_return(threads_list_array)
+
+			has_selector(session, threads_block_count_css(count))
+			allow(session).to receive(:find).with(threads_block_count_css(count)).and_return(threads_list_2)
+
+			has_selector(threads_list_2, one_thread_css, wait: 5)
+			allow(threads_list_2).to receive(:find).with(one_thread_css, wait: 5).and_return(conversation)
 			
-			has_selector(item, href_css)
-			allow(item).to receive(:find).with(href_css).and_return(thread_link)
-			link = item_href_hash[:href]
-			# byebug
-			# thread_link[:href] = 'https://www.linkedin.com/messaging/threads/johnsmith'
-			allow(thread_link).to receive([]).with(':href').and_return(link)
-			byebug
-			
-			allow(item).to receive(:native)
-			# puts(count)
+			allow(conversation).to receive(:text).and_return(name)
+			allow(conversation).to receive(:click)
+
+			allow(session).to receive(:current_url).and_return(thread_link)
 			count += 1
 		end
 	end
 
 	context 'testtesttest' do
 		it 'testtesttest' do
-			expect ( linkedin_threads_instance.execute { |_name, _thread_link| } )
-				.to eq(true)
+			expect(linkedin_threads_instance.execute { |_name, _thread_link| } ).to eq(true)
 		end
 	end
 
