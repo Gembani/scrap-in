@@ -39,13 +39,13 @@ module ScrapIn
       end
 
       def find_conversation(count)
-        threads_list = check_and_find(@session, ".msg-conversations-container__conversations-list li:nth-child(#{count + 2})")
-        check_and_find(threads_list, '.msg-conversation-listitem__participant-names', wait: 5)
+        threads_list = check_and_find(@session, threads_block_count_css(count))
+        check_and_find(threads_list, one_thread_css, wait: 5)
       end
 
       def set_limit
-        threads_list = check_and_find(@session, '.msg-conversations-container__conversations-list')
-        threads_list.all('.msg-conversation-listitem', wait: 5).count
+        threads_list = check_and_find(@session, threads_block_css)
+        threads_list.all(threads_list_css, wait: 5).count
       end
     end
   end

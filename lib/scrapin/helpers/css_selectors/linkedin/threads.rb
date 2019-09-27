@@ -6,15 +6,15 @@ module CssSelectors
 			end
 
 			 def threads_block_css
-				'.msg-conversations-container__conversations-list li'
+				'.msg-conversations-container__conversations-list'
 			end
 
 			 def one_thread_css
 				'.msg-conversation-listitem__participant-names'
 			end
 
-			 def href_css
-				'a'
+			def threads_list_css
+				'.msg-conversation-listitem'
 			end
 		end
 	end
