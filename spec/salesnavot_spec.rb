@@ -9,43 +9,44 @@ RSpec.describe ScrapIn do
   after(:all) do
     @session.driver.quit
   end
-  xit 'has a version number_of_invites' do
+  it 'has a version number_of_invites' do
     expect(ScrapIn::VERSION).not_to be nil
   end
 
   describe '#Search' do
+    let(:list_name) { 'Rspec' }
+    let(:last_page) { 100 }
+    before do
+      @search = @session.search(list_name)
+    end
 
-    it 'gets lead from all pages' do
-      @search = @session.search('test_one_200')
-      max_page = 13
+    it 'gets lead from 10 firsts pages' do
       page = 1
+      max_page = 10
       until page == max_page
-        puts "TESTING PAGE = #{page}"
         found_links = []
-        next_page_to_process = @search.execute(page) do |link, image|
+        next_page_to_process = @search.execute(page) do |link, _image|
           expect(link).to start_with('https://www.linkedin.com/sales/people')
           found_links << link
         end
-        expect(found_links.size).to eq(25)
+        expect(found_links.size).to be >= 20
         expect(next_page_to_process).to eq(page + 1)
         page += 1
       end
     end
 
     it 'gets lead from page 1' do
-      @search = @session.search('test_one_200')
       found_links = []
       next_page_to_process = @search.execute(1) do |link, image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
         found_links << link
       end
-      expect(found_links.size).to eq(25)
+      expect(found_links.size).to be >= 20
       expect(next_page_to_process).to eq(2)
     end
 
 
     it 'gets profile and image links from all leads of the second page of the list and return the next page' do
-      @search = @session.search('test_one_200')
       next_page_to_process = @search.execute(3) do |link, image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
       end
@@ -53,7 +54,6 @@ RSpec.describe ScrapIn do
     end
 
     it 'gets profile and image links from all leads of the twelfth page of the list and return the next page' do
-      @search = @session.search('test_one_200')
       next_page_to_process = @search.execute(12) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
       end
@@ -61,19 +61,17 @@ RSpec.describe ScrapIn do
     end
 
     it 'gets leads form the last page' do
-      @search = @session.search('test_one_200')
       found_links = []
-      next_page_to_process = @search.execute(13) do |link, image|
+      next_page_to_process = @search.execute(last_page) do |link, image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
         found_links << link
       end
-      expect(found_links.size).to eq(9)
-      expect(next_page_to_process).to eq(14)
+      expect(found_links.size).to eq(16)
+      expect(next_page_to_process).to eq(101)
     end
 
-    it 'tries to go to the twentieth page of the list, doesnt find it and return the first page' do
-      @search = @session.search('test_one_200')
-      next_page_to_process = @search.execute(20) do |_link, _image|
+    it 'tries to go to the 101th page of the list, doesnt find it and return the first page' do
+      next_page_to_process = @search.execute(101) do |_link, _image|
       end
       expect(next_page_to_process).to eq(1)
     end

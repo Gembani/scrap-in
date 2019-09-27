@@ -39,18 +39,18 @@ module ScrapIn
       @processed_page + 1
     end
 
-    private
+
+    def click_on_page(page)
+      page_button = @session.all(page_css(page), wait: 30).first
+      scroll_to(page_button)
+      sleep(4)
+      page_button.click
+      check_results_loaded
+    end
 
     def check_results_loaded
       raise 'NOT LOADED' unless @session.has_selector?(
-        results_loaded_css, wait: 3
-      )
-    end
-
-    def click_on_page(page)
-      sleep(5)
-      @session.all(page_css(page), wait: 30).first.click
-      check_results_loaded
+          results_loaded_css)
     end
 
     def empty_results?
@@ -75,7 +75,6 @@ module ScrapIn
       puts "Going to page #{page}"
       @session.visit(url)
       return false if empty_results?
-
       check_results_loaded
       true
     end
@@ -96,21 +95,17 @@ module ScrapIn
     end
 
     def ensure_leads_are_loaded
-      sleep(5)
       raise CssNotFound.new(name_css) unless @session.has_selector?(name_css)
     end
 
     def find_leads_size_on_page
-      sleep(5)
       items = @session.all(name_css)
       size = items.count
       count = 0
-      while size != 25
+      while size < 20
         scroll_to(items.last)
         items = @session.all(name_css)
         size = items.count
-        puts "size = #{size}"
-        byebug if count > 200
         count += 1
         break if processing_last_page?
       end
