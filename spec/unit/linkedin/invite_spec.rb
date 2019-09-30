@@ -4,13 +4,16 @@ require 'spec_helper'
 
 RSpec.describe ScrapIn::LinkedIn::Invite do
 	let(:subject) { described_class }
-	let(:session) { instance_double('Capybara::Session') }
+	let(:session) { instance_double('Capybara::Session', 'session') }
 	let(:lead_url) { 'lead_url' }
 	let(:note) { 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.' }
 	let(:invite_instance) { subject.new(session, lead_url) }
 	let(:buttons_array) { [] }
+	let(:add_a_note_array) { [] }
+	let(:send_invitation_array) { [] }
 	let(:more_buttons_array) { [] }
-	let(:input_note_area) { instance_double('Capybara::Node::Element') }
+	let(:buttons_popup_array) { [] }
+	let(:input_note_area) { instance_double('Capybara::Node::Element', 'input_note_area') }
 	
 
 	
@@ -19,8 +22,10 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 	before do
 		disable_puts
 
-		create_node_array(buttons_array, 5)
-		create_node_array(more_buttons_array, 5)
+		create_node_array(buttons_array, 5, 'buttons')
+		create_node_array(add_a_note_array, 5, 'add_a_note')
+		create_node_array(send_invitation_array, 5, 'send_invitation')
+		create_node_array(more_buttons_array, 5, 'more buttons')
 
 		has_selector(session, buttons_css)
 		has_selector(session, connect_in_more_button_css, visible: false)
@@ -28,18 +33,35 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 		has_selector(session, 'span', text: confirmation_text)
 
 		allow(session).to receive(:visit).with(lead_url)
-		allow(session).to receive(:all).with(buttons_css).and_return(buttons_array)
+		allow(session).to receive(:all).with(buttons_css).and_return(buttons_array, add_a_note_array, send_invitation_array)
 		
 		buttons_array.each do | button |
-			allow(button).to receive(:text).and_return('More…')
+			allow(button).to receive(:text).and_return('Connect')
 			allow(button).to receive(:click)
 		end
 
-		allow(session).to receive(:all).with(connect_in_more_button_css, visible: false).and_return(more_buttons_array)
-		allow(more_buttons_array[3]).to receive(:click)
+		add_a_note_array.each do | button |
+			allow(button).to receive(:text).and_return('Add a note')
+			allow(button).to receive(:click)
+		end
 
+		send_invitation_array.each do | button |
+			allow(button).to receive(:text).and_return('Send invitation')
+			allow(button).to receive(:click)
+		end
+		
+		more_buttons_array.each do | button |
+			allow(button).to receive(:text).and_return('Connect')
+			allow(button).to receive(:click)
+		end
+
+		# allow(session).to receive(:all).with(buttons_css).and_return(buttons_popup_array)
+
+		allow(session).to receive(:all).with(connect_in_more_button_css, visible: false).and_return(more_buttons_array)
+		# allow(more_buttons_array[3]).to receive(:click)
+		
 		allow(session).to receive(:find).with(note_area_css).and_return(input_note_area)
-		allow(input_note_area).to receive(:send_keys).with(note)
+		allow(input_note_area).to receive(:send_keys)
 
 		allow(session).to receive(:find).with('span', text: confirmation_text).and_return(true)
 
@@ -58,45 +80,21 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 		end
 
 		context 'everything is ok in order to invite someone without a note' do
-			it 'succesfully invites someone' do
-				result = invite_instance.execute(lead_url)
-				expect(result).to eq(true)
+			it { expect(invite_instance.execute(lead_url)).to eq(true) }
+		end
+		
+		context 'everything is ok in order to invite someone without a note' do
+			before do
+				invite_instance.execute(lead_url)
 			end
+			it { expect(input_note_area).to have_received(:send_keys) }
 		end
 
 		context 'the confirmation message was not found' do
-			before do
-				has_not_selector(session, 'span', text: confirmation_text)
-				allow(session).to receive(:find).with('span', text: confirmation_text).and_return(false)
-			end
+			before { has_not_selector(session, 'span', text: confirmation_text) }
 			it 'did not send the invitation' do
-				result = invite_instance.execute(lead_url)
-				expect(result).to eq(false)
+				expect { invite_instance.execute(lead_url, note) }.to raise_error(ScrapIn::CssNotFound)
 			end
-		end
-
-		context 'the selector for buttons was not found' do
-      before { has_not_selector(session, buttons_css) }
-      it do
-        expect { invite_instance.execute(lead_url, note) }
-          .to raise_error(ScrapIn::CssNotFound)
-      end
-      it do
-        expect { invite_instance.execute(lead_url, note) }
-          .to raise_error(/#{buttons_css}/)
-			end
-		end
-		
-		context 'the selector for connect in more button was not found' do
-      before { has_not_selector(session, connect_in_more_button_css, visible: false) }
-      it do
-        expect { invite_instance.execute(lead_url, note) }
-          .to raise_error(ScrapIn::CssNotFound)
-      end
-      it do
-        expect { invite_instance.execute(lead_url, note) }
-          .to raise_error(/#{connect_in_more_button_css}/)
-      end
 		end
 		
 		context 'the selector for note area was not found' do

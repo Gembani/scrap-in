@@ -53,8 +53,8 @@ module ScrapIn
       ScrapIn::SalesNavigator::SendInmail.new(@capybara, profile_url, subject, message)
     end
 
-    def threads
-      ScrapIn::SalesNavigator::Threads.new(@capybara)
+    def linkedin_threads
+      ScrapIn::LinkedIn::Threads.new(@capybara)
     end
 
     def sales_nav_threads
@@ -69,8 +69,8 @@ module ScrapIn
       ScrapIn::LinkedIn::Messages.new(@capybara, thread_link)
     end
 
-    def profile_views
-      ScrapIn::ProfileViews.new(@capybara)
+    def linkedin_profile_views
+      ScrapIn::LinkedIn::ProfileViews.new(@capybara)
     end
 
     def driver

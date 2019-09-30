@@ -6,9 +6,9 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
   include CssSelectors::SalesNavigator::Messages
   include ScrapIn::Tools
 
-  let(:session) { instance_double('Capybara::Session') }
-  let(:sales_messages) { instance_double('Capybara::Node::Element') }
-  let(:message_thread) { instance_double('Capybara::Node::Element') }
+  let(:session) { instance_double('Capybara::Session', 'session') }
+  let(:sales_messages) { instance_double('Capybara::Node::Element', 'sales_messages') }
+  let(:message_thread) { instance_double('Capybara::Node::Element', 'message_thread') }
 
   let(:subject) do
     described_class
@@ -43,6 +43,7 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
     has_selector(message_thread, message_thread_elements_css, wait: 5)
     has_selector(sales_messages, message_thread_css, wait: 5)
 
+    allow(message_thread).to receive(:first).with(message_thread_elements_css, wait: 5).and_return(message_thread_elements[0])
     allow(message_thread).to receive(:all).with(message_thread_elements_css, wait: 5)
                                           .and_return(message_thread_elements) # Return the messages array
     allow(sales_messages).to receive(:find).with(message_thread_css, wait: 5).and_return(message_thread)
@@ -111,7 +112,7 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
       context 'when execute with no number of messages argument' do
         it 'returns true' do
           count = 5 - 1
-          result = salesnav_messages_instance.execute(10) do |message, direction|
+          result = salesnav_messages_instance.execute() do |message, direction|
             expect(message).to eq(message_content(count))
             if count.even?
               expect(direction).to eq(:outgoing)
@@ -134,18 +135,6 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
         it do
           expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
             .to raise_error('Cannot scrap conversation. Timeout !')
-        end
-      end
-
-      context 'when cannot find the sales_loaded_messages_css' do
-        before { has_not_selector(session, sales_loaded_messages_css, wait: 5) }
-        it do
-          expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
-            .to raise_error(ScrapIn::CssNotFound)
-        end
-        it do
-          expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
-            .to raise_error(/#{sales_loaded_messages_css}/)
         end
       end
     end
@@ -172,14 +161,16 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
       end
     end
 
-    context 'when cannot find the message_thread_elements_css' do
-      before { has_not_selector(message_thread, message_thread_elements_css, wait: 5) }
+    context 'when cannot find the message_thread_elements_css and cannot find first message to scroll' do
+      before do
+        has_not_selector(message_thread, message_thread_elements_css, wait: 5)
+        allow(message_thread).to receive(:all).with(message_thread_elements_css, wait: 5).and_return([])
+      end
       it do
         expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
-          .to raise_error(/#{message_thread_elements_css}/)
+        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(/#{message_thread_elements_css}/)
       end
     end
 
@@ -208,19 +199,6 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
       end
       it do
         expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(/#{sender_css}/)
-      end
-    end
-
-    context 'when have issues to load messages' do
-      context 'when cannot find first message to scroll' do
-        before do
-          allow(message_thread).to receive(:all).with(message_thread_elements_css, wait: 5)
-                                                .and_return(message_thread_elements, [])
-        end
-        it do
-          expect { salesnav_messages_instance.execute(10) { |_message, _direction| } }
-            .to raise_error('Item does not exist. Cannot scroll!')
-        end
       end
     end
   end

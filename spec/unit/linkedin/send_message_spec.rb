@@ -40,13 +40,7 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
     allow(sent_message_node).to receive(:text).and_return(message_content)
   end
 
-  context 'when cannot find message_button_css' do
-    before { has_not_selector(session, message_button_css) }
-    it { expect { subject.execute }.to raise_error(/#{message_button_css}/) }
-    it { expect { subject.execute }.to raise_error(ScrapIn::CssNotFound) }
-  end
-
-  context 'when too long to load buttons' do
+  context 'when too long to load buttons or has not selector message_button_css' do
     let(:message_button_array) { [] }
     it { expect { subject.execute }.to raise_error('Cannot load profile. Timeout !') }
   end
@@ -64,9 +58,8 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
   end
 
   context 'when no sent_message_css' do
-    before { has_not_selector(session, sent_message_css) }
-    it { expect { subject.execute }.to raise_error(/#{sent_message_css}/) }
-    it { expect { subject.execute }.to raise_error(ScrapIn::CssNotFound) }
+    let(:sent_message_array) { [] }
+    it { expect(subject.message_sent?).to eq(false) }
   end
 
   context 'when an error occured when sending message' do

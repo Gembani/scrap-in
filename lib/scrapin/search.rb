@@ -39,15 +39,18 @@ module ScrapIn
       @processed_page + 1
     end
 
-    def check_results_loaded
-      raise 'NOT LOADED' unless @session.has_selector?(
-        results_loaded_css, wait: 3
-      )
-    end
 
     def click_on_page(page)
-      @session.all(page_css(page)).first.click
+      page_button = @session.all(page_css(page), wait: 30).first
+      scroll_to(page_button)
+      sleep(4)
+      page_button.click
       check_results_loaded
+    end
+
+    def check_results_loaded
+      raise 'NOT LOADED' unless @session.has_selector?(
+          results_loaded_css)
     end
 
     def empty_results?
@@ -57,6 +60,7 @@ module ScrapIn
     # if page 2 empty results fails - don't use this with a too small search!
     def visit_page(page)
       return true if page == 1
+
       if page == @max_page
         find_leads_size_on_page # in order to scroll to the bottom of the page
         @session.click_button(@max_page)
@@ -97,10 +101,12 @@ module ScrapIn
     def find_leads_size_on_page
       items = @session.all(name_css)
       size = items.count
-      while size != 25
+      count = 0
+      while size < 20
         scroll_to(items.last)
         items = @session.all(name_css)
         size = items.count
+        count += 1
         break if processing_last_page?
       end
     end
