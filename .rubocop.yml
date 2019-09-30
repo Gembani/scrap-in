@@ -19,6 +19,9 @@ Metrics/BlockLength:
 Metrics/AbcSize:
   Enabled: false
 
+Layout/TrailingWhitespace:
+  Enabled: false
+
 Style/FrozenStringLiteralComment:
   Enabled: false
 
