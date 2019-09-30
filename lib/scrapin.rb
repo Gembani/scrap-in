@@ -1,18 +1,18 @@
 require 'scrapin/version'
 
 require 'scrapin/helpers/tools'
-require 'scrapin/helpers/css_selectors/friends'
 require 'scrapin/helpers/css_selectors/invite'
 require 'scrapin/helpers/css_selectors/scrap_lead'
 require 'scrapin/helpers/css_selectors/search'
 require 'scrapin/helpers/css_selectors/send_inmail.rb'
 require 'scrapin/helpers/css_selectors/sent_invites'
 
+require 'scrapin/helpers/css_selectors/linkedin/friends'
 require 'scrapin/helpers/css_selectors/linkedin/invite.rb'
+require 'scrapin/helpers/css_selectors/linkedin/profile_views.rb'
 require 'scrapin/helpers/css_selectors/linkedin/scrap_lead.rb'
 require 'scrapin/helpers/css_selectors/linkedin/send_message.rb'
 require 'scrapin/helpers/css_selectors/linkedin/threads.rb'
-require 'scrapin/helpers/css_selectors/linkedin/profile_views.rb'
 
 
 require 'scrapin/helpers/css_selectors/sales_navigator/messages.rb'
@@ -26,6 +26,7 @@ require 'scrapin/errors/out_of_network_error'
 
 require 'scrapin/sales_navigator/css_selectors/auth'
 
+require 'scrapin/linkedin/friends'
 require 'scrapin/linkedin/scrap_lead'
 require 'scrapin/linkedin/send_message'
 require 'scrapin/linkedin/threads'
@@ -40,7 +41,6 @@ require 'scrapin/sales_navigator/send_inmail'
 require 'capybara/dsl'
 require 'scrapin/driver'
 require 'scrapin/linkedin/invite'
-require 'scrapin/friends'
 require 'scrapin/linkedin_data_from_name'
 require 'scrapin/linkedin_salesnav_converter'
 require 'scrapin/messages'
