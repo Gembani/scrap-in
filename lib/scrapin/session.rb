@@ -77,8 +77,8 @@ module ScrapIn
       @capybara.driver
     end
 
-    def linkedin_friends
-      ScrapIn::LinkedIn::Friends.new(@capybara)
+    def linkedin_scrap_friends
+      ScrapIn::LinkedIn::ScrapFriends.new(@capybara)
     end
 
     def search(list_identifier)

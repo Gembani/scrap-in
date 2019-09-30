@@ -7,7 +7,7 @@ require 'scrapin/helpers/css_selectors/search'
 require 'scrapin/helpers/css_selectors/send_inmail.rb'
 require 'scrapin/helpers/css_selectors/sent_invites'
 
-require 'scrapin/helpers/css_selectors/linkedin/friends'
+require 'scrapin/helpers/css_selectors/linkedin/scrap_friends'
 require 'scrapin/helpers/css_selectors/linkedin/invite.rb'
 require 'scrapin/helpers/css_selectors/linkedin/profile_views.rb'
 require 'scrapin/helpers/css_selectors/linkedin/scrap_lead.rb'
@@ -26,7 +26,7 @@ require 'scrapin/errors/out_of_network_error'
 
 require 'scrapin/sales_navigator/css_selectors/auth'
 
-require 'scrapin/linkedin/friends'
+require 'scrapin/linkedin/scrap_friends'
 require 'scrapin/linkedin/scrap_lead'
 require 'scrapin/linkedin/send_message'
 require 'scrapin/linkedin/threads'

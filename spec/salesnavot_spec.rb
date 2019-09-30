@@ -203,10 +203,10 @@ RSpec.describe ScrapIn do
   end
 
 
-  describe '.friends' do
+  describe '.scrap_friends' do
     it 'scraps friends' do
       count = 1
-      @session.linkedin_friends.execute(10) do |time_ago, name, url|
+      @session.linkedin_scrap_friends.execute(10) do |time_ago, name, url|
         puts "#{count} -> #{name} : #{time_ago}. -> #{url}"
         count += 1
       end

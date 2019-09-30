@@ -1,7 +1,7 @@
 module CssSelectors
   # All css selectors used in ScrapIn::Friend Class
   module LinkedIn
-    module Friends
+    module ScrapFriends
       def friend_name_css
         '.mn-connection-card__name'
       end

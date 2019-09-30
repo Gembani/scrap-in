@@ -2,9 +2,9 @@ module ScrapIn
   # Go to friend list, and get their names
   # and when you connected with them
   module LinkedIn
-    class Friends
+    class ScrapFriends
       include Tools
-      include CssSelectors::LinkedIn::Friends
+      include CssSelectors::LinkedIn::ScrapFriends
       attr_reader :error
       def initialize(session)
         @session = session
