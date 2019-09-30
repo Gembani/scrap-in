@@ -22,6 +22,8 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 	include CssSelectors::LinkedIn::Threads
 
 	before do
+		disable_puts
+
 		create_node_array(threads_list_array, 12)
 		allow(session).to receive(:visit).with(messages_link)
 
@@ -47,69 +49,65 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 		end
 	end
 
-	context 'testtesttest' do
-		it 'testtesttest' do
-			expect(linkedin_threads_instance.execute { |_name, _thread_link| } ).to eq(true)
+	context 'when num_times is 0' do
+		it { expect(linkedin_threads_instance.execute(0) { |_name, _thread_link| } ).to eq(true) }
+	end
+
+	context 'when num_times is 1' do
+		it { expect(linkedin_threads_instance.execute(1) { |_name, _thread_link| } ).to eq(true) }
+	end
+
+	context 'when num_times is 30' do
+		it { expect(linkedin_threads_instance.execute(30) { |_name, _thread_link| } ).to eq(true) }
+	end
+
+	context 'the selector for threads block count was not found' do
+		before do
+			count = 0
+			12.times do
+				has_not_selector(session, threads_block_count_css(count))
+				count += 1
+			end
+		end
+		it do
+			count = 0
+			12.times do
+				expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
+				.to raise_error(ScrapIn::CssNotFound)
+				count += 1
+			end
+		end
+		it do
+			count = 0
+			12.times do
+				expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
+				.to raise_error(/#{threads_block_css}/)
+				count += 1
+			end
 		end
 	end
 
-	# context 'the selector for threads block count was not found' do
-	# 	before do
-	# 		count = 0
-	# 		12.times do
-	# 			has_not_selector(session, threads_block_count_css(count))
-	# 			count += 1
-	# 		end
-	# 	end
-	# 	it do
-	# 		12.times do
-	# 			expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
-	# 				.to raise_error(ScrapIn::CssNotFound)
-	# 			count += 1
-	# 		end
-	# 	end
-	# 	it do
-	# 		12.times do
-	# 			expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
-	# 				.to raise_error(/#{threads_block_count_css}/)
-	# 			count += 1
-	# 		end
-	# 	end
-	# end
-
-	# context 'the selector for threads block was not found' do
-	# 	before { has_not_selector(session, threads_block_css) }
-	# 	it do
-	# 		expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
-	# 			.to raise_error(ScrapIn::CssNotFound)
-	# 	end
-	# 	it do
-	# 		expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
-	# 			.to raise_error(/#{threads_block_css}/)
-	# 	end
-	# end
-
-	# context 'the selector for one thread was not found' do
-	# 	before { 			has_not_selector(session, threads_block_count_css(10))		}
-	# 	it do
-	# 		expect { linkedin_threads_instance.execute(12) { |_name, _thread_link| } }
-	# 			.to raise_error(ScrapIn::CssNotFound)
-	# 	end
-	# 	it do
-	# 		expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
-	# 			.to raise_error(/#{one_thread_css}/)
-	# 	end
-	# end
-
-	# context 'the selector for href was not found' do
-	# 	before { has_not_selector(item, href_css) }
-	# 	it do
-	# 		expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
-	# 			.to raise_error(ScrapIn::CssNotFound)
-	# 	end
-	# 	it do
-	# 		expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
-	# 			.to raise_error(/#{href_css}/)
-	# 	end
-	# end
+	context 'the selector for threads block was not found' do
+		before { has_not_selector(session, threads_block_css) }
+		it do
+			expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
+				.to raise_error(ScrapIn::CssNotFound)
+		end
+		it do
+			expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
+				.to raise_error(/#{threads_block_css}/)
+		end
+	end
+	
+	context 'the selector for one thread was not found' do
+		before { has_not_selector(threads_list_2, one_thread_css, wait: 5) }
+		it do
+			expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
+				.to raise_error(ScrapIn::CssNotFound)
+		end
+		it do
+			expect { linkedin_threads_instance.execute { |_name, _thread_link| } }
+				.to raise_error(/#{one_thread_css}/)
+		end
+	end
 end
