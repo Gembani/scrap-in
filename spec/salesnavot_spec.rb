@@ -202,6 +202,7 @@ RSpec.describe ScrapIn do
     end
   end
 
+
   describe '.friends' do
     it 'scraps friends' do
       count = 1

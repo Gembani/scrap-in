@@ -32,11 +32,11 @@ module ScrapIn
         sleep(1)
         password_field.send_keys(:enter)
 
-        loop do
-          break unless @session.has_xpath?(captcha_xpath, wait: 4)
-          puts "Captcha verification waiting for result"
-        end
-        raise 'Login failed !' unless @session.has_xpath?(alert_header_xpath)
+        # loop do
+        #   break unless @session.has_xpath?(captcha_xpath, wait: 4)
+        #   puts "Captcha verification waiting for result"
+        # end
+        # raise 'Login failed !' unless @session.has_xpath?(alert_header_xpath)
       end
       
 
