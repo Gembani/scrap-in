@@ -49,8 +49,8 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 		end
 	end
 
-	context 'when num_times is 0' do
-		it { expect(linkedin_threads_instance.execute(0) { |_name, _thread_link| } ).to eq(true) }
+	context 'when num_times is not positive throws error' do
+		it { expect{ linkedin_threads_instance.execute(0)  }.to raise_error(ArgumentError) }
 	end
 
 	context 'when num_times is 1' do

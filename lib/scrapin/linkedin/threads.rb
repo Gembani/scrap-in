@@ -8,7 +8,7 @@ module ScrapIn
       end
 
        def execute(num_times = 10)
-        return true if num_times.zero?
+        raise ArgumentError.new("Parameter should be positive") unless num_times.positive?
         
         visit_messages_link
         count = 0
@@ -20,8 +20,6 @@ module ScrapIn
             break
           else
             conversation = find_conversation(count)
-            return false if conversation == false
-
             name = conversation.text
             conversation.click
             thread_link = @session.current_url
