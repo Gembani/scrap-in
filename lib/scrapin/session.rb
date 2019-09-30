@@ -62,11 +62,11 @@ module ScrapIn
     end
 
     def sales_nav_messages(thread_link)
-      ScrapIn::SalesNavigator::Messages.new(@capybara, thread_link)
+      ScrapIn::SalesNavigator::ScrapMessages.new(@capybara, thread_link)
     end
 
-    def linkedin_messages(thread_link)
-      ScrapIn::LinkedIn::Messages.new(@capybara, thread_link)
+    def linkedin_scrap_messages(thread_link)
+      ScrapIn::LinkedIn::ScrapMessages.new(@capybara, thread_link)
     end
 
     def linkedin_profile_views

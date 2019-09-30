@@ -1,7 +1,7 @@
 module CssSelectors
   module LinkedIn
     # All css selectors used in ScrapIn::LinkedIn::Messages Class
-    module Messages
+    module ScrapMessages
       def message_content_css
         '.msg-s-event-listitem__body'
       end

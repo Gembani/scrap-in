@@ -1,9 +1,9 @@
 module ScrapIn
   module SalesNavigator
     # Class which yield messages and direction in sales conversation
-    class Messages
+    class ScrapMessages
       include Tools
-      include CssSelectors::SalesNavigator::Messages
+      include CssSelectors::SalesNavigator::ScrapMessages
 
       def initialize(session, thread_link)
         @session = session

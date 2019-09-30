@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-RSpec.describe ScrapIn::SalesNavigator::Messages do
-  include CssSelectors::SalesNavigator::Messages
+RSpec.describe ScrapIn::SalesNavigator::ScrapMessages do
+  include CssSelectors::SalesNavigator::ScrapMessages
   include ScrapIn::Tools
 
   let(:session) { instance_double('Capybara::Session', 'session') }
@@ -55,7 +55,7 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
   end
 
   describe '.initialize' do
-    it { is_expected.to eq ScrapIn::SalesNavigator::Messages }
+    it { is_expected.to eq ScrapIn::SalesNavigator::ScrapMessages }
   end
 
   describe '.execute' do

@@ -1,24 +1,25 @@
 module ScrapIn
   module LinkedIn
     # Class which yield messages and direction in linkedin
-    class Messages
+    class ScrapMessages
       include Tools
-      include CssSelectors::LinkedIn::Messages
+      include CssSelectors::LinkedIn::ScrapMessages
       def initialize(session, thread_link)
         @session = session
         @thread_link = thread_link
       end
       
       def execute(number_of_messages = 20)
-        return false unless number_of_messages.positive? # ArgumentError.new
+        raise ArgumentError.new('Parameter should be positive') unless number_of_messages.positive? # ArgumentError.new
 
-        return false unless visit_thread_link
+        raise ArgumentError.new('Failed to visit thread link') unless visit_thread_link
 
         loaded_messages = load(number_of_messages)
-        return false if loaded_messages.zero?
+        raise ArgumentError.new('Failed to visit thread link') if loaded_messages.zero?
 
         count = loaded_messages - 1
-        loaded_messages.times.each do
+        max = loaded_messages > number_of_messages ? number_of_messages : loaded_messages
+        max.times.each do
           message = @session.all(all_messages_css)
           content = check_and_find(message[count], message_content_css).text
           direction = message[count][:class].include?(sender_css) ? :incoming : :outgoing
@@ -31,6 +32,7 @@ module ScrapIn
       def visit_thread_link
         @session.visit(@thread_link)
         return false unless wait_messages_to_appear
+
         puts 'Messages have been visited.'
         true
       end
@@ -38,7 +40,7 @@ module ScrapIn
       def wait_messages_to_appear
         puts 'waiting messages to appear'
         messages_appear = check_until(500) do
-          @session.all(messages_thread_css).count > 0
+          @session.all(messages_thread_css).count.positive?
         end
         messages_appear
       end
