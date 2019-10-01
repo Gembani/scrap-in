@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-RSpec.describe ScrapIn::SalesNavigator::Messages do
-  include CssSelectors::SalesNavigator::Messages
+RSpec.describe ScrapIn::SalesNavigator::ScrapMessages do
+  include CssSelectors::SalesNavigator::ScrapMessages
   include ScrapIn::Tools
 
   let(:session) { instance_double('Capybara::Session', 'session') }
@@ -34,7 +34,7 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
 
     create_node_array(message_thread_elements, 5, 'message_thread_elements') # Create empty conversation thread
     message_thread_elements.each do |node|
-      allow(node).to receive(:native) # Method used by scroll_down_to
+      allow(node).to receive(:native) # Method used by scroll_up_to
     end
     create_node_array(sales_loaded_messages, 1, 'sales_loaded_messages') # Create at least one message to load
     # otherwise infinite loop to load conversation
@@ -55,7 +55,7 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
   end
 
   describe '.initialize' do
-    it { is_expected.to eq ScrapIn::SalesNavigator::Messages }
+    it { is_expected.to eq ScrapIn::SalesNavigator::ScrapMessages }
   end
 
   describe '.execute' do
@@ -79,6 +79,9 @@ RSpec.describe ScrapIn::SalesNavigator::Messages do
       context 'when need to load more messages' do
         before do
           create_node_array(bigger_conversation, 10)
+          bigger_conversation.each do |node|
+            allow(node).to receive(:native) # Method used by scroll_up_to
+          end
           create_conversation(bigger_conversation)
           allow(message_thread).to receive(:all)
             .with(message_thread_elements_css, wait: 5)
