@@ -6,7 +6,6 @@ module ScrapIn
       # Capybara.default_max_wait_time = 60 # Seconds
 
       @capybara = Capybara::Session.new(ENV.fetch('driver').to_sym)
-      # @capybara.driver.browser.manage.window.resize_to(1920, 1080)
       auth = ScrapIn::SalesNavigator::Auth.new(@capybara)
       auth.login!(username, password)
     end
