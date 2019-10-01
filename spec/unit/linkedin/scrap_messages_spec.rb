@@ -55,7 +55,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
         has_not_selector(session, messages_thread_css)
         allow(session).to receive(:all).with(messages_thread_css).and_return([])
       end
-      it { expect { linkedin_messages_instance.execute(10) { |message, direction| } }.to raise_error(ArgumentError) }
+      it { expect { linkedin_messages_instance.execute(10) { |message, direction| } }.to raise_error(ScrapIn::CssNotFound) }
     end
   
     context 'when cannot load messages' do
@@ -63,7 +63,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
         has_not_selector(session, all_messages_css)
         allow(session).to receive(:all).with(all_messages_css).and_return([])
       end
-      it { expect { linkedin_messages_instance.execute(10) { |message, direction| } }.to raise_error(ArgumentError) }
+      it { expect { linkedin_messages_instance.execute(10) { |message, direction| } }.to raise_error(ScrapIn::CssNotFound) }
     end
 
     context 'when cannot find message_content_css' do
@@ -80,7 +80,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
   end
 
   context 'when everything is ok' do
-    context '' do
+    context 'when no scroll needed' do
       it do
         count = 0
         linkedin_messages_instance.execute(10) do |message, direction|
