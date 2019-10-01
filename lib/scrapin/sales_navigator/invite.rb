@@ -40,7 +40,7 @@ module ScrapIn
           @error = :already_pending
           return false
         end
-        find_xpath_and_click(action_button_xpath)
+        find_and_click(@session, action_button_css)
         if friend?
           @error = :already_friends
           return false
@@ -86,7 +86,7 @@ module ScrapIn
       end
 
       def click_and_connect
-        find_xpath_and_click(action_button_xpath)
+        find_and_click(@session, action_button_css)
         puts 'clicking on the Connect button'
         find_and_click(@session, connect_button_css)
         if lead_email_required?
@@ -101,12 +101,12 @@ module ScrapIn
       end
 
       def initially_pending?
-        find_xpath_and_click(action_button_xpath)
+        find_and_click(@session, action_button_css)
         @session.has_selector?('li', text: pending_connection_css, wait: 4)
       end
 
       def pending_after_invite?
-        find_xpath_and_click(action_button_xpath)
+        find_and_click(@session, action_button_css)
         unless @session.has_selector?('li', text: pending_connection_css, wait: 4)
           @error = :no_pending_after
           return false

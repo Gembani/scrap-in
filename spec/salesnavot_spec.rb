@@ -126,7 +126,6 @@ RSpec.describe ScrapIn do
       expect(data[:emails].count).to be > 0
       expect(data[:phones].count).to be > 0
       expect(data[:links].count).to eq(2)
-      byebug
     end
   end
 
@@ -185,7 +184,8 @@ RSpec.describe ScrapIn do
     end
     it 'sends invite and send a message' do ## Integration
       message = 'Hello there'
-      invite = @session.invite('https://www.linkedin.com/sales/people/ACwAAAH0sfYBxITLbDpjmA7L5iAPE_WtUzz1-c0,NAME_SEARCH,IoU3', message)
+      url = 'https://www.linkedin.com/sales/people/ACwAABOC43QB_33UK_zSdjpGT874CI8sI8O2g-Y,NAME_SEARCH,WIxj?_ntb=VRQIgoLqSS%2BxwUkvus4PVA%3D%3D'
+      invite = @session.invite(url, message)
       value = invite.execute
       expect(value).to be true
       puts 'Invite sent !'

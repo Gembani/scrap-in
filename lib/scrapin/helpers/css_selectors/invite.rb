@@ -1,8 +1,8 @@
 module CssSelectors
   # All css selectors used in ScrapIn::Invite Class
   module Invite
-    def action_button_xpath
-      "/HTML/BODY[1]/DIV[4]/MAIN[1]/DIV[1]/DIV[1]/DIV[1]/DIV[2]/DIV[1]/ARTDECO-DROPDOWN[1]/ARTDECO-DROPDOWN-TRIGGER[1]"
+    def action_button_css
+      'div.profile-topcard-actions > artdeco-dropdown'
     end
 
     def connect_button_css
