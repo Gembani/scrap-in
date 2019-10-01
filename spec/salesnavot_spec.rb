@@ -76,25 +76,6 @@ RSpec.describe ScrapIn do
     end
   end
 
-  describe '.convert_linkedin_to_salesnav' do
-    it 'convert_linkedin_to_salesnav' do
-      convert = @session.convert_linkedin_to_salesnav('https://www.linkedin.com/in/fabricelenoble/')
-      expect(convert.execute).to eq('https://www.linkedin.com/sales/people/ACoAAADWUwgBctzvFTKAW_3OhL5rc-fpKquTURM,name,2Qv9')
-    end
-  end
-
-  describe '.get_linkedin_data_from_name' do
-    it 'get the linkedin data from name' do
-      expect(@session.get_linkedin_data_from_name('Emma Donovan')).to eq(linkedin_url: 'https://www.linkedin.com/in/emmadonovan1', salesnav_url: 'https://www.linkedin.com/sales/people/ACoAAAAAJ_kBu6vzRwww0KpB2oF4ljYmj1O21z8,name,QOK6')
-    end
-  end
-
-  describe '.get_thread_from_name' do
-    it 'gets friend thread' do
-      expect(@session.get_thread_from_name('Emma Donovan')).to eq('https://www.linkedin.com/messaging/thread/S490732917_3')
-    end
-  end
-
   describe '.scrap_lead' do
     it 'scraps location, phones, emails and website links for a lead' do
       seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'
