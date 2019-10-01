@@ -270,7 +270,7 @@ RSpec.describe ScrapIn do
     context 'Connect button is visible and no note is added' do
       it 'invite the lead' do
         lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
-        invite = @session.invite(lead_url)
+        invite = @session.linkedin_invite(lead_url)
         value = invite.execute(lead_url)
         expect(value).to be(true)
       end
@@ -279,7 +279,7 @@ RSpec.describe ScrapIn do
     context 'Connect button is in \'More...\' section and no note is added' do
       it 'invite the lead' do
         lead_url = 'https://www.linkedin.com/in/nenad-akanovic-460aa9174/'
-        invite = @session.invite(lead_url)
+        invite = @session.linkedin_invite(lead_url)
         value = invite.execute(lead_url)
         expect(value).to be(true)
       end
@@ -380,6 +380,21 @@ RSpec.describe ScrapIn do
           end
           expect(count).to be < scrap_value
         end
+      end
+    end
+  end
+  
+  context 'when a lead as an open conversation' do
+    it do
+      messages = @session.linkedin_scrap_messages('https://www.linkedin.com/messaging/thread/6260168385326256128/')
+      messages.execute(13) do |message, direction|
+      
+        if direction == :incoming
+          print "CONTACT ->  "
+        else
+          print "YOU ->  "
+        end
+        puts message
       end
     end
   end

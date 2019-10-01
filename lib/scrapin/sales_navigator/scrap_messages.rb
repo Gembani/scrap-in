@@ -1,9 +1,9 @@
 module ScrapIn
   module SalesNavigator
     # Class which yield messages and direction in sales conversation
-    class Messages
+    class ScrapMessages
       include Tools
-      include CssSelectors::SalesNavigator::Messages
+      include CssSelectors::SalesNavigator::ScrapMessages
 
       def initialize(session, thread_link)
         @session = session
@@ -59,7 +59,7 @@ module ScrapIn
         while loaded_messages < number_of_messages
           message_thread = find_message_thread
           item = check_and_find_first(message_thread, message_thread_elements_css, wait: 5)
-          scroll_down_to(item)
+          scroll_up_to(item)
           sleep(4)
           return loaded_messages if loaded_messages == count_loaded_messages
 
