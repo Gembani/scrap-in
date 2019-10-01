@@ -14,7 +14,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
   let(:degree_css) { 'degree_css' }
   let(:form_css) { 'form_css' }
   let(:form_email_css) { 'form_email_css' }
-  let(:action_button_xpath) { 'action_button_xpath' }
+  let(:action_button_css) { 'action_button_xpath' }
   let(:connect_button_css) { 'connect_button_css' }
   let(:send_button_css) { 'send' }
   let(:pending_connection_css) { 'pending_connection_css' }
@@ -53,7 +53,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
         allow(invite).to receive(:visit_target_page).with(sales_nav_url)
         allow(invite).to receive(:friend?).and_return(true)
         allow(invite).to receive(:initially_pending?).and_return(false)
-        allow(invite).to receive(:action_button_xpath).and_return(action_button_xpath)
+        allow(invite).to receive(:action_button_css).and_return(action_button_xpath)
         allow(invite).to receive(:find_xpath_and_click).with(action_button_xpath)
       end
 
@@ -66,7 +66,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
       before do
         allow(invite).to receive(:visit_target_page).with(sales_nav_url)
         allow(invite).to receive(:friend?).and_return(false)
-        allow(invite).to receive(:action_button_xpath).and_return(action_button_xpath)
+        allow(invite).to receive(:action_button_css).and_return(action_button_xpath)
         allow(invite).to receive(:connect_button_css).and_return(connect_button_css)
         allow(invite).to receive(:initially_pending?).and_return(false)
         allow(invite).to receive(:find_xpath_and_click).with(action_button_xpath)
@@ -84,7 +84,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
       before do
         allow(invite).to receive(:visit_target_page).with(sales_nav_url)
         allow(invite).to receive(:initially_pending?).and_return(false)
-        allow(invite).to receive(:action_button_xpath).and_return(action_button_xpath)
+        allow(invite).to receive(:action_button_css).and_return(action_button_xpath)
         allow(invite).to receive(:find_xpath_and_click).with(action_button_xpath)
         allow(invite).to receive(:friend?).and_return(false)
         allow(invite).to receive(:connect_button_css).and_return(connect_button_css)
@@ -112,7 +112,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
       end
       context 'but the invitation button do not close' do
         before do
-          allow(invite).to receive(:action_button_xpath).and_return(action_button_xpath)
+          allow(invite).to receive(:action_button_css).and_return(action_button_xpath)
           allow(invite).to receive(:find_xpath_and_click).with(action_button_xpath)
           allow(invite).to receive(:form_css).and_return(form_css)
           allow(session).to receive(:has_selector?).with(form_css).and_return(true)
@@ -128,7 +128,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
       context 'but it cannot find again the action button' do
         before do
           allow(invite).to receive(:invitation_window_closed?).and_return(true)
-          allow(invite).to receive(:action_button_xpath).and_return(action_button_xpath)
+          allow(invite).to receive(:action_button_css).and_return(action_button_xpath)
           allow(session).to receive(:has_selector?).with(:xpath, action_button_xpath).and_return(false)
         end
         it 'raises an error!' do
@@ -140,7 +140,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
       context 'but it cannot find pending connection button' do
         before do
           allow(invite).to receive(:invitation_window_closed?).and_return(true)
-          allow(invite).to receive(:action_button_xpath).and_return(action_button_xpath)
+          allow(invite).to receive(:action_button_css).and_return(action_button_xpath)
           allow(invite).to receive(:find_xpath_and_click).with(action_button_xpath)
           allow(invite).to receive(:pending_connection_css).and_return(pending_connection_css)
           allow(session).to receive(:has_selector?).with(pending_connection_css, :wait=>4).and_return(false)
@@ -156,7 +156,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
       context 'and everything went well' do
         before do
           allow(invite).to receive(:invitation_window_closed?).and_return(true)
-          allow(invite).to receive(:action_button_xpath).and_return(action_button_xpath)
+          allow(invite).to receive(:action_button_css).and_return(action_button_xpath)
           allow(invite).to receive(:find_xpath_and_click).with(action_button_xpath)
           allow(invite).to receive(:pending_connection_css).and_return(pending_connection_css)
           allow(session).to receive(:has_selector?).with(pending_connection_css, :wait=>4).and_return(true)
