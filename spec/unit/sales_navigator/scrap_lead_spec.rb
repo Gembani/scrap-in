@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.shared_examples "a popup closed method" do 
-  include CssSelectors::ScrapLead
+  include CssSelectors::SalesNavigator::ScrapLead
   context "not on leads page, go to lead page" do 
     before do
       allow(session).to receive(:current_url).with(no_args).and_return("google.com")
@@ -35,7 +35,7 @@ RSpec.shared_examples "a popup closed method" do
 end
 
 RSpec.shared_examples "a popup open method" do 
-  include CssSelectors::ScrapLead
+  include CssSelectors::SalesNavigator::ScrapLead
   let(:more_info_button) {instance_double('Capybara::Node::Element') }
   context "not on leads page, go to lead page, open popup" do 
     before do
@@ -73,7 +73,7 @@ RSpec.shared_examples "a popup open method" do
   end 
 end
 
-RSpec.describe ScrapIn::ScrapLead do
+RSpec.describe ScrapIn::SalesNavigator::ScrapLead do
   include ScrapIn::Tools
   let(:session) { instance_double('Capybara::Session') }
   let(:sales_nav_url) { 'linkedin.com/sales/people/adsahsdfasd' }
