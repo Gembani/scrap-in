@@ -1,23 +1,29 @@
 
 module CssSelectors
-  module LinkedIn
-    # All css selectors used in ScrapIn::LinkedIn::Auth Class
-    module Auth
-      def email_input
-        '#username'
-      end
+  # All css selectors used in ScrapIn::LinkedIn::Auth Class
+  module Auth
+    def username_input_css
+      '#username'
+    end
 
-      def password_input
-        '#password'
-      end
+    def password_input_css
+      '#password'
+    end
 
-      def login_button
-        'btn__primary--large'
-      end
+    def alert_header_css
+      '.alert-center__list-header'
+    end
 
-      def alert_header_xpath
-        '//*/section/header/h2[contains(.,"Alerts")]'
-      end
+    def password_error_css
+      '#error-for-password'
+    end
+
+    def linkedin_placeholder
+      'Search'
+    end
+
+    def sales_navigator_placeholder
+      'Search by keywords or boolean'
     end
   end
 end
