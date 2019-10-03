@@ -3,16 +3,47 @@ module ScrapIn
   class Auth
     include CssSelectors::Auth
     include Tools
-    def initialize(session, linkedin = false)
+    def initialize(session)
       @session = session
-      @linkedin = linkedin
     end
 
-    def login!(username, password)
+    def login!(username, password, linkedin = false)
+      @linkedin = linkedin
       enter_credentials(username, password)
-      alert_page_loaded = homepage_is_loaded?
+      success = homepage_is_loaded?
       raise IncorrectPassword if @session.has_selector?(password_error_css, wait: 1)
-      raise CssNotFound, "Input with placeholder = #{search_placeholder}" unless alert_page_loaded
+      raise CssNotFound, "Input with placeholder = #{search_placeholder}" unless success
+    end
+
+
+    private
+
+    def homepage_is_loaded?
+      check_until(10) do
+        @session.has_field?(placeholder: search_placeholder, wait: 1)
+      end
+    end
+
+    def enter_credentials(username, password)
+      puts 'Visiting login screen'
+      @session.visit(homepage)
+
+      puts "Filling in email... -> #{username}"
+      username_field = check_and_find(@session, username_input_css)
+      username_field.click
+      sleep(1)
+      username_field.send_keys(username)
+      sleep(1)
+
+      puts 'Filling in password...'
+      password_field = check_and_find(@session, password_input_css)
+      sleep(1)
+      password_field.click
+      password_field.send_keys(password)
+
+      puts 'Clicking on login button'
+      sleep(1)
+      password_field.send_keys(:enter)
     end
 
     def homepage
@@ -30,35 +61,5 @@ module ScrapIn
     def sales_navigator_homepage
       'https://www.linkedin.com/sales'
     end
-
-    private
-
-    def homepage_is_loaded?
-      check_until(10) do
-        @session.has_field?(placeholder: search_placeholder, wait: 1)
-      end
-    end
-
-    def enter_credentials(username, password)
-    puts 'Visiting login screen'
-    @session.visit(homepage)
-
-    puts "Filling in email... -> #{username}"
-    username_field = check_and_find(@session, username_input_css)
-    username_field.click
-    sleep(1)
-    username_field.send_keys(username)
-    sleep(1)
-
-    puts 'Filling in password...'
-    password_field = check_and_find(@session, password_input_css)
-    sleep(1)
-    password_field.click
-    password_field.send_keys(password)
-
-    puts 'Clicking on login button'
-    sleep(1)
-    password_field.send_keys(:enter)
-  end
   end
 end

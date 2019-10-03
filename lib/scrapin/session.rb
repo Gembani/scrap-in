@@ -6,8 +6,8 @@ module ScrapIn
       # Capybara.default_max_wait_time = 60 # Seconds
 
       @capybara = Capybara::Session.new(ENV.fetch('driver').to_sym)
-      auth = ScrapIn::Auth.new(@capybara, linkedin)
-      auth.login!(username, password)
+      auth = ScrapIn::Auth.new(@capybara)
+      auth.login!(username, password, linkedin)
     end
 
     def scrap_lead(config)
@@ -26,22 +26,8 @@ module ScrapIn
       ScrapIn::LinkedIn::Invite.new(@capybara, lead_url)
     end
 
-    def convert_linkedin_to_salesnav(linkedin_url)
-      ScrapIn::LinkedinSalesnavConverter.new(linkedin_url, @capybara)
-    end
-
     def sent_invites
       ScrapIn::SentInvites.new(@capybara)
-    end
-
-    def get_linkedin_data_from_name(name)
-      object = ScrapIn::LinkedInDataFromName.new(@capybara)
-      object.execute(name)
-    end
-
-    def get_thread_from_name(name)
-      object = ScrapIn::ThreadFromName.new(@capybara)
-      object.execute(name)
     end
 
     def linkedin_send_message(profile, message)
