@@ -10,8 +10,8 @@ module ScrapIn
       auth.login!(username, password, linkedin)
     end
 
-    def scrap_lead(config)
-      ScrapIn::ScrapLead.new(config, @capybara)
+    def sales_nav_scrap_lead(config)
+      ScrapIn::SalesNavigator::ScrapLead.new(config, @capybara)
     end
 
     def linkedin_scrap_lead(config)
