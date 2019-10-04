@@ -1,3 +1,3 @@
-#captcha error
+# captcha error
 class CaptchaError < StandardError
 end

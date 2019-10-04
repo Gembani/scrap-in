@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe ScrapIn::Session do
-
-
   let(:username) { 'username' }
   let(:password) { 'password' }
   let(:driver) { 'driver' }
@@ -228,4 +226,3 @@ RSpec.describe ScrapIn::Session do
     end
   end
 end
-

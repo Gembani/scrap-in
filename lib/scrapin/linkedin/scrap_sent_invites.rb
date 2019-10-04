@@ -16,10 +16,12 @@ module ScrapIn
 
       def find_lead_name(count)
         return unless @session.has_selector?(nth_lead_css(count), wait: 3)
+
         item = @session.find(nth_lead_css(count))
         scroll_to(item)
         name = item.text
         return if name.empty?
+
         @invited_leads.push name
         yield name
       end
@@ -30,7 +32,7 @@ module ScrapIn
         count = 0
         num_times.times.each do
           unless @session.has_selector?(
-              nth_lead_css(count, invitation: false), wait: 10
+            nth_lead_css(count, invitation: false), wait: 10
           )
             count = 0
             break unless next_page
@@ -43,6 +45,7 @@ module ScrapIn
       def init_list(link)
         @session.visit(link)
         return false unless @session.has_selector?(invitation_list_css)
+
         true
       end
 
@@ -50,6 +53,7 @@ module ScrapIn
         pagination_buttons = @session.all(pagination_selector)
         pagination_buttons.each do |button|
           next unless button.has_selector?(next_button_css, wait: 1)
+
           return button
         end
         nil
@@ -57,8 +61,10 @@ module ScrapIn
 
       def next_page
         return false unless @session.has_selector?(pagination_selector)
+
         next_button = find_next_button
         return false if next_button[:class].include?('disabled')
+
         init_list(next_button[:href])
         true
       end

@@ -7,9 +7,9 @@ module ScrapIn
         @session = session
       end
 
-       def execute(num_times = 10)
-        raise ArgumentError.new("Parameter should be positive") unless num_times.positive?
-        
+      def execute(num_times = 10)
+        raise ArgumentError, 'Parameter should be positive' unless num_times.positive?
+       
         visit_messages_link
         count = 0
 
@@ -29,12 +29,12 @@ module ScrapIn
           sleep(1.5)
         end
         true
-      end
+     end
 
-       def visit_messages_link
+      def visit_messages_link
         @session.visit('https://www.linkedin.com/messaging/')
         puts 'Messages have been visited.'
-      end
+     end
 
       def find_conversation(count)
         threads_list_2 = check_and_find(@session, threads_block_count_css(count))
@@ -47,4 +47,4 @@ module ScrapIn
       end
     end
   end
-end 
+end

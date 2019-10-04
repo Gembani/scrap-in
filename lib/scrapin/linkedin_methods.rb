@@ -3,7 +3,7 @@ module LinkedInMethods
     ScrapIn::LinkedIn::ScrapLead.new(config, @capybara)
   end
 
-  def linkedin_invite(lead_url, *note)
+  def linkedin_invite(lead_url, *_note)
     ScrapIn::LinkedIn::Invite.new(@capybara, lead_url)
   end
 

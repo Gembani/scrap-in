@@ -40,7 +40,6 @@ module ScrapIn
         @processed_page + 1
       end
 
-
       def click_on_page(page)
         page_button = @session.all(page_css(page), wait: 30).first
         scroll_to(page_button)
@@ -51,7 +50,8 @@ module ScrapIn
 
       def check_results_loaded
         raise 'NOT LOADED' unless @session.has_selector?(
-            results_loaded_css)
+          results_loaded_css
+        )
       end
 
       def empty_results?
@@ -76,6 +76,7 @@ module ScrapIn
         puts "Going to page #{page}"
         @session.visit(url)
         return false if empty_results?
+
         check_results_loaded
         true
       end
@@ -83,20 +84,18 @@ module ScrapIn
       def find_page_leads
         ensure_leads_are_loaded
         find_leads_size_on_page
-        puts "Getting the links and the image source of each profile on the page..."
+        puts 'Getting the links and the image source of each profile on the page...'
         @session.all(name_css).each do |item|
           href = item[:href]
-          profile_image = if item.has_selector?('img', wait: 0)
-                            item.find('img')[:src]
-                          end
+          profile_image = (item.find('img')[:src] if item.has_selector?('img', wait: 0))
           puts "Link = #{href}"
           yield href, profile_image
         end
-        puts "Done"
+        puts 'Done'
       end
 
       def ensure_leads_are_loaded
-        raise CssNotFound.new(name_css) unless @session.has_selector?(name_css)
+        raise CssNotFound, name_css unless @session.has_selector?(name_css)
       end
 
       def find_leads_size_on_page
@@ -117,12 +116,12 @@ module ScrapIn
       end
 
       def go_to_saved_search
-        puts "Going to the Homepage"
+        puts 'Going to the Homepage'
         @session.visit(homepage)
         puts "Hovering the mouse over the button 'Saved searches'"
         @session.find(searches_hover_css).hover
-        puts "Clicking on the search of interest"
-        @session.find(searches_hover_css).find(searches_list_css).find('li',:text=>@list_identifier).click_link
+        puts 'Clicking on the search of interest'
+        @session.find(searches_hover_css).find(searches_list_css).find('li', text: @list_identifier).click_link
         @saved_search_url = @session.current_url
       end
 

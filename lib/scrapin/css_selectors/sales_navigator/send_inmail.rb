@@ -7,7 +7,7 @@ module CssSelectors
       end
 
       def degree_text
-        "1st"
+        '1st'
       end
 
       def subject_placeholder

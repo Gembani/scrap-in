@@ -19,31 +19,29 @@ module ScrapIn
     def check_until(amount_of_time)
       amount_of_time.times do
         return true if yield
+
         sleep(0.001)
       end
-      return false
+      false
     end
 
     def find_and_click(node, css)
-      unless node.has_selector?(css)
-        raise CssNotFound.new(css)
-      end
+      raise CssNotFound, css unless node.has_selector?(css)
+
       node.find(css).click 
     end
     
     def check_and_find_first(node, *config)
       css = config.first
-      unless node.has_selector?(*config)
-        raise CssNotFound.new(css)
-      end
+      raise CssNotFound, css unless node.has_selector?(*config)
+
       node.first(*config)
     end
 
     def check_and_find(node, *config)
       css = config.first
-      unless node.has_selector?(*config)
-        raise CssNotFound.new(css)
-      end
+      raise CssNotFound, css unless node.has_selector?(*config)
+
       node.find(*config)
     end
 
@@ -56,9 +54,8 @@ module ScrapIn
     # end
     
     def find_xpath_and_click(xpath)
-      unless @session.has_selector?(:xpath, xpath)
-        raise CssNotFound.new(xpath)
-      end
+      raise CssNotFound, xpath unless @session.has_selector?(:xpath, xpath)
+
       @session.find(:xpath, xpath).click
     end
   end

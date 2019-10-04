@@ -2,7 +2,6 @@
 
 module ScrapIn
   module SalesNavigator
-
     # Goes to a lead profile page, and invite the lead
     class Invite
       include Tools
@@ -56,7 +55,7 @@ module ScrapIn
 
       def visit_target_page(link)
         @session.visit(link)
-        raise CssNotFound.new(profile_css) unless @session.has_selector?(profile_css)
+        raise CssNotFound, profile_css unless @session.has_selector?(profile_css)
       end
 
       def friend?

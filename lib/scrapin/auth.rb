@@ -15,7 +15,6 @@ module ScrapIn
       raise CssNotFound, "Input with placeholder = #{search_placeholder}" unless success
     end
 
-
     private
 
     def homepage_is_loaded?

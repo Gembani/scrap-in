@@ -15,7 +15,5 @@ module ScrapIn
     def driver
       @capybara.driver
     end
-
-
   end
 end
