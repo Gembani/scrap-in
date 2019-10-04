@@ -35,6 +35,10 @@ module ScrapIn
       ScrapIn::LinkedIn::SendMessage.new(@capybara, profile, message)
     end
 
+    def sales_nav_send_message(thread, message)
+      ScrapIn::SalesNavigator::SendMessage.new(@capybara, thread, message)
+    end
+
     def send_inmail(profile_url, subject, message)
       ScrapIn::SalesNavigator::SendInmail.new(@capybara, profile_url, subject, message)
     end
@@ -47,7 +51,7 @@ module ScrapIn
       ScrapIn::SalesNavigator::Threads.new(@capybara)
     end
 
-    def sales_nav_messages(thread_link)
+    def sales_nav_scrap_messages(thread_link)
       ScrapIn::SalesNavigator::ScrapMessages.new(@capybara, thread_link)
     end
 

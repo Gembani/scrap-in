@@ -183,6 +183,15 @@ RSpec.describe ScrapIn do
     end
   end
 
+  describe '.sales_nav_send_message' do
+    it ' sends a message from sales nav conversation thread to a lead' do
+      send_message = @session.sales_nav_send_message('https://www.linkedin.com/sales/inbox/6572101845743910912',
+                                                    'Hi, this is a test message at ' +
+                                                        Time.now.strftime('%H:%M:%S').to_s +
+                                                        '. Thanks!')
+      send_message.execute
+    end
+  end
 
   describe '.friends' do
     it 'scraps friends' do
@@ -287,13 +296,13 @@ RSpec.describe ScrapIn do
     end
   end
 
-  describe '.sales_nav_messages' do
+  describe '.sales_nav_scrap_messages' do
     context 'when a lead as an open conversation' do
       it 'scraps all messages from thread_url if the number of messages < scrap_value' do
         20.times do
           count = 0
           scrap_value = 100
-          seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
+          seb_messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
           seb_messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
               print 'CONTACT ->  '
@@ -311,8 +320,8 @@ RSpec.describe ScrapIn do
         20.times do
           count = 0
           scrap_value = 2
-          # messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
-          messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6572101845743910912')
+          # messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
+          messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6572101845743910912')
 
           messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
@@ -331,7 +340,7 @@ RSpec.describe ScrapIn do
         20.times do
           count = 0
           scrap_value = 25
-          seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
+          seb_messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
           seb_messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
               print 'CONTACT ->  '
@@ -349,7 +358,7 @@ RSpec.describe ScrapIn do
         20.times do
           count = 0
           scrap_value = 25
-          messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6560550015541043200')
+          messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6560550015541043200')
           messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
               print 'CONTACT ->  '
