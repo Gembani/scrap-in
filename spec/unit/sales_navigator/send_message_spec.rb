@@ -74,7 +74,7 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
     it { expect(salesnav_messages_instance.execute).to eq(false) }
   end
 
-  context 'when fails to send message' do
+  context 'when fails to send message for some reason, the last message is not the one expected' do
     before do
       has_not_selector(session, messages_css)
       allow(conversation_array).to receive(:[]).with(-1).and_return(conversation_array[0])
@@ -82,7 +82,7 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
     it { expect(salesnav_messages_instance.execute).to eq(false) }
   end
 
-  context 'when class sends message' do
+  context 'when class sends message to lead' do
     it { expect(salesnav_messages_instance.execute).to eq(true) }
   end
 end
