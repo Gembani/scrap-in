@@ -126,7 +126,13 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
     end
 
     context 'the selector for friend name was not found' do
-      before { has_not_selector(friends, friend_name_css) }
+      before do
+        count = 0
+        40.times do
+          has_not_selector(friends_array[count], friend_name_css)
+          count += 1
+        end
+      end
       it do
         expect { friends.execute { |_name, _time_ago, _link| } }
           .to raise_error(ScrapIn::CssNotFound)
@@ -138,7 +144,13 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
     end
 
     context 'the selector for friend name was not found' do
-      before { has_not_selector(friends, time_ago_css) }
+      before do
+        count = 0
+        40.times do
+          has_not_selector(friends_array[count], time_ago_css)
+          count += 1
+        end
+      end
       it do
         expect { friends.execute { |_name, _time_ago, _link| } }
           .to raise_error(ScrapIn::CssNotFound)
@@ -150,7 +162,13 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
     end
 
     context 'the selector for friend name was not found' do
-      before { has_not_selector(friends, link_css) }
+      before do
+        count = 0
+        40.times do
+          has_not_selector(friends_array[count], link_css)
+          count += 1
+        end
+      end
       it do
         expect { friends.execute { |_name, _time_ago, _link| } }
           .to raise_error(ScrapIn::CssNotFound)
