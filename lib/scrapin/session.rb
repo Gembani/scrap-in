@@ -10,44 +10,52 @@ module ScrapIn
       auth.login!(username, password, linkedin)
     end
 
+    def driver
+      @capybara.driver
+    end
+
     def sales_nav_scrap_lead(config)
       ScrapIn::SalesNavigator::ScrapLead.new(config, @capybara)
+    end
+
+    def sales_nav_invite(sales_nav_profile_link, content)
+      ScrapIn::SalesNavigator::Invite.new(sales_nav_profile_link, @capybara, content)
+    end
+
+    def sales_nav_send_inmail(profile_url, subject, message)
+      ScrapIn::SalesNavigator::SendInmail.new(@capybara, profile_url, subject, message)
+    end
+
+    def sales_nav_scrap_threads
+      ScrapIn::SalesNavigator::ScrapThreads.new(@capybara)
+    end
+
+    def sales_nav_scrap_messages(thread_link)
+      ScrapIn::SalesNavigator::ScrapMessages.new(@capybara, thread_link)
+    end
+
+    def sales_nav_scrap_search_list(list_identifier)
+      ScrapIn::SalesNavigator::ScrapSearchList.new(list_identifier, @capybara)
     end
 
     def linkedin_scrap_lead(config)
       ScrapIn::LinkedIn::ScrapLead.new(config, @capybara)
     end
 
-    def invite(sales_nav_profile_link, content)
-      ScrapIn::SalesNavigator::Invite.new(sales_nav_profile_link, @capybara, content)
-    end
-
     def linkedin_invite(lead_url, *note)
       ScrapIn::LinkedIn::Invite.new(@capybara, lead_url)
     end
 
-    def sent_invites
-      ScrapIn::SentInvites.new(@capybara)
+    def linkedin_scrap_sent_invites
+      ScrapIn::LinkedIn::ScrapSentInvites.new(@capybara)
     end
 
     def linkedin_send_message(profile, message)
       ScrapIn::LinkedIn::SendMessage.new(@capybara, profile, message)
     end
 
-    def send_inmail(profile_url, subject, message)
-      ScrapIn::SalesNavigator::SendInmail.new(@capybara, profile_url, subject, message)
-    end
-
-    def linkedin_threads
-      ScrapIn::LinkedIn::Threads.new(@capybara)
-    end
-
-    def sales_nav_threads
-      ScrapIn::SalesNavigator::Threads.new(@capybara)
-    end
-
-    def sales_nav_messages(thread_link)
-      ScrapIn::SalesNavigator::ScrapMessages.new(@capybara, thread_link)
+    def linkedin_scrap_threads
+      ScrapIn::LinkedIn::ScrapThreads.new(@capybara)
     end
 
     def linkedin_scrap_messages(thread_link)
@@ -58,16 +66,8 @@ module ScrapIn
       ScrapIn::LinkedIn::ProfileViews.new(@capybara)
     end
 
-    def driver
-      @capybara.driver
-    end
-
-    def friends
-      ScrapIn::Friends.new(@capybara)
-    end
-
-    def search(list_identifier)
-      ScrapIn::Search.new(list_identifier, @capybara)
+    def linkedin_scrap_friends
+      ScrapIn::LinkedIn::ScrapFriends.new(@capybara)
     end
   end
 end

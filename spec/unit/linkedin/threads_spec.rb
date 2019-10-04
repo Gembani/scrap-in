@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ScrapIn::LinkedIn::Threads do
+RSpec.describe ScrapIn::LinkedIn::ScrapThreads do
 	RSpec::Mocks.configuration.allow_message_expectations_on_nil = true
 	let(:subject) do
 		described_class
@@ -19,7 +19,7 @@ RSpec.describe ScrapIn::LinkedIn::Threads do
 	let(:conversation) { instance_double('Capybara::Node::Element', 'conversation') }
 	let(:threads_list_array) { [] }
 
-	include CssSelectors::LinkedIn::Threads
+	include CssSelectors::LinkedIn::ScrapThreads
 
 	before do
 		disable_puts

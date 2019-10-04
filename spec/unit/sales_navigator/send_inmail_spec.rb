@@ -17,7 +17,7 @@ RSpec.describe ScrapIn::SalesNavigator::SendInmail do
   let(:subject_text) { 'subject_text' }
   let(:session) { instance_double('Capybara::Session') }
 
-  include CssSelectors::SendInmail
+  include CssSelectors::SalesNavigator::SendInmail
   before do
     # For more clear results without all the logs
     disable_puts

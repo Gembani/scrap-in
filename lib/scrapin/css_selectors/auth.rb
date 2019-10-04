@@ -1,4 +1,3 @@
-
 module CssSelectors
   # All css selectors used in ScrapIn::LinkedIn::Auth Class
   module Auth

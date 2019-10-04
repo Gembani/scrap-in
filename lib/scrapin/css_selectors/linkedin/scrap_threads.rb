@@ -1,6 +1,6 @@
 module CssSelectors
 	module LinkedIn
-		module Threads
+		module ScrapThreads
 			def threads_block_count_css(count)
 				".msg-conversations-container__conversations-list li:nth-child(#{count + 2})"
 			end

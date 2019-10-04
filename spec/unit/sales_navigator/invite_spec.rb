@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe ScrapIn::SalesNavigator::Invite do
   include ScrapIn::Tools
-  include CssSelectors::Invite
+  include CssSelectors::SalesNavigator::Invite
   let(:invite) do
     described_class.new(sales_nav_url, session, content)
   end

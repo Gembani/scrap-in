@@ -2,7 +2,7 @@ module ScrapIn
   module SalesNavigator
     class SendInmail
       include Tools
-      include CssSelectors::SendInmail
+      include CssSelectors::SalesNavigator::SendInmail
 
       def initialize(session, profile_url, subject, inmail_message)
         @session = session

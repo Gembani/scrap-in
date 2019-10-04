@@ -1,8 +1,8 @@
 module ScrapIn
   module LinkedIn
-    class Threads
+    class ScrapThreads
       include Tools
-      include CssSelectors::LinkedIn::Threads
+      include CssSelectors::LinkedIn::ScrapThreads
       def initialize(session)
         @session = session
       end
