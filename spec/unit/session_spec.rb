@@ -19,10 +19,10 @@ RSpec.describe ScrapIn::Session do
       allow(auth).to receive(:login!).with(username, password, linkedin)
       allow(ScrapIn::Auth).to receive(:new).with(capybara_session).and_return(auth)
     end
-    after { ScrapIn::Session.new(username, password, linkedin) }
 
     describe '.intialize' do
       context "when we want to log into #{platform_name}" do
+        after { ScrapIn::Session.new(username, password, linkedin) }
         it 'should have created a new session' do
           expect(Capybara::Session).to receive(:new).with(driver.to_sym).and_return(capybara_session)
         end
@@ -165,17 +165,19 @@ RSpec.describe ScrapIn::Session do
       end
     end
 
-    describe '.sales_nav_threads' do
-      let(:sales_nav_threads) { instance_double('ScrapIn::SalesNavigator::Threads') }
+    describe '.linkedin_scrap_messages' do
+      let(:thread_link) { 'thread_link' }
+      let(:linkedin_scrap_messages) { instance_double('ScrapIn::LinkedIn::ScrapMessages') }
       before do
-        allow(ScrapIn::SalesNavigator::Threads).to receive(:new).with(capybara_session).and_return(sales_nav_threads)
+        allow(ScrapIn::LinkedIn::ScrapMessages).to receive(:new).with(capybara_session, thread_link).and_return(linkedin_scrap_messages)
       end
       it 'should call the correct initializer' do
-        expect(ScrapIn::SalesNavigator::Threads).to receive(:new).with(capybara_session).and_return(sales_nav_threads)
-        result = subject.sales_nav_threads
-        expect(result).to be(sales_nav_threads)
+        allow(ScrapIn::LinkedIn::ScrapMessages).to receive(:new).with(capybara_session, thread_link).and_return(linkedin_scrap_messages)
+        result = subject.linkedin_scrap_messages(thread_link)
+        expect(result).to be(linkedin_scrap_messages)
       end
     end
+
     describe '.linkedin_profile_views' do
       let(:linkedin_profile_views) { instance_double('ScrapIn::LinkedIn::ProfileViews') }
       before do
@@ -185,6 +187,43 @@ RSpec.describe ScrapIn::Session do
         expect(ScrapIn::LinkedIn::ProfileViews).to receive(:new).with(capybara_session).and_return(linkedin_profile_views)
         result = subject.linkedin_profile_views
         expect(result).to be(linkedin_profile_views)
+      end
+    end
+
+    describe '.driver' do
+      let(:capybara_driver) { instance_double('Capybara::Selenium::Driver') }
+      before do
+        allow(capybara_session).to receive(:driver).and_return(capybara_driver)
+      end
+      it 'should call the correct initializer' do
+        expect(capybara_session).to receive(:driver).and_return(capybara_driver)
+        result = subject.driver
+        expect(result).to be(capybara_driver)
+      end
+    end
+
+    describe '.friends' do
+      let(:friends) { instance_double('ScrapIn::Friends') }
+      before do
+        allow(ScrapIn::Friends).to receive(:new).with(capybara_session).and_return(friends)
+      end
+      it 'should call the correct initializer' do
+        expect(ScrapIn::Friends).to receive(:new).with(capybara_session).and_return(friends)
+        result = subject.friends
+        expect(result).to be(friends)
+      end
+    end
+
+    describe '.search' do
+      let(:list_identifier) { 'list_identifier' }
+      let(:search) { instance_double('ScrapIn::Search') }
+      before do
+        allow(ScrapIn::Search).to receive(:new).with(list_identifier, capybara_session).and_return(search)
+      end
+      it 'should call the correct initializer' do
+        expect(ScrapIn::Search).to receive(:new).with(list_identifier, capybara_session).and_return(search)
+        result = subject.search(list_identifier)
+        expect(result).to be(search)
       end
     end
   end
