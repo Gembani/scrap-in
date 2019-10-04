@@ -14,6 +14,7 @@ module ScrapIn
         write_message
         send_message
         message_sent?
+        true
       end
 
       def visit_thread
