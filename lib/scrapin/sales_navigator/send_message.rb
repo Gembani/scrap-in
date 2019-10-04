@@ -10,11 +10,11 @@ module ScrapIn
       end
 
       def execute
-        visit_thread
+        return false unless visit_thread
+
         write_message
         send_message
         message_sent?
-        true
       end
 
       def visit_thread
