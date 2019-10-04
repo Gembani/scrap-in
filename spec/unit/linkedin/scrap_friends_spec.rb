@@ -7,10 +7,10 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
 
   let(:session) { instance_double('Capybara::Session') }
 
-  let(:friend) { instance_double('Capybara::Node::Element', 'friend') }
-  let(:name_node) { instance_double('Capybara::Node::Element', 'name') }
-  let(:link_node) { instance_double('Capybara::Node::Element', 'link') }
-  let(:time_ago_node) { instance_double('Capybara::Node::Element', 'time_ago') }
+  let(:friends_array) { [] }
+  let(:name_nodes_array) { [] }
+  let(:link_nodes_array) { [] }
+  let(:time_ago_nodes_array) { [] }
 
   # let(:name_string) { Faker::Name.name }
   # let(:link_string) { Faker::Internet.url }
@@ -23,39 +23,42 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
 
   before do
     disable_script
+    create_node_array(friends_array, 40)
+    create_node_array(name_nodes_array, 40)
+    create_node_array(time_ago_nodes_array, 40)
+    create_node_array(link_nodes_array, 40)
 
     allow(session).to receive(:visit)
     # has_selector(session, nth_friend_css(0)) # use css selector nth_friend_css
 
+    40.times do
+      names_array << Faker::Name.name
+      links_array << Faker::Internet.url
+      time_agos_array << Faker::Time.backward(14, :evening)
+    end
     count = 0
     40.times do
       has_selector(session, nth_friend_css(count)) # use css selector nth_friend_css
-      allow(session).to receive(:find).with(nth_friend_css(count)).and_return(friend)
+      allow(session).to receive(:find).with(nth_friend_css(count)).and_return(friends_array[count])
 
-      allow(friend).to receive(:native)
+      allow(friends_array[count]).to receive(:native)
 
       has_selector(session, friend_name_css)
       has_selector(session, time_ago_css)
       has_selector(session, link_css)
 
-      has_selector(friend, friend_name_css)
-      has_selector(friend, time_ago_css)
-      has_selector(friend, link_css)
+      has_selector(friends_array[count], friend_name_css)
+      has_selector(friends_array[count], time_ago_css)
+      has_selector(friends_array[count], link_css)
 
-      allow(friend).to receive(:find).with(friend_name_css).and_return(name_node)
-      name = Faker::Name.name
-      allow(name_node).to receive(:text).and_return(name)
-      names_array << name
+      allow(friends_array[count]).to receive(:find).with(friend_name_css).and_return(name_nodes_array[count])
+      allow(name_nodes_array[count]).to receive(:text).and_return(names_array[count])
 
-      allow(friend).to receive(:find).with(link_css).and_return(link_node)
-      link = Faker::Internet.url
-      allow(link_node).to receive(:[]).with(:href).and_return(link)
-      links_array << link
+      allow(friends_array[count]).to receive(:find).with(link_css).and_return(link_nodes_array[count])
+      allow(link_nodes_array[count]).to receive(:[]).with(:href).and_return(links_array[count])
 
-      allow(friend).to receive(:find).with(time_ago_css).and_return(time_ago_node)
-      time_ago = Faker::Time.backward(14, :evening)
-      allow(time_ago_node).to receive(:text).and_return(time_ago)
-      time_agos_array << time_ago
+      allow(friends_array[count]).to receive(:find).with(time_ago_css).and_return(time_ago_nodes_array[count])
+      allow(time_ago_nodes_array[count]).to receive(:text).and_return(time_agos_array[count])
 
       count += 1
     end
@@ -158,17 +161,15 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
       end
     end
 
-    context 'testtesttest' do
+    context 'normal behavior' do
       it do
         count = 0
-        40.times do
-          result = friends.execute(40) do |name, time_ago, link|
-            # expect(name).to eq(names_array[count])
-            # expect(time_ago).to eq(time_agos_array[count])
-            # expect(link).to eq(links_array[count])
+          result = friends.execute do |name, time_ago, link|
+            expect(name).to eq(names_array[count])
+            expect(time_ago).to eq(time_agos_array[count])
+            expect(link).to eq(links_array[count])
             count += 1
           end
-        end
         expect(result).to eq(true)
       end
     end
