@@ -66,7 +66,7 @@ module ScrapIn
       # We expect the user to only scrap 1st degree leads
       def first_degree?
         close_popup
-        check_and_find(@session, degree_css, wait: 5).text
+        check_and_find(@session, degree_css, wait: 5).text == '1st'
       end
 
       def scrap_emails

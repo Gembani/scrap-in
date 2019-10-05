@@ -15,7 +15,7 @@ module CssSelectors
       end
 
       def links_block_css
-        '.contact-info-form__link div.contact-info-form__website-readonly-group'
+        '.contact-info-form__website-readonly-group'
       end
 
       def infos_css
