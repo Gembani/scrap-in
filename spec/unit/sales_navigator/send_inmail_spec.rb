@@ -17,7 +17,7 @@ RSpec.describe ScrapIn::SalesNavigator::SendInmail do
   let(:subject_text) { 'subject_text' }
   let(:session) { instance_double('Capybara::Session') }
 
-  include CssSelectors::SendInmail
+  include CssSelectors::SalesNavigator::SendInmail
   before do
     # For more clear results without all the logs
     disable_puts
@@ -64,18 +64,18 @@ RSpec.describe ScrapIn::SalesNavigator::SendInmail do
       it { expect { send_inmail_instance.execute }.to raise_error(/#{profile_url}/) }
     end
     context 'when we are unable to click on message button' do
-      before { click_button_fails(message_button_text)}
+      before { click_button_fails(message_button_text) }
       it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{message_button_text}/) }
     end
     context 'when we are unable to find the subject field' do
-      before { cannot_find_field_with_placeholder(subject_placeholder)}
+      before { cannot_find_field_with_placeholder(subject_placeholder) }
       it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
       xit { expect { send_inmail_instance.execute }.to raise_error(/#{subject_placeholder}/) }
       # Weird behavior with parenthesis in placeholder ...
     end
     context 'when we are unable to find the message field' do
-      before { cannot_find_field_with_placeholder(message_placeholder)}
+      before { cannot_find_field_with_placeholder(message_placeholder) }
       it { expect { send_inmail_instance.execute }.to raise_error(Capybara::ElementNotFound) }
       it { expect { send_inmail_instance.execute }.to raise_error(/#{message_placeholder}/) }
     end

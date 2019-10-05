@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe ScrapIn::SalesNavigator::Invite do
   include ScrapIn::Tools
-  include CssSelectors::Invite
+  include CssSelectors::SalesNavigator::Invite
   let(:invite) do
     described_class.new(sales_nav_url, session, content)
   end
@@ -133,7 +133,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
           allow(invite).to receive(:action_button_css).and_return(action_button_css)
           allow(invite).to receive(:find_and_click).with(session, action_button_css)
           allow(invite).to receive(:pending_connection_css).and_return(pending_connection_css)
-          allow(session).to receive(:has_selector?).with(pending_connection_css, :wait=>4).and_return(false)
+          allow(session).to receive(:has_selector?).with(pending_connection_css, wait: 4).and_return(false)
         end
         xit 'returns false!' do
           expect(invite.execute).to eq(false)
@@ -149,7 +149,7 @@ RSpec.describe ScrapIn::SalesNavigator::Invite do
           allow(invite).to receive(:action_button_css).and_return(action_button_css)
           allow(invite).to receive(:find_and_click).with(session, action_button_css)
           allow(invite).to receive(:pending_connection_css).and_return(pending_connection_css)
-          allow(session).to receive(:has_selector?).with(pending_connection_css, :wait=>4).and_return(true)
+          allow(session).to receive(:has_selector?).with(pending_connection_css, wait: 4).and_return(true)
         end
         xit 'returns true!' do
           expect(invite.execute).to eq(true)

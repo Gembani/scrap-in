@@ -2,11 +2,10 @@
 
 module ScrapIn
   module SalesNavigator
-
     # Goes to a lead profile page, and invite the lead
     class Invite
       include Tools
-      include CssSelectors::Invite
+      include CssSelectors::SalesNavigator::Invite
       attr_reader :error
       def initialize(sales_nav_url, session, content)
         @sales_nav_url = sales_nav_url
@@ -56,7 +55,7 @@ module ScrapIn
 
       def visit_target_page(link)
         @session.visit(link)
-        raise CssNotFound.new(profile_css) unless @session.has_selector?(profile_css)
+        raise CssNotFound, profile_css unless @session.has_selector?(profile_css)
       end
 
       def friend?

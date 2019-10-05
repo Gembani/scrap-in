@@ -1,9 +1,9 @@
 module ScrapIn
   module SalesNavigator
     # Scrap threads
-    class Threads
+    class ScrapThreads
       include ScrapIn::Tools
-      include CssSelectors::SalesNavigator::Threads
+      include CssSelectors::SalesNavigator::ScrapThreads
       def initialize(session)
         @session = session
       end

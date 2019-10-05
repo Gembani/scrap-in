@@ -1,74 +1,19 @@
 module ScrapIn
   # Capybara Session
   class Session
-    def initialize(username, password)
+    include LinkedInMethods
+    include SalesNavigatorMethods
+
+    def initialize(username, password, linkedin = false)
       Capybara.default_max_wait_time = 10 # Seconds
       # Capybara.default_max_wait_time = 60 # Seconds
-
       @capybara = Capybara::Session.new(ENV.fetch('driver').to_sym)
-      # @capybara.driver.browser.manage.window.resize_to(1920, 1080)
-      auth = ScrapIn::SalesNavigator::Auth.new(@capybara)
-      auth.login!(username, password)
-    end
-
-    def sales_nav_scrap_lead(config)
-      ScrapIn::SalesNavigator::ScrapLead.new(config, @capybara)
-    end
-
-    def linkedin_scrap_lead(config)
-      ScrapIn::LinkedIn::ScrapLead.new(config, @capybara)
-    end
-
-    def invite(sales_nav_profile_link, content)
-      ScrapIn::SalesNavigator::Invite.new(sales_nav_profile_link, @capybara, content)
-    end
-
-    def linkedin_invite(lead_url, *note)
-      ScrapIn::LinkedIn::Invite.new(@capybara, lead_url)
-    end
-
-    def sent_invites
-      ScrapIn::SentInvites.new(@capybara)
-    end
-
-    def linkedin_send_message(profile, message)
-      ScrapIn::LinkedIn::SendMessage.new(@capybara, profile, message)
-    end
-
-    def send_inmail(profile_url, subject, message)
-      ScrapIn::SalesNavigator::SendInmail.new(@capybara, profile_url, subject, message)
-    end
-
-    def linkedin_threads
-      ScrapIn::LinkedIn::Threads.new(@capybara)
-    end
-
-    def sales_nav_threads
-      ScrapIn::SalesNavigator::Threads.new(@capybara)
-    end
-
-    def sales_nav_messages(thread_link)
-      ScrapIn::SalesNavigator::ScrapMessages.new(@capybara, thread_link)
-    end
-
-    def linkedin_scrap_messages(thread_link)
-      ScrapIn::LinkedIn::ScrapMessages.new(@capybara, thread_link)
-    end
-
-    def linkedin_profile_views
-      ScrapIn::LinkedIn::ProfileViews.new(@capybara)
+      auth = ScrapIn::Auth.new(@capybara)
+      auth.login!(username, password, linkedin)
     end
 
     def driver
       @capybara.driver
-    end
-
-    def friends
-      ScrapIn::Friends.new(@capybara)
-    end
-
-    def search(list_identifier)
-      ScrapIn::Search.new(list_identifier, @capybara)
     end
   end
 end

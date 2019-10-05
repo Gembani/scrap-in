@@ -1,7 +1,7 @@
 module CssSelectors
   # All css selectors used in ScrapIn::Threads Class
   module SalesNavigator
-    module Threads
+    module ScrapThreads
       def threads_list_css
         '.infinite-scroller ul'
       end
