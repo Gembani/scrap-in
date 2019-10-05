@@ -171,6 +171,18 @@ RSpec.describe ScrapIn do
       expect(value).to be true
       puts 'Invite sent !'
     end
+
+    it 'sends invite and send a message when already friends' do ## Integration
+      message = 'Hello there'
+      url = 'https://www.linkedin.com/sales/people/ACwAABI1H9EBeHSOuawCiNLkn6VEP1LHzEz420I,NAME_SEARCH,94gX?_ntb=2zSSN%2FB4Q4uh%2BwB9HHTBCA%3D%3D'
+   
+      sales_nav_invite = @session.sales_nav_invite(url, message)
+      value = sales_nav_invite.execute
+      expect(value).to be false
+      puts 'already friends'
+    end
+
+       
   end
 
   describe '.linkedin_send_message' do
@@ -267,6 +279,7 @@ RSpec.describe ScrapIn do
         expect(value).to be(true)
       end
     end
+    
     
     context 'Connect button is in \'More...\' section and no note is added' do
       it 'invite the lead' do

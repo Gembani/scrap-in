@@ -45,13 +45,14 @@ module ScrapIn
         scroll_to(page_button)
         sleep(4)
         page_button.click
+        
         check_results_loaded
       end
 
       def check_results_loaded
-        raise 'NOT LOADED' unless @session.has_selector?(
-          results_loaded_css
-        )
+        raise 'NOT LOADED' unless check_until(500) do
+          @session.has_selector?(results_loaded_css)
+        end
       end
 
       def empty_results?

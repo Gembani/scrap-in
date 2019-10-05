@@ -59,9 +59,8 @@ module ScrapIn
       end
 
       def friend?
-        if @session.has_selector?(degree_css, wait: 4)
-          return true if @session.find(degree_css).text == '1st'
-        end
+        raise CssNotFound, degree_css unless @session.has_selector?(degree_css, wait: 4)
+        return true if @session.find(degree_css).text == '1st'
         false
       end
 

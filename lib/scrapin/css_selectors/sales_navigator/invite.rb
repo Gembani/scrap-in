@@ -19,7 +19,7 @@ module CssSelectors
       end
 
       def degree_css
-        '.m-type--degree'
+        '.profile-topcard-person-entity__content > dl > dt >ul > li > span:first-child'
       end
 
       def form_email_css
