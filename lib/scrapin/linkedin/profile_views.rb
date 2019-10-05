@@ -73,7 +73,7 @@ module ScrapIn
 
       def visit_target_page(link)
         @session.visit(link)
-        raise CssNotFound.new(viewers_list_css) unless @session.has_selector?(viewers_list_css)
+        raise CssNotFound, viewers_list_css unless @session.has_selector?(viewers_list_css)
       end
 
       def name(item)

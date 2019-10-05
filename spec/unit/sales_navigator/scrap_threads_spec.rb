@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe ScrapIn::SalesNavigator::Threads do
+RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
   let(:subject) do
     described_class
   end
@@ -36,7 +36,7 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
     ]
   end
 
-  include CssSelectors::SalesNavigator::Threads
+  include CssSelectors::SalesNavigator::ScrapThreads
   before do
     disable_puts
 
@@ -79,7 +79,7 @@ RSpec.describe ScrapIn::SalesNavigator::Threads do
   end
 
   describe '.initialize' do
-    it { is_expected.to eq ScrapIn::SalesNavigator::Threads }
+    it { is_expected.to eq ScrapIn::SalesNavigator::ScrapThreads }
   end
 
   describe '.execute' do

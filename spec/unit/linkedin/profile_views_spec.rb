@@ -92,10 +92,10 @@ RSpec.describe ScrapIn::LinkedIn::ProfileViews do
 
         has_selector(profile_item, name_css)
         find(profile_item, name_item, name_css)
-        allow(name_item).to receive(:text).and_return("name 1")
+        allow(name_item).to receive(:text).and_return('name 1')
 
         time_ago_item = instance_double(Capybara::Node::Element)
-        allow(time_ago_item).to receive(:text).and_return("time_ago1")
+        allow(time_ago_item).to receive(:text).and_return('time_ago1')
         has_not_selector(profile_item, time_ago_css)
         find(profile_item, time_ago_item, time_ago_css)
         find(session, profile_item, public_profile_css(2), wait: 1)
@@ -144,4 +144,3 @@ RSpec.describe ScrapIn::LinkedIn::ProfileViews do
     end
   end
 end
-
