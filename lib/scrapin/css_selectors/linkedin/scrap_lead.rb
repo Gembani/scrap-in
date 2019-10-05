@@ -5,6 +5,10 @@ module CssSelectors
       def name_css
         'li.inline.t-24.t-black.t-normal.break-words' # find
       end
+      
+      def sales_nav_button_css
+        '.pv-s-profile-actions--view-profile-in-sales-navigator'
+      end
 
       def phone_css
         'span.t-14.t-black.t-normal' # first
