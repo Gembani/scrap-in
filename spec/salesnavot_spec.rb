@@ -83,10 +83,12 @@ RSpec.describe ScrapIn do
       sales_nav_scrap_lead = @session.sales_nav_scrap_lead(sales_nav_url: seb_link)
       data = sales_nav_scrap_lead.to_hash
       # puts "Error: #{scrap.error}" unless scrap.error.empty?
-
       expect(data[:sales_nav_url]).not_to be_nil
       expect(data[:name]).not_to be_nil
       expect(data[:location]).not_to be_nil
+      expect(data[:links].first).to eq('https://gembani.com')
+      
+      
       expect(data[:emails].count).to be > 0
       expect(data[:phones].count).to be > 0
       expect(data[:links].count).to eq(0)
@@ -99,6 +101,7 @@ RSpec.describe ScrapIn do
 
       linkedin_scrap_lead = @session.linkedin_scrap_lead(linkedin_url: scrap_in, get_sales_nav_url: true)
       data = linkedin_scrap_lead.to_hash()
+      byebug
       # puts "Error: #{scrap.error}" unless scrap.error.empty?
       expect(data[:sales_nav_url]).not_to be_nil
       expect(data[:linkedin_url]).not_to be_nil
