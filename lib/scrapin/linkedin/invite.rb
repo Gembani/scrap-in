@@ -54,8 +54,6 @@ module ScrapIn
 
       def confirmation_invite_is_sent
         return true if check_and_find(@session, 'span', text: confirmation_text)
-
-        byebug
         false
       end
 
