@@ -11,8 +11,9 @@ module ScrapIn
       def initialize(config, session)
         @popup_open = false
         @linkedin_url = config[:linkedin_url] || ''
+        @get_sales_nav_url = config[:get_sales_nav_url] || false
         raise 'Lead\'s linkedin url is not valid' unless @linkedin_url.include?('linkedin.com/in/')
-
+        
         @session = session
         @info_popup = @linkedin_url + 'detail/contact-info/'
       end
@@ -22,12 +23,16 @@ module ScrapIn
       end
 
       def to_hash
-        {
+        data = {
           name: name,
           location: location,
           linkedin_url: @linkedin_url,
           first_degree: first_degree?
         }.merge(scrap_datas)
+        if @get_sales_nav_url
+          data[:sales_nav_url] = sales_nav_url
+        end
+        data
       end
 
       def scrap_datas
@@ -36,6 +41,16 @@ module ScrapIn
           data[name.to_sym] = method("scrap_#{name}").call
         end
         data
+      end
+
+      def sales_nav_url
+        close_popup
+        find_and_click(@session, sales_nav_button_css)
+        @session.driver.browser.switch_to.window(@session.driver.browser.window_handles.last)
+        url = @session.current_url 
+        @session.driver.browser.execute_script("window.close()", @session.find("body"))
+        @session.driver.browser.switch_to.window(@session.driver.browser.window_handles.first)
+        url
       end
 
       def name

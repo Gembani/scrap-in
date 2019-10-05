@@ -97,10 +97,10 @@ RSpec.describe ScrapIn do
     it 'scraps location, phones, emails and website links for a lead' do
       scrap_in = 'https://www.linkedin.com/in/scrap-in-b72a77192/'
 
-      linkedin_scrap_lead = @session.linkedin_scrap_lead(linkedin_url: scrap_in)
-      data = linkedin_scrap_lead.to_hash
+      linkedin_scrap_lead = @session.linkedin_scrap_lead(linkedin_url: scrap_in, get_sales_nav_url: true)
+      data = linkedin_scrap_lead.to_hash()
       # puts "Error: #{scrap.error}" unless scrap.error.empty?
-
+      expect(data[:sales_nav_url]).not_to be_nil
       expect(data[:linkedin_url]).not_to be_nil
       expect(data[:name]).not_to be_nil
       expect(data[:location]).not_to be_nil
