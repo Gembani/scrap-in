@@ -183,6 +183,18 @@ RSpec.describe ScrapIn do
     end
   end
 
+
+  describe '.sales_nav_send_message' do
+    it ' sends a message from sales nav conversation thread to a lead' do
+      send_message = @session.sales_nav_send_message('https://www.linkedin.com/sales/inbox/6572101845743910912',
+                                                    'Hi, this is a test message at ' +
+                                                        Time.now.strftime('%H:%M:%S').to_s +
+                                                        '. Thanks!')
+      send_message.execute
+    end
+  end
+
+
   describe '.linkedin_scrap_friends' do
     it 'scraps friends' do
       count = 1
