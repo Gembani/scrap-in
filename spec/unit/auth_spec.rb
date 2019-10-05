@@ -1,21 +1,20 @@
 require 'spec_helper'
 
-RSpec.describe ScrapIn::SalesNavigator::Auth do
+RSpec.describe ScrapIn::Auth do
   let(:auth) do
     described_class.new(session)
   end
 
   let(:session) { instance_double('Capybara::Session') }
-  let(:email_input) { 'email_css' }
   let(:username) { 'username' }
-  let(:password_input) { 'password_css' }
   let(:password) { 'password' }
-  let(:alert_header_css) { 'alert_header_css' }
-  let(:captcha_css) {'captcha_css'}
+  let(:linkedin_homepage) { 'linkedin_homepage' }
+  let(:sales_navigator_homepage) { 'sales_navigator_homepage' }
+  include CssSelectors::Auth
 
   describe 'Initializer' do
     subject { described_class }
-    it { is_expected.to eq ScrapIn::SalesNavigator::Auth }
+    it { is_expected.to eq ScrapIn::Auth }
   end
 
   describe 'instance of described class' do
@@ -25,61 +24,79 @@ RSpec.describe ScrapIn::SalesNavigator::Auth do
 
   describe '.login' do
     before do
-      allow(auth).to receive(:email_input).and_return(email_input)
-      allow(auth).to receive(:password_input).and_return(password_input)
-      allow(auth).to receive(:captcha_css).and_return(captcha_css)
-      allow(auth).to receive(:alert_header_css).and_return(alert_header_css)
-      allow(auth).to receive(:username).and_return(username)
-      allow(auth).to receive(:password).and_return(password)
-      allow(session).to receive(:visit).with(auth.homepage)
-      allow(session).to receive(:has_selector?).with(email_input).and_return(true)
-    end
-    context 'Username and password are correct' do
-      before do
-        allow(session).to receive_message_chain(:find, :click).and_return(true)
-        allow(session).to receive_message_chain(:find, :send_keys).and_return(true)
-        allow(session).to receive(:has_selector?).with('#error-for-username').and_return(false)
-      end
-      context 'when a CAPTCHA page appears' do
-        before do
-          allow(session).to receive(:has_selector?).with(captcha_css).and_return(true)
-        end
-        xit 'raises an error' do
-          expect do
-            auth.login!(username, password)
-          end.to raise_error(CaptchaError)
-        end
-      end
-      context 'when CAPTCHA didnt appear' do
-        before do
-          allow(session).to receive(:has_selector?).with(captcha_css).and_return(false)
-          allow(session).to receive(:has_selector?).with(alert_header_css).and_return(true)
-        end
-        xit 'logs in into Linkedin' do
-          auth.login!(username, password)
-          expect(auth).to have_received(:email_input).twice
-          expect(auth).to have_received(:password_input)
-          expect(auth).to have_received(:alert_header_css)
-          expect(session).to have_received(:visit).with(auth.homepage)
-          expect(session.find.click).to eq(true)
-          expect(session).to have_received(:has_selector?).with(alert_header_css)
-        end
-      end
-    end
-    context 'Username and/or password are incorrect' do
-      before do
-        allow(session).to receive_message_chain(:find, :click).and_return(true)
-        allow(session).to receive_message_chain(:find, :send_keys).and_return(true)
-        allow(session).to receive(:has_selector?).with('#error-for-username').and_return(false)
-        allow(session).to receive(:has_selector?).with(captcha_css).and_return(false)
-        allow(session).to receive(:has_selector?).with(alert_header_css).and_return(false)
-      end
+      allow(auth).to receive(:linkedin_homepage).and_return(linkedin_homepage)
+      allow(auth).to receive(:sales_navigator_homepage).and_return(sales_navigator_homepage)
 
-      xit 'does not log in into Linkedin and raises an error' do
-        expect do
-          auth.login!(username, password)
-        end.to raise_error('Login failed !')
+      allow(session).to receive(:visit)
+      username_field = instance_double('Capybara::Node::Element', 'username_field')
+      allow(username_field).to receive(:click)
+      allow(username_field).to receive(:send_keys).with(username)
+      has_selector(session, username_input_css)
+      allow(session).to receive(:find).with(username_input_css).and_return(username_field)
+
+      password_field = instance_double('Capybara::Node::Element', 'password_field')
+      allow(password_field).to receive(:click)
+      allow(password_field).to receive(:send_keys).with(password)
+      allow(password_field).to receive(:send_keys).with(:enter)
+      has_selector(session, password_input_css)
+      allow(session).to receive(:find).with(password_input_css).and_return(password_field)
+
+      has_not_selector(session, password_error_css, wait: 1)
+      has_selector(session, alert_header_css)
+    end
+
+    context 'when we log in into sales navigator' do
+      before { has_field(session, placeholder: sales_navigator_placeholder, wait: 1) }
+
+      context 'when all css were found' do
+        context 'when the credentials are correct' do
+          it 'should work and call the right methods for sales navigator' do
+            expect(auth).to receive(:search_placeholder).and_return(sales_navigator_placeholder)
+            expect(auth).to receive(:homepage).and_return(sales_navigator_homepage)
+            auth.login!(username, password)
+          end
+        end
+        context 'when the credentials are incorrect' do
+          before { has_selector(session, password_error_css, wait: 1) }
+          it { expect { auth.login!(username, password) }.to raise_error(ScrapIn::IncorrectPassword) }
+        end
+        context 'when it cannot find the sales navigator search placeholder' do
+          before { has_not_field(session, placeholder: sales_navigator_placeholder, wait: 1) }
+          it { expect { auth.login!(username, password) }.to raise_error(ScrapIn::CssNotFound) }
+        end
       end
+    end
+
+    context 'when we log in into linkedin' do
+      before { has_field(session, placeholder: linkedin_placeholder, wait: 1) }
+
+      context 'when all css were found' do
+        it 'should work and call the right methods for linkedin' do
+          expect(auth).to receive(:search_placeholder).and_return(linkedin_placeholder)
+          expect(auth).to receive(:homepage).and_return(linkedin_homepage)
+          auth.login!(username, password, true)
+        end
+
+        context 'when the credentials are incorrect' do
+          before { has_selector(session, password_error_css, wait: 1) }
+          it { expect { auth.login!(username, password, true) }.to raise_error(ScrapIn::IncorrectPassword) }
+        end
+
+        context 'when it cannot find the sales navigator search placeholder' do
+          before { has_not_field(session, placeholder: linkedin_placeholder, wait: 1) }
+          it { expect { auth.login!(username, password, true) }.to raise_error(ScrapIn::CssNotFound) }
+        end
+      end
+    end
+
+    context 'when it cannot find the username input css' do
+      before { has_not_selector(session, username_input_css) }
+      it { expect { auth.login!(username, password) }.to raise_error(ScrapIn::CssNotFound) }
+    end
+
+    context 'when it cannot find the password input css' do
+      before { has_not_selector(session, password_input_css) }
+      it { expect { auth.login!(username, password) }.to raise_error(ScrapIn::CssNotFound) }
     end
   end
 end

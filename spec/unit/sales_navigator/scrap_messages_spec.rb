@@ -112,7 +112,7 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapMessages do
       context 'when execute with no number of messages argument' do
         it 'returns true' do
           count = 5 - 1
-          result = salesnav_messages_instance.execute() do |message, direction|
+          result = salesnav_messages_instance.execute do |message, direction|
             expect(message).to eq(message_content(count))
             if count.even?
               expect(direction).to eq(:outgoing)

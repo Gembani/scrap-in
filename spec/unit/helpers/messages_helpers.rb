@@ -10,7 +10,7 @@ module MessagesHelpers
       has_selector(element, sender_css, wait: 2, visible: false)
 
       content = { 'innerHTML' => message_content(count) }
-      content = { 'innerHTML' => "beginnning of the conversation" } if count.zero?
+      content = { 'innerHTML' => 'beginnning of the conversation' } if count.zero?
 
       # Alternate senders to see incoming and outgoing directions
       sender = count.even? ? { 'innerHTML' => '   You   ' } : { 'innerHTML' => '   Sender   ' }

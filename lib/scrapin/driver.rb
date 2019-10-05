@@ -5,11 +5,11 @@ Capybara.register_driver :scrapin_driver do |app|
     url: ENV.fetch('hud_url'),
     desired_capabilities: {
       "browser": 'chrome',
-      "browserName": "chrome",
-      "build": "scrapin",
-      "zal:name": "linkedin",
-      "zal:build": "linkedin",
-      "idleTimeout": "3600",
+      "browserName": 'chrome',
+      "build": 'scrapin',
+      "zal:name": 'linkedin',
+      "zal:build": 'linkedin',
+      "idleTimeout": '3600',
       'chromeOptions': {
         'args': [
           'no-sandbox',

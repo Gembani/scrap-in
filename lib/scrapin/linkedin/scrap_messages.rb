@@ -10,12 +10,12 @@ module ScrapIn
       end
       
       def execute(number_of_messages = 20)
-        raise ArgumentError.new('Parameter should be positive') unless number_of_messages.positive? # ArgumentError.new
+        raise ArgumentError, 'Parameter should be positive' unless number_of_messages.positive? # ArgumentError.new
 
-        raise CssNotFound.new(messages_thread_css) unless visit_thread_link
+        raise CssNotFound, messages_thread_css unless visit_thread_link
 
         loaded_messages = load(number_of_messages)
-        raise CssNotFound.new(all_messages_css) if loaded_messages.zero?
+        raise CssNotFound, all_messages_css if loaded_messages.zero?
 
         count = loaded_messages - 1
         max = loaded_messages > number_of_messages ? number_of_messages : loaded_messages
