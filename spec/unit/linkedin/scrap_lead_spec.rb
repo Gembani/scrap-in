@@ -126,7 +126,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
       end
 
       context 'when want the degree' do
-        it { expect(subject.first_degree?).to eq(degree) }
+        it { expect(subject.first_degree?).to eq(true) }
       end
     end
   end

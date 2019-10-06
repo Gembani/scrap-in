@@ -28,7 +28,6 @@ module ScrapIn
 
       def execute(num_times = 50)
         return unless init_list(target_page)
-
         count = 0
         num_times.times.each do
           unless @session.has_selector?(
@@ -45,28 +44,16 @@ module ScrapIn
       def init_list(link)
         @session.visit(link)
         return false unless @session.has_selector?(invitation_list_css)
-
         true
       end
-
-      def find_next_button
-        pagination_buttons = @session.all(pagination_selector)
-        pagination_buttons.each do |button|
-          next unless button.has_selector?(next_button_css, wait: 1)
-
-          return button
-        end
-        nil
-      end
-
+     
       def next_page
-        return false unless @session.has_selector?(pagination_selector)
-
-        next_button = find_next_button
-        return false if next_button[:class].include?('disabled')
-
-        init_list(next_button[:href])
-        true
+        url_pre_click = @session.current_url
+        find_and_click(@session, next_button_css)
+        
+        check_until(1000) do 
+          url_pre_click !=  @session.current_url
+        end
       end
     end
   end
