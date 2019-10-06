@@ -21,10 +21,6 @@ module CssSelectors
       def message_css
         '.thread-container li'
       end
-
-      def threads_access_button_css
-        '.nav-item__icon'
-      end
     end
   end
 end

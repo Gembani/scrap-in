@@ -35,7 +35,7 @@ module ScrapIn
       end
 
       def visit_messages_link
-        check_and_find_first(@session, threads_access_button_css, wait: 5).click
+        @session.visit('https://www.linkedin.com/sales/inbox/')
         wait_messages_page_to_load
         puts 'Messages have been visited.'
       end
