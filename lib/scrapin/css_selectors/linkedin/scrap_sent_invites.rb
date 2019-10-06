@@ -10,16 +10,12 @@ module CssSelectors
         end
       end
 
-      def pagination_selector
-        'a.mn-invitation-pagination__control-btn'
-      end
-
       def invitation_list_css
         '.mn-invitation-list'
       end
 
       def next_button_css
-        'li-icon[aria-label="Next item"]'
+        'ol.mn-invitation-pagination > li > a > li-icon[aria-label="Next item"]'
       end
     end
   end
