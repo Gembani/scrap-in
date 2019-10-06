@@ -14,7 +14,6 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
   let(:session) { instance_double('Capybara::Session') }
   let(:threads_list) { instance_double('Capybara::Node::Element') }
   let(:threads_list_elements) { instance_double('Capybara::Node::Element') }
-  let(:thread_access_button_array) { [] }
   let(:message_array) { [] }
   let(:loaded_threads_array) { [] }
   let(:threads_list_array) { [] }
@@ -40,8 +39,6 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
   before do
     disable_puts
 
-    has_selector(session, threads_access_button_css, wait: 5)
-    create_node_array(thread_access_button_array)
     create_node_array(message_array, 3)
     create_node_array(loaded_threads_array, 3)
     create_node_array(thread_name_array, 3)
@@ -49,10 +46,8 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
 
     has_selector(session, message_css, wait: 5)
 
-    allow(session).to receive(:first).with(threads_access_button_css, wait: 5).and_return(thread_access_button_array[0])
-
-    allow(thread_access_button_array[0]).to receive(:click)
-
+    allow(session).to receive(:visit).with('https://www.linkedin.com/sales/inbox/')
+    
     has_selector(session, message_css, wait: 5)
     allow(session).to receive(:all).with(message_css, wait: 5).and_return(message_array)
 
@@ -91,6 +86,7 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
           expect(name).to eq(names_array[count])
           count += 1
         end
+        expect(session).to have_received(:visit)
         expect(result).to be(true)
       end
     end
