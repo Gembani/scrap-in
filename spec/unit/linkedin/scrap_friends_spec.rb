@@ -69,7 +69,6 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
   describe 'instance of described class' do
     subject { friends.instance_variables }
     it { is_expected.to include(:@session) }
-    it { is_expected.to include(:@error) }
   end
 
   describe '.execute' do
@@ -131,7 +130,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
       before do
         has_not_selector(session, friend_name_css)
       end
-      it do
+      it 'yield nothing' do
         friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
           expect(name).to be_empty
         end
@@ -142,7 +141,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
       before do
         has_not_selector(session, time_ago_css)
       end
-      it do
+      it 'yield nothing' do
         friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
           expect(time_ago).to be_empty
         end
@@ -153,7 +152,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
       before do
         has_not_selector(session, link_css)
       end
-      it do
+      it 'yield nothing' do
         friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
           expect(link).to be_empty
         end
@@ -170,6 +169,17 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
       end
       it do
         expect(friends.get_next_friend(1)).to eq(nil)
+      end
+      it 'yield nothing' do
+        friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
+          expect(name, time_ago, link).to be_empty
+        end
+      end
+      it do
+        expect(friends.visit_target_page).to eq(false)
+      end
+      it do
+        expect(friends.execute).to eq(false)
       end
     end
 
