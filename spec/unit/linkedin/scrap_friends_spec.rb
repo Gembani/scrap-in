@@ -127,27 +127,27 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
       end
     end
     
-        context 'the selector for name was not found' do
-          before do
-            has_not_selector(session, friend_name_css)
-          end
-          it do
-            friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
-              expect(name).to be_empty
-            end
-          end
+    context 'the selector for name was not found' do
+      before do
+        has_not_selector(session, friend_name_css)
+      end
+      it do
+        friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
+          expect(name).to be_empty
         end
-    
-        context 'the selector for time ago was not found' do
-          before do
-            has_not_selector(session, time_ago_css)
-          end
-          it do
-            friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
-              expect(time_ago).to be_empty
-            end
-          end
+      end
+    end
+
+    context 'the selector for time ago was not found' do
+      before do
+        has_not_selector(session, time_ago_css)
+      end
+      it do
+        friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
+          expect(time_ago).to be_empty
         end
+      end
+    end
 
     context 'the selector for link was not found' do
       before do
@@ -157,6 +157,19 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
         friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
           expect(link).to be_empty
         end
+      end
+    end
+
+    context 'no selector for nth_friend_css()' do
+      before do
+        count = 0
+        40.times do
+          has_not_selector(session, nth_friend_css(count))
+          count += 1
+        end
+      end
+      it do
+        expect(friends.get_next_friend(1)).to eq(nil)
       end
     end
 
