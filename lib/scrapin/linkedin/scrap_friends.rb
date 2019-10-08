@@ -1,7 +1,7 @@
 module ScrapIn
-  # Go to friend list, and get their names
-  # and when you connected with them
   module LinkedIn
+    # Go to friend list, and get their names
+    # and when you connected with them
     class ScrapFriends
       include Tools
       include CssSelectors::LinkedIn::ScrapFriends
