@@ -105,10 +105,10 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
       end
       it do
         expect { friends.execute { |_name, _time_ago, _link| } }
-          .to raise_error(/#{time_ago_css}/)
+        .to raise_error(/#{time_ago_css}/)
       end
     end
-
+    
     context 'the selector for friend name was not found' do
       before do
         count = 0
@@ -119,11 +119,44 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
       end
       it do
         expect { friends.execute { |_name, _time_ago, _link| } }
-          .to raise_error(ScrapIn::CssNotFound)
+        .to raise_error(ScrapIn::CssNotFound)
       end
       it do
         expect { friends.execute { |_name, _time_ago, _link| } }
-          .to raise_error(/#{link_css}/)
+        .to raise_error(/#{link_css}/)
+      end
+    end
+    
+        context 'the selector for name was not found' do
+          before do
+            has_not_selector(session, friend_name_css)
+          end
+          it do
+            friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
+              expect(name).to be_empty
+            end
+          end
+        end
+    
+        context 'the selector for time ago was not found' do
+          before do
+            has_not_selector(session, time_ago_css)
+          end
+          it do
+            friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
+              expect(time_ago).to be_empty
+            end
+          end
+        end
+
+    context 'the selector for link was not found' do
+      before do
+        has_not_selector(session, link_css)
+      end
+      it do
+        friends.search_for_name_and_time_ago(1) do |name, time_ago, link|
+          expect(link).to be_empty
+        end
       end
     end
 
