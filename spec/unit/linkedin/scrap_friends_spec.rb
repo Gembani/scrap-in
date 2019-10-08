@@ -21,10 +21,10 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
   before do
     disable_puts
     disable_script
-    create_node_array(friends_array, 40)
-    create_node_array(name_nodes_array, 40)
-    create_node_array(time_ago_nodes_array, 40)
-    create_node_array(link_nodes_array, 40)
+    create_node_array(friends_array, 40, 'friends_node')
+    create_node_array(name_nodes_array, 40, 'name_node')
+    create_node_array(time_ago_nodes_array, 40, 'time_ago_node')
+    create_node_array(link_nodes_array, 40, 'link_node')
 
     allow(session).to receive(:visit)
     has_selector(session, nth_friend_css(0)) # use css selector nth_friend_css
