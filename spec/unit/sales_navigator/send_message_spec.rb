@@ -69,16 +69,13 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
   context 'when fails to load messages after sending for some reason' do
     before do
       has_not_selector(session, messages_css)
-      allow(session).to receive(:all).with(messages_css).and_return([])
+      allow(session).to receive(:all).with(messages_css).and_return(conversation_array, [])
     end
     it { expect(salesnav_messages_instance.execute).to eq(false) }
   end
 
   context 'when fails to send message for some reason, the last message is not the one expected' do
-    before do
-      has_not_selector(session, messages_css)
-      allow(conversation_array).to receive(:[]).with(-1).and_return(conversation_array[0])
-    end
+    before { allow(conversation_array).to receive(:[]).with(-1).and_return(conversation_array[0]) }
     it { expect(salesnav_messages_instance.execute).to eq(false) }
   end
 
