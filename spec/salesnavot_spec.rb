@@ -213,11 +213,11 @@ RSpec.describe ScrapIn do
   describe '.linkedin_scrap_friends' do
     it 'scraps friends' do
       count = 1
-      @session.linkedin_scrap_friends.execute(250) do |time_ago, name, url|
+      @session.linkedin_scrap_friends.execute(10) do |name, time_ago, url|
         puts "#{count} -> #{name} : #{time_ago}. -> #{url}"
         count += 1
       end
-      expect(count).to eq(251)
+      expect(count).to eq(11)
     end
   end
 
