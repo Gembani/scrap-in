@@ -190,22 +190,25 @@ RSpec.describe ScrapIn do
 
   describe '.linkedin_send_message' do
     it ' sends a message from linkedin profile to a lead' do
-      linkedin_send_message = @session.linkedin_send_message('https://www.linkedin.com/in/scebula/',
+      # https://www.linkedin.com/in/scebula/
+      seb_linkedin_thread = 'https://www.linkedin.com/messaging/thread/6260168385326256128/'
+      linkedin_send_message = @session.linkedin_send_message(seb_linkedin_thread,
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
                                                         '. Thanks!')
-      linkedin_send_message.execute
+      linkedin_send_message.execute(true)
     end
   end
 
 
   describe '.sales_nav_send_message' do
     it ' sends a message from sales nav conversation thread to a lead' do
-      send_message = @session.sales_nav_send_message('https://www.linkedin.com/sales/inbox/6572101845743910912',
+      seb_sales_thread = 'https://www.linkedin.com/sales/inbox/6572101845743910912'
+      send_message = @session.sales_nav_send_message(seb_sales_thread,
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
                                                         '. Thanks!')
-      send_message.execute
+      send_message.execute(false)
     end
   end
 

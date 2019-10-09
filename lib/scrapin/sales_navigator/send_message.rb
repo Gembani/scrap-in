@@ -9,10 +9,12 @@ module ScrapIn
         @message = message
       end
 
-      def execute
+      def execute(send = true)
         return false unless visit_thread
 
         write_message
+        return send unless send
+
         send_message
         message_sent?
       end

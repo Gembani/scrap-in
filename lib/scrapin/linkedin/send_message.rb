@@ -5,17 +5,19 @@ module ScrapIn
       include Tools
       include CssSelectors::LinkedIn::SendMessage
 
-      def initialize(session, profile, message)
+      def initialize(session, thread, message)
         @session = session
-        @profile = profile
+        @thread = thread
         @message = message
         @error = 'An error occured when sending the message.'
       end
 
-      def execute
-        visit_profile
-        open_message_window
+      def execute(send = true)
+        return false unless visit_profile
+
         write_message
+        return send unless send
+
         send_message
         message_sent?
       end
@@ -23,21 +25,16 @@ module ScrapIn
       def visit_profile
         puts 'Visiting profile...'
 
-        @session.visit(@profile)
-        time = 0
-        while @session.all(message_button_css).count.zero?
-          puts 'sleeping'
-          sleep(0.2)
-          time += 0.2
-          raise 'Cannot load profile. Timeout !' if time > 60
-        end
-        puts 'Profile has been visited.'
+        @session.visit(@thread)
+        wait_messages_to_appear
       end
 
-      def open_message_window
-        puts 'Opening message window...'
-        @session.click_button 'Message'
-        puts 'Message window has been opened.'
+      def wait_messages_to_appear
+        puts 'waiting messages to appear'
+        messages_appear = check_until(500) do
+          @session.all(messages_css).count.positive?
+        end
+        messages_appear
       end
 
       def write_message
@@ -57,10 +54,10 @@ module ScrapIn
 
       def message_sent?
         puts 'Checking the message has been sent...'
-        if @session.all(sent_message_css)[-1].nil?
+        if @session.all(messages_css)[-1].nil?
           puts @error.to_s
           return false
-        elsif @session.all(sent_message_css)[-1].text != @message
+        elsif @session.all(messages_css)[-1].text != @message
           puts @error.to_s
           return false
         else
