@@ -10,6 +10,14 @@ module MockCapybara
       .with(*config).and_return(false)
   end
 
+  def has_field(node, *config)
+    allow(node).to receive(:has_field?).with(*config).and_return(true)
+  end
+
+  def has_not_field(node, *config)
+    allow(node).to receive(:has_field?).with(*config).and_return(false)
+  end
+
   def find(node, return_value, *config)
     allow(node).to receive(:find).with(*config).and_return(return_value)
   end

@@ -13,11 +13,11 @@ RSpec.describe ScrapIn do
     expect(ScrapIn::VERSION).not_to be nil
   end
 
-  describe '.search' do
+  describe '.sales_nav_scrap_search_list' do
     let(:list_name) { 'Rspec' }
     let(:last_page) { 100 }
     before do
-      @search = @session.search(list_name)
+      @sales_nav_scrap_search_list = @session.sales_nav_scrap_search_list(list_name)
     end
 
     it 'gets lead from 10 firsts pages' do
@@ -25,7 +25,7 @@ RSpec.describe ScrapIn do
       max_page = 10
       until page == max_page
         found_links = []
-        next_page_to_process = @search.execute(page) do |link, _image|
+        next_page_to_process = @sales_nav_scrap_search_list.execute(page) do |link, _image|
           expect(link).to start_with('https://www.linkedin.com/sales/people')
           found_links << link
         end
@@ -37,7 +37,7 @@ RSpec.describe ScrapIn do
 
     it 'gets lead from page 1' do
       found_links = []
-      next_page_to_process = @search.execute(1) do |link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(1) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
         found_links << link
       end
@@ -46,14 +46,14 @@ RSpec.describe ScrapIn do
     end
 
     it 'gets profile and image links from all leads of the second page of the list and return the next page' do
-      next_page_to_process = @search.execute(3) do |link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(3) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
       end
       expect(next_page_to_process).to eq(4)
     end
 
     it 'gets profile and image links from all leads of the twelfth page of the list and return the next page' do
-      next_page_to_process = @search.execute(12) do |link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(12) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
       end
       expect(next_page_to_process).to eq(13)
@@ -61,7 +61,7 @@ RSpec.describe ScrapIn do
 
     it 'gets leads form the last page' do
       found_links = []
-      next_page_to_process = @search.execute(last_page) do |link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(last_page) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
         found_links << link
       end
@@ -70,42 +70,25 @@ RSpec.describe ScrapIn do
     end
 
     it 'tries to go to the 101th page of the list, doesnt find it and return the first page' do
-      next_page_to_process = @search.execute(101) do |_link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(101) do |_link, _image|
       end
       expect(next_page_to_process).to eq(1)
     end
   end
 
-  describe '.convert_linkedin_to_salesnav' do
-    it 'convert_linkedin_to_salesnav' do
-      convert = @session.convert_linkedin_to_salesnav('https://www.linkedin.com/in/fabricelenoble/')
-      expect(convert.execute).to eq('https://www.linkedin.com/sales/people/ACoAAADWUwgBctzvFTKAW_3OhL5rc-fpKquTURM,name,2Qv9')
-    end
-  end
-
-  describe '.get_linkedin_data_from_name' do
-    it 'get the linkedin data from name' do
-      expect(@session.get_linkedin_data_from_name('Emma Donovan')).to eq(linkedin_url: 'https://www.linkedin.com/in/emmadonovan1', salesnav_url: 'https://www.linkedin.com/sales/people/ACoAAAAAJ_kBu6vzRwww0KpB2oF4ljYmj1O21z8,name,QOK6')
-    end
-  end
-
-  describe '.get_thread_from_name' do
-    it 'gets friend thread' do
-      expect(@session.get_thread_from_name('Emma Donovan')).to eq('https://www.linkedin.com/messaging/thread/S490732917_3')
-    end
-  end
-
-  describe '.scrap_lead' do
+  describe '.sales_nav_scrap_lead' do
     it 'scraps location, phones, emails and website links for a lead' do
       seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'
 
-      scrap = @session.scrap_lead(sales_nav_url: seb_link)
-      data = scrap.to_hash
+      sales_nav_scrap_lead = @session.sales_nav_scrap_lead(sales_nav_url: seb_link)
+      data = sales_nav_scrap_lead.to_hash
       # puts "Error: #{scrap.error}" unless scrap.error.empty?
-
       expect(data[:sales_nav_url]).not_to be_nil
       expect(data[:name]).not_to be_nil
       expect(data[:location]).not_to be_nil
+      expect(data[:links].first).to eq('https://gembani.com')
+      
+      
       expect(data[:emails].count).to be > 0
       expect(data[:phones].count).to be > 0
       expect(data[:links].count).to eq(0)
@@ -116,39 +99,39 @@ RSpec.describe ScrapIn do
     it 'scraps location, phones, emails and website links for a lead' do
       scrap_in = 'https://www.linkedin.com/in/scrap-in-b72a77192/'
 
-      scrap = @session.linkedin_scrap_lead(linkedin_url: scrap_in)
-      data = scrap.to_hash
+      linkedin_scrap_lead = @session.linkedin_scrap_lead(linkedin_url: scrap_in, get_sales_nav_url: true)
+      data = linkedin_scrap_lead.to_hash()
+      byebug
       # puts "Error: #{scrap.error}" unless scrap.error.empty?
-
+      expect(data[:sales_nav_url]).not_to be_nil
       expect(data[:linkedin_url]).not_to be_nil
       expect(data[:name]).not_to be_nil
       expect(data[:location]).not_to be_nil
       expect(data[:emails].count).to be > 0
       expect(data[:phones].count).to be > 0
       expect(data[:links].count).to eq(2)
-      byebug
     end
   end
 
-  describe '.sent_invites' do
-    it 'scraps up to 40 leads names with pending invites' do
-      invites = @session.sent_invites
-      invites.execute(40) do |invited_lead|
+  describe '.linkedin_scrap_sent_invites' do
+    xit 'scraps up to 40 leads names with pending invites' do
+      linkedin_scrap_sent_invites = @session.linkedin_scrap_sent_invites
+      linkedin_scrap_sent_invites.execute(40) do |invited_lead|
         puts invited_lead
       end
-      expect(invites.invited_leads.length).to be <= 40
-      expect(invites.invited_leads.length).to be >= 10
+      expect(linkedin_scrap_sent_invites.invited_leads.length).to be <= 40
+      expect(linkedin_scrap_sent_invites.invited_leads.length).to be >= 10
     end
 
-    xit 'scraps up to 10000 leads names with pending invites' do
+    it 'scraps up to 10000 leads names with pending invites' do
       count = 1
       number_of_invites = 10_000
-      invites = @session.sent_invites
-      invites.execute(number_of_invites) do |invite|
+      linkedin_scrap_sent_invites = @session.linkedin_scrap_sent_invites
+      linkedin_scrap_sent_invites.execute(number_of_invites) do |invite|
         puts count.to_s + ' -> ' + invite.to_s
         count += 1
       end
-      expect(invites.invited_leads.length).to be <= number_of_invites
+      expect(linkedin_scrap_sent_invites.invited_leads.length).to be <= number_of_invites
     end
   end
 
@@ -156,45 +139,69 @@ RSpec.describe ScrapIn do
     it 'shows the profiles of up to 5 people who viewed our profile recently' do
       count = 1
       n = 5
-      profile_views = @session.linkedin_profile_views
-      profile_views.execute(n) do |name, time_ago|
+      linkedin_profile_views = @session.linkedin_profile_views
+      linkedin_profile_views.execute(n) do |name, time_ago|
         puts "#{count} -> #{name} , #{time_ago} ago."
         count += 1
       end
-      expect(profile_views.profile_viewed_by.length).to eq(n)
+      expect(linkedin_profile_views.profile_viewed_by.length).to eq(n)
     end
 
     it 'shows the profiles of up to 100 people who viewed our profile recently' do
       count = 1
       n = 100
-      profile_views = @session.linkedin_profile_views
-      profile_views.execute(n) do |name, time_ago|
+      linkedin_profile_views = @session.linkedin_profile_views
+      linkedin_profile_views.execute(n) do |name, time_ago|
         puts "#{count} -> #{name} , #{time_ago} ago."
         count += 1
       end
-      expect(profile_views.profile_viewed_by.length).to be <= n
+      expect(linkedin_profile_views.profile_viewed_by.length).to be <= n
     end
   end
 
-  describe '.invite' do
+  describe '.sales_nav_invite' do
     before do
       # Let's mock here some method
-      # allow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
+      # allsales_nav_ow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
       # allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
       # allow_any_instance_of(Salesnavot::Invite).to receive(:pending_after_invite?).and_return(true)
     end
     it 'sends invite and send a message' do ## Integration
       message = 'Hello there'
-      invite = @session.invite('https://www.linkedin.com/sales/people/ACwAAAH0sfYBxITLbDpjmA7L5iAPE_WtUzz1-c0,NAME_SEARCH,IoU3', message)
-      value = invite.execute
+      url = 'https://www.linkedin.com/sales/people/ACwAABOC43QB_33UK_zSdjpGT874CI8sI8O2g-Y,NAME_SEARCH,WIxj?_ntb=VRQIgoLqSS%2BxwUkvus4PVA%3D%3D'
+      sales_nav_invite = @session.sales_nav_invite(url, message)
+      value = sales_nav_invite.execute
       expect(value).to be true
       puts 'Invite sent !'
     end
+
+    it 'sends invite and send a message when already friends' do ## Integration
+      message = 'Hello there'
+      url = 'https://www.linkedin.com/sales/people/ACwAABI1H9EBeHSOuawCiNLkn6VEP1LHzEz420I,NAME_SEARCH,94gX?_ntb=2zSSN%2FB4Q4uh%2BwB9HHTBCA%3D%3D'
+   
+      sales_nav_invite = @session.sales_nav_invite(url, message)
+      value = sales_nav_invite.execute
+      expect(value).to be false
+      puts 'already friends'
+    end
+
+       
   end
 
   describe '.linkedin_send_message' do
     it ' sends a message from linkedin profile to a lead' do
-      send_message = @session.linkedin_send_message('https://www.linkedin.com/in/scebula/',
+      linkedin_send_message = @session.linkedin_send_message('https://www.linkedin.com/in/scebula/',
+                                                    'Hi, this is a test message at ' +
+                                                        Time.now.strftime('%H:%M:%S').to_s +
+                                                        '. Thanks!')
+      linkedin_send_message.execute
+    end
+  end
+
+
+  describe '.sales_nav_send_message' do
+    it ' sends a message from sales nav conversation thread to a lead' do
+      send_message = @session.sales_nav_send_message('https://www.linkedin.com/sales/inbox/6572101845743910912',
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
                                                         '. Thanks!')
@@ -203,7 +210,7 @@ RSpec.describe ScrapIn do
   end
 
 
-  describe '.scrap_friends' do
+  describe '.linkedin_scrap_friends' do
     it 'scraps friends' do
       count = 1
       @session.linkedin_scrap_friends.execute(10) do |name, time_ago, url|
@@ -214,19 +221,19 @@ RSpec.describe ScrapIn do
     end
   end
 
-  describe '.threads' do
+  describe '.linkedin_scrap_threads' do
     xit 'scraps threads' do # For now we don't care
-      @session.threads.execute(70) do |name, thread|
+      @session.linkedin_scrap_threads.execute(70) do |name, thread|
         puts "#{name}, #{thread}"
       end
     end
   end
 
-  describe '.sales_nav_threads' do
+  describe '.sales_nav_scrap_threads' do
     context 'when scrapping open threads' do
       it 'wants to scrap 100 threads but there is less open conversations' do
         count = 0
-        @session.sales_nav_threads.execute(100) do |name, thread|
+        @session.sales_nav_scrap_threads.execute(100) do |name, thread|
           puts "#{name}, #{thread}"
           count += 1
         end
@@ -235,7 +242,7 @@ RSpec.describe ScrapIn do
 
       it 'scraps 10 threads, does not need to scroll down to load older conversations' do
         count = 0
-        @session.sales_nav_threads.execute(10) do |name, thread|
+        @session.sales_nav_scrap_threads.execute(10) do |name, thread|
           puts "#{name}, #{thread}"
           count += 1
         end
@@ -244,7 +251,7 @@ RSpec.describe ScrapIn do
 
       it 'scraps 30 threads, needs to scroll down 1 time to load older conversations' do
         count = 0
-        @session.sales_nav_threads.execute(30) do |name, thread|
+        @session.sales_nav_scrap_threads.execute(30) do |name, thread|
           puts "#{name}, #{thread}"
           count += 1
         end
@@ -253,7 +260,7 @@ RSpec.describe ScrapIn do
     end
   end
 
-  describe '.send_inmail' do
+  describe '.sales_nav_send_inmail' do
     before do
       # let's mock some methods in order to not send the inmail
     end
@@ -261,26 +268,27 @@ RSpec.describe ScrapIn do
       url = 'https://www.linkedin.com/sales/people/ACwAABoqzPMBkNjA1A2yhrvf3CmyLD3fQWqTLCg,NAME_SEARCH,Q68x'
       message = 'Hello from Paris. I\'m'
       subject = 'Introduction'
-      send_inmail = @session.send_inmail(url, subject, message)
-      expect(send_inmail.execute).to be true
+      sales_nav_send_inmail = @session.sales_nav_send_inmail(url, subject, message)
+      expect(sales_nav_send_inmail.execute).to be true
     end
   end
 
-  describe '#invite' do
+  describe '.linkedin_invite' do
     context 'Connect button is visible and no note is added' do
       it 'invite the lead' do
         lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
-        invite = @session.linkedin_invite(lead_url)
-        value = invite.execute(lead_url)
+        linkedin_invite = @session.linkedin_invite(lead_url)
+        value = linkedin_invite.execute(lead_url)
         expect(value).to be(true)
       end
     end
     
+    
     context 'Connect button is in \'More...\' section and no note is added' do
       it 'invite the lead' do
         lead_url = 'https://www.linkedin.com/in/nenad-akanovic-460aa9174/'
-        invite = @session.linkedin_invite(lead_url)
-        value = invite.execute(lead_url)
+        linkedin_invite = @session.linkedin_invite(lead_url)
+        value = linkedin_invite.execute(lead_url)
         expect(value).to be(true)
       end
     end
@@ -289,8 +297,8 @@ RSpec.describe ScrapIn do
       it 'invite the lead with a message' do
         lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
         note = 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.'
-        invite = @session.invite(lead_url, note)
-        value = invite.execute(lead_url, note)
+        linkedin_invite = @session.linkedin_invite(lead_url, note)
+        value = linkedin_invite.execute(lead_url, note)
         expect(value).to be(true)
       end
     end
@@ -299,20 +307,20 @@ RSpec.describe ScrapIn do
       it 'invite the lead with a message' do
         lead_url = 'https://www.linkedin.com/in/nenad-akanovic-460aa9174/'
         note = 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.'
-        invite = @session.invite(lead_url, note)
-        value = invite.execute(lead_url, note)
+        linkedin_invite = @session.linkedin_invite(lead_url, note)
+        value = linkedin_invite.execute(lead_url, note)
         expect(value).to be(true)
       end
     end
   end
 
-  describe '.sales_nav_messages' do
+  describe '.sales_nav_scrap_messages' do
     context 'when a lead as an open conversation' do
       it 'scraps all messages from thread_url if the number of messages < scrap_value' do
         20.times do
           count = 0
           scrap_value = 100
-          seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
+          seb_messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
           seb_messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
               print 'CONTACT ->  '
@@ -330,8 +338,8 @@ RSpec.describe ScrapIn do
         20.times do
           count = 0
           scrap_value = 2
-          # messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
-          messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6572101845743910912')
+          # messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
+          messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6572101845743910912')
 
           messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
@@ -350,7 +358,7 @@ RSpec.describe ScrapIn do
         20.times do
           count = 0
           scrap_value = 25
-          seb_messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
+          seb_messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
           seb_messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
               print 'CONTACT ->  '
@@ -368,7 +376,7 @@ RSpec.describe ScrapIn do
         20.times do
           count = 0
           scrap_value = 25
-          messages = @session.sales_nav_messages('https://www.linkedin.com/sales/inbox/6560550015541043200')
+          messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6560550015541043200')
           messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
               print 'CONTACT ->  '
@@ -383,18 +391,20 @@ RSpec.describe ScrapIn do
       end
     end
   end
-  
-  context 'when a lead as an open conversation' do
-    it do
-      messages = @session.linkedin_scrap_messages('https://www.linkedin.com/messaging/thread/6260168385326256128/')
-      messages.execute(13) do |message, direction|
-      
-        if direction == :incoming
-          print "CONTACT ->  "
-        else
-          print "YOU ->  "
+
+  describe '.linkedin_scrap_messages' do
+    context 'when a lead as an open conversation' do
+      it do
+        messages = @session.linkedin_scrap_messages('https://www.linkedin.com/messaging/thread/6260168385326256128/')
+        messages.execute(13) do |message, direction|
+
+          if direction == :incoming
+            print "CONTACT ->  "
+          else
+            print "YOU ->  "
+          end
+          puts message
         end
-        puts message
       end
     end
   end

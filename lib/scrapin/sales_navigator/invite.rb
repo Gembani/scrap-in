@@ -2,11 +2,10 @@
 
 module ScrapIn
   module SalesNavigator
-
     # Goes to a lead profile page, and invite the lead
     class Invite
       include Tools
-      include CssSelectors::Invite
+      include CssSelectors::SalesNavigator::Invite
       attr_reader :error
       def initialize(sales_nav_url, session, content)
         @sales_nav_url = sales_nav_url
@@ -40,7 +39,7 @@ module ScrapIn
           @error = :already_pending
           return false
         end
-        find_xpath_and_click(action_button_xpath)
+        find_and_click(@session, action_button_css)
         if friend?
           @error = :already_friends
           return false
@@ -56,13 +55,12 @@ module ScrapIn
 
       def visit_target_page(link)
         @session.visit(link)
-        raise CssNotFound.new(profile_css) unless @session.has_selector?(profile_css)
+        raise CssNotFound, profile_css unless @session.has_selector?(profile_css)
       end
 
       def friend?
-        if @session.has_selector?(degree_css, wait: 4)
-          return true if @session.find(degree_css).text == '1st'
-        end
+        raise CssNotFound, degree_css unless @session.has_selector?(degree_css, wait: 4)
+        return true if @session.find(degree_css).text == '1st'
         false
       end
 
@@ -86,7 +84,7 @@ module ScrapIn
       end
 
       def click_and_connect
-        find_xpath_and_click(action_button_xpath)
+        find_and_click(@session, action_button_css)
         puts 'clicking on the Connect button'
         find_and_click(@session, connect_button_css)
         if lead_email_required?
@@ -101,12 +99,12 @@ module ScrapIn
       end
 
       def initially_pending?
-        find_xpath_and_click(action_button_xpath)
+        find_and_click(@session, action_button_css)
         @session.has_selector?('li', text: pending_connection_css, wait: 4)
       end
 
       def pending_after_invite?
-        find_xpath_and_click(action_button_xpath)
+        find_and_click(@session, action_button_css)
         unless @session.has_selector?('li', text: pending_connection_css, wait: 4)
           @error = :no_pending_after
           return false
