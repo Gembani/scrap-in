@@ -114,7 +114,7 @@ RSpec.describe ScrapIn do
   end
 
   describe '.linkedin_scrap_sent_invites' do
-    xit 'scraps up to 40 leads names with pending invites' do
+    it 'scraps up to 40 leads names with pending invites' do
       linkedin_scrap_sent_invites = @session.linkedin_scrap_sent_invites
       linkedin_scrap_sent_invites.execute(40) do |invited_lead|
         puts invited_lead
