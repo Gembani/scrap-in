@@ -196,10 +196,9 @@ RSpec.describe ScrapIn do
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
                                                         '. Thanks!')
-      linkedin_send_message.execute(true)
+      linkedin_send_message.execute(false)
     end
   end
-
 
   describe '.sales_nav_send_message' do
     it ' sends a message from sales nav conversation thread to a lead' do

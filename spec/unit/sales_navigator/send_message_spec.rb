@@ -85,7 +85,10 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
   end
 
   context 'when wants the class to do the job but do not send the message' do
-    before { salesnav_messages_instance.execute(false) }
+    before do
+      conversation_array.pop
+      salesnav_messages_instance.execute(false)
+    end
     it { expect(session).to have_received(:visit) }
     it { expect(message_field_node).to have_received(:send_keys) }
     it { expect(salesnav_messages_instance.execute(false)).to eq(false) }

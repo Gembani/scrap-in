@@ -1,5 +1,6 @@
 module ScrapIn
   module SalesNavigator
+    # Send a message to a lead on Sales Navigator
     class SendMessage
       include Tools
       include CssSelectors::SalesNavigator::SendMessage
@@ -13,9 +14,7 @@ module ScrapIn
         return false unless visit_thread
 
         write_message
-        return send unless send
-
-        send_message
+        send_message(send)
         message_sent?
       end
 
@@ -39,9 +38,12 @@ module ScrapIn
         puts 'Message has been written.'
       end
 
-      def send_message
+      def send_message(send)
         puts 'Sending message...'
-        find_and_click(@session, send_button_css)
+        send_button = check_and_find(@session, send_button_css)
+        return send unless send
+
+        send_button.click
         puts 'Message has been sent.'
         true
       end

@@ -1,6 +1,6 @@
 module ScrapIn
   module LinkedIn
-    # Send a message a lead on LinkedIn
+    # Send a message to a lead on LinkedIn
     class SendMessage
       include Tools
       include CssSelectors::LinkedIn::SendMessage
@@ -16,9 +16,7 @@ module ScrapIn
         return false unless visit_profile
 
         write_message
-        return send unless send
-
-        send_message
+        send_message(send)
         message_sent?
       end
 
@@ -44,9 +42,12 @@ module ScrapIn
         puts 'Message has been written.'
       end
 
-      def send_message
+      def send_message(send)
         puts 'Sending message...'
-        find_and_click(@session, send_button_css)
+        send_button = check_and_find(@session, send_button_css)
+        return send unless send
+
+        send_button.click
         puts 'Message has been sent.'
         # check, for now we suppose the message has been sent correctly
         true
