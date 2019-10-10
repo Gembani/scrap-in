@@ -10,11 +10,7 @@ module CssSelectors
         '.msg-form__send-button'
       end
 
-      def message_button_css
-        'button.pv-s-profile-actions--message'
-      end
-
-      def sent_message_css
+      def messages_css
         '.msg-s-event-listitem p'
       end
     end

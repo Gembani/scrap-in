@@ -21,6 +21,7 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
   let(:new_node) { instance_double('Capybara::Node::Element', 'new_node') }
 
   before do
+    disable_puts
     allow(session).to receive(:visit)
     10.times { messages_array << Faker::Lorem.unique.sentence }
     has_selector(session, messages_css)
@@ -81,5 +82,15 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
 
   context 'when class sends message to lead' do
     it { expect(salesnav_messages_instance.execute).to eq(true) }
+  end
+
+  context 'when wants the class to do the job but do not send the message' do
+    before do
+      conversation_array.pop
+      salesnav_messages_instance.execute(false)
+    end
+    it { expect(session).to have_received(:visit) }
+    it { expect(message_field_node).to have_received(:send_keys) }
+    it { expect(salesnav_messages_instance.execute(false)).to eq(false) }
   end
 end
