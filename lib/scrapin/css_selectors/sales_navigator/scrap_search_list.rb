@@ -27,9 +27,9 @@ module CssSelectors
         '.global-nav-saved-searches-flyout'
       end
 
-      def searches_list_css
-        'ul.saved-searches-list'
-      end
+      # def searches_list_css
+      #   'ul.saved-searches-list'
+      # end
 
       def pagination_list_css
         '.search-results__pagination-list'
