@@ -53,10 +53,10 @@ module ScrapIn
      
       def next_page
         url_pre_click = @session.current_url
-        find_and_click(@session, next_button_css) # return false sans raison?
+        find_and_click(@session, next_button_css) 
+
         check_until(1000) do 
-          byebug
-          url_pre_click !=  @session.current_url
+          url_pre_click !=  @session.current_url # faire en sorte que ceci = true
         end
       end
     end

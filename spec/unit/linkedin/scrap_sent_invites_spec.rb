@@ -89,6 +89,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapSentInvites do
 				50.times do
 					has_not_selector(session, nth_lead_css(count, invitation: false), wait: 10)
 					allow(session).to receive(:current_url).and_return(url_pre_click)
+					
 					has_selector(session, next_button_css)
 					allow(session).to receive(:find).with(next_button_css).and_return(next_button_node)
 				end
@@ -99,12 +100,8 @@ RSpec.describe ScrapIn::LinkedIn::ScrapSentInvites do
 					allow(next_button_node).to receive(:click).and_return(true)
 				end
 
-				it 'next_page return false' do
+				it 'next_page return true' do
 					expect(scrap_sent_invites.next_page).to eq(true)
-				end
-
-				it 'execute loop break' do
-					expect(scrap_sent_invites.execute).to eq(true)
 				end
 			end
 
@@ -112,7 +109,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapSentInvites do
 				before do
 					allow(next_button_node).to receive(:click).and_return(false)
 				end
-				
+
 				it 'next_page return false' do
 					expect(scrap_sent_invites.next_page).to eq(false)
 				end
