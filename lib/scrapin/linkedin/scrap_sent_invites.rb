@@ -17,6 +17,7 @@ module ScrapIn
       def find_lead_name(count)
         return unless @session.has_selector?(nth_lead_css(count), wait: 3)
 
+        # item = check_and_find(@session, nth_lead_css(count))
         item = @session.find(nth_lead_css(count))
         scroll_to(item)
         name = item.text
@@ -28,6 +29,7 @@ module ScrapIn
 
       def execute(num_times = 50)
         return unless init_list(target_page)
+
         count = 0
         num_times.times.each do
           unless @session.has_selector?(
@@ -39,6 +41,7 @@ module ScrapIn
           find_lead_name(count) { |name| yield name }
           count += 1
         end
+        true
       end
 
       def init_list(link)
