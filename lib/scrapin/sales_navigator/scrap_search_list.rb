@@ -1,6 +1,6 @@
 module ScrapIn
-  # Goes on list page and get profile and image links of all leads
   module SalesNavigator
+    # Goes on list page and get profile and image links of all leads
     class ScrapSearchList
       include Tools
       include CssSelectors::SalesNavigator::ScrapSearchList
@@ -13,6 +13,7 @@ module ScrapIn
         @error = nil
         @processed_page = 1
         @max_page = 1
+        @homepage = 'https://www.linkedin.com/sales'
       end
 
       def execute(page = 1)
@@ -20,7 +21,8 @@ module ScrapIn
         go_to_saved_search
 
         puts "Processing page = #{@processed_page}"
-        @max_page = @session.find(pagination_list_css).all('li').last.find('button').text.to_i
+        # @max_page = @session.find(pagination_list_css).all('li').last.find('button').text.to_i
+        @max_page = @session.all('.search-results__pagination-list li button').last.text.to_i
 
         if @processed_page > @max_page
           @error = "Page #{@processed_page} doesn't exist as the maximum page is #{@max_page}"
@@ -34,13 +36,13 @@ module ScrapIn
           return 1
         end
 
-        find_page_leads do |a, b|
-          yield a, b
+        find_page_leads do |link, image|
+          yield link, image
         end
         @processed_page + 1
       end
 
-      def click_on_page(page)
+      def click_on_page(page) # use check_until instead of sleep
         page_button = @session.all(page_css(page), wait: 30).first
         scroll_to(page_button)
         sleep(4)
@@ -87,10 +89,10 @@ module ScrapIn
         find_leads_size_on_page
         puts 'Getting the links and the image source of each profile on the page...'
         @session.all(name_css).each do |item|
-          href = item[:href]
+          link = item[:href]
           profile_image = (item.find('img')[:src] if item.has_selector?('img', wait: 0))
-          puts "Link = #{href}"
-          yield href, profile_image
+          puts "Link = #{link}"
+          yield link, profile_image
         end
         puts 'Done'
       end
@@ -99,7 +101,7 @@ module ScrapIn
         raise CssNotFound, name_css unless @session.has_selector?(name_css)
       end
 
-      def find_leads_size_on_page
+      def find_leads_size_on_page # do something if cannot find name_css, size == 0
         items = @session.all(name_css)
         size = items.count
         count = 0
@@ -118,16 +120,13 @@ module ScrapIn
 
       def go_to_saved_search
         puts 'Going to the Homepage'
-        @session.visit(homepage)
+        @session.visit(@homepage)
         puts "Hovering the mouse over the button 'Saved searches'"
         @session.find(searches_hover_css).hover
         puts 'Clicking on the search of interest'
-        @session.find(searches_hover_css).find(searches_list_css).find('li', text: @list_identifier).click_link
+        # @session.find(searches_hover_css).find(searches_list_css).find('li', text: @list_identifier).click_link
+        @session.find(searches_hover_css + ' li', text: @list_identifier).click_link
         @saved_search_url = @session.current_url
-      end
-
-      def homepage
-        'https://www.linkedin.com/sales'
       end
     end
   end
