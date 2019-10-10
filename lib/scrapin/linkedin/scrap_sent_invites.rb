@@ -15,30 +15,31 @@ module ScrapIn
       end
 
       def find_lead_name(count)
-        return unless @session.has_selector?(nth_lead_css(count), wait: 3)
+        return false unless @session.has_selector?(nth_lead_css(count), wait: 3)
 
         # item = check_and_find(@session, nth_lead_css(count))
         item = @session.find(nth_lead_css(count))
         scroll_to(item)
         name = item.text
-        return if name.empty?
-
+        return false if name.empty?
+        
         @invited_leads.push name
         yield name
+        true
       end
-
+      
       def execute(num_times = 50)
-        return unless init_list(target_page)
-
+        return false unless init_list(target_page)
+        
         count = 0
         num_times.times.each do
           unless @session.has_selector?(
             nth_lead_css(count, invitation: false), wait: 10
           )
-            count = 0
-            break unless next_page
-          end
-          find_lead_name(count) { |name| yield name }
+          count = 0
+          break unless next_page
+        end
+        find_lead_name(count) { |name| yield name }
           count += 1
         end
         true
@@ -52,9 +53,9 @@ module ScrapIn
      
       def next_page
         url_pre_click = @session.current_url
-        find_and_click(@session, next_button_css)
-        
+        find_and_click(@session, next_button_css) # return false sans raison?
         check_until(1000) do 
+          byebug
           url_pre_click !=  @session.current_url
         end
       end
