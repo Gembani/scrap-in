@@ -316,14 +316,23 @@ RSpec.describe ScrapIn do
     end
   end
 
+  
   describe '.sales_nav_scrap_messages' do
+    context 'when a lead has an open conversation but does not match the given name param' do
+      it 'raises error' do
+        count = 0
+        scrap_value = 100
+        stephane_messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6588308325002158080')
+        expect { stephane_messages.execute(scrap_value, 'CEBULA Sébastien') }.to raise_error(ScrapIn::LeadNameMismatch)
+      end
+    end
     context 'when a lead as an open conversation' do
       it 'scraps all messages from thread_url if the number of messages < scrap_value' do
         20.times do
           count = 0
           scrap_value = 100
-          seb_messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
-          seb_messages.execute(scrap_value) do |message, direction|
+          stephane_messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6588308325002158080')
+          stephane_messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
               print 'CONTACT ->  '
             else

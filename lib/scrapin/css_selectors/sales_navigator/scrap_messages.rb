@@ -25,6 +25,10 @@ module CssSelectors
       def sender_css
         'span'
       end
+
+      def lead_name_css
+        '.conversation-insights__section artdeco-entity-lockup-title > span:first-child'
+      end
     end
   end
 end

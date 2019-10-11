@@ -201,5 +201,27 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapMessages do
         expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(/#{sender_css}/)
       end
     end
+    context 'when we give a name to execute method to check the lead name' do
+      let(:lead_name_node) { instance_double('Capybara::Node::Element', 'lead_name') }
+      let(:lead_name) { 'STOCK Nicholas' }
+      before do
+        has_selector(session, lead_name_css)
+        allow(session).to receive(:find).with(lead_name_css).and_return(lead_name_node)
+        allow(lead_name_node).to receive(:text).and_return(lead_name)
+      end
+      context 'when we give the correct one' do
+        it 'returns true without raising an error' do
+          expect(salesnav_messages_instance.execute(1, 'STOCK Nicholas') { |_message, _direction| }).to be(true)
+        end
+      end
+      context 'when we give a wrong one' do
+        it do
+          expect do
+            salesnav_messages_instance.execute(1, 'CEBULA Sébastien') { |_message, _direction| }
+          end
+          .to raise_error(ScrapIn::LeadNameMismatch)
+        end
+      end
+    end
   end
 end
