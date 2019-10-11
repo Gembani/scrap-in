@@ -10,11 +10,11 @@ module ScrapIn
         @thread_link = thread_link
       end
 
-      def execute(number_of_messages = 20)
+      def execute(number_of_messages = 20, lead_name = false)
         return true unless number_of_messages.positive?
 
         visit_thread_link
-
+        confirm_lead(lead_name) if lead_name
         loaded_messages = load(number_of_messages)
         count = loaded_messages - 1
 
@@ -35,6 +35,11 @@ module ScrapIn
         end
         sleep(0.5)
         true
+      end
+
+      def confirm_lead(lead_name)
+        lead_name_in_thread = check_and_find(@session, lead_name_css).text
+        raise LeadNameMismatch.new(lead_name, lead_name_in_thread) unless lead_name_in_thread.include?(lead_name)
       end
 
       def visit_thread_link
