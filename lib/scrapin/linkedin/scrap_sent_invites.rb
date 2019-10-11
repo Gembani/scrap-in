@@ -1,6 +1,6 @@
 module ScrapIn
-  # Goes to "Sent invitations" page, and scrap all leads that were invited
   module LinkedIn
+    # Goes to "Sent invitations" page, and scrap all leads that were invited
     class ScrapSentInvites
       include Tools
       include CssSelectors::LinkedIn::ScrapSentInvites
@@ -36,10 +36,10 @@ module ScrapIn
           unless @session.has_selector?(
             nth_lead_css(count, invitation: false), wait: 10
           )
-          count = 0
-          break unless next_page
+            count = 0
+            break unless next_page
         end
-        find_lead_name(count) { |name| yield name }
+          find_lead_name(count) { |name| yield name }
           count += 1
         end
         true
@@ -48,6 +48,7 @@ module ScrapIn
       def init_list(link)
         @session.visit(link)
         return false unless @session.has_selector?(invitation_list_css)
+
         true
       end
      
@@ -56,7 +57,7 @@ module ScrapIn
         find_and_click(@session, next_button_css) 
 
         check_until(1000) do 
-          url_pre_click !=  @session.current_url # faire en sorte que ceci = true
+          url_pre_click != @session.current_url
         end
       end
     end
