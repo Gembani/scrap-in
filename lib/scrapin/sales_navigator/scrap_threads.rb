@@ -24,7 +24,11 @@ module ScrapIn
             return false if conversation == false
 
             name = conversation.text
+            old_url = @session.current_url
             conversation.click
+            raise "url did not change" unless check_until(500) do  
+              old_url != @session.current_url
+            end
             thread_link = @session.current_url
             yield name, thread_link
             count += 1

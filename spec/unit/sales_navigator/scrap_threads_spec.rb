@@ -19,11 +19,26 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
   let(:threads_list_array) { [] }
   let(:thread_name_array) { [] }
   let(:one_message_array) { [] }
-  let(:thread_names) do
+  
+  let(:current_urls) do
     [
-      'Thread name 1',
-      'Thread name 2',
-      'Thread name 3'
+      'Initial Thread link',
+      'Thread Link after click',
+      'thread_link_one',
+      'Initial Thread link',
+      'Thread Link after click',
+      'thread_link_two',
+      'Initial Thread link',
+      'Thread Link after click',
+      'thread_link_three',
+    ]
+  end
+
+  let(:thread_links) do
+    [
+      current_urls[2],
+      current_urls[5],
+      current_urls[8],
     ]
   end
 
@@ -38,7 +53,6 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
   include CssSelectors::SalesNavigator::ScrapThreads
   before do
     disable_puts
-
     create_node_array(message_array, 3)
     create_node_array(loaded_threads_array, 3)
     create_node_array(thread_name_array, 3)
@@ -70,7 +84,7 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
       allow(thread_name_array[count]).to receive(:click)
       count += 1
     end
-    allow(session).to receive(:current_url).and_return(*thread_names)
+    allow(session).to receive(:current_url).and_return(*current_urls)
   end
 
   describe '.initialize' do
@@ -81,8 +95,10 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
     context 'when everything is ok in order to scrap threads links' do
       it 'scraps successfully threads and names' do
         count = 0
+        
+    
         result = sales_nav_threads_instance.execute do |name, thread_link|
-          expect(thread_link).to eq(thread_names[count])
+          expect(thread_link).to eq(thread_links[count])
           expect(name).to eq(names_array[count])
           count += 1
         end
@@ -102,7 +118,7 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
       it 'scraps one thread' do
         count = 0
         result = sales_nav_threads_instance.execute(1) do |name, thread_link|
-          expect(thread_link).to eq(thread_names[count])
+          expect(thread_link).to eq(thread_links[count])
           expect(name).to eq(names_array[count])
           count += 1
         end
