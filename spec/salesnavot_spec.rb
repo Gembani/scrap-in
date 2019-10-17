@@ -45,7 +45,7 @@ RSpec.describe ScrapIn do
       expect(next_page_to_process).to eq(2)
     end
 
-    it 'gets profile and image links from all leads of the second page of the list and return the next page' do
+    it 'gets profile and image links from all leads of the third page of the list and return the next page' do
       next_page_to_process = @sales_nav_scrap_search_list.execute(3) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
       end

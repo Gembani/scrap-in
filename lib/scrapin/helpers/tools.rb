@@ -6,6 +6,7 @@ module ScrapIn
           arguments[0].scrollIntoView(true);
       JS
       @session.driver.browser.execute_script(script, element.native)
+      true
     end
     
     def scroll_up_to(element)
