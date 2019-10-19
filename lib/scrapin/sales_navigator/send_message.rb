@@ -1,61 +1,31 @@
+require 'forwardable'
+
 module ScrapIn
   module SalesNavigator
-    # Send a message to a lead on Sales Navigator
     class SendMessage
+      PROFILE_MATCHER =   /https:\/\/(www\.|)linkedin\.com\/sales\/people\/.*/
+      THREAD_MATCHER  =   /https:\/\/(www\.|)linkedin\.com\/sales\/inbox\/.*/
+    
       include Tools
-      include CssSelectors::SalesNavigator::SendMessage
-      def initialize(session, thread, message)
+      extend Forwardable
+      def_delegators :@thread_or_profile, :message_sent?, :visit, :write_message, :send_message
+      
+      def initialize(session, thread_or_profile, message)
+        if thread_or_profile.match(PROFILE_MATCHER)
+          @thread_or_profile = SendMessageProfile.new(session, thread_or_profile)
+        elsif thread_or_profile.match(THREAD_MATCHER)
+          @thread_or_profile = SendMessageThread.new(session, thread_or_profile)
+        else 
+          raise ArgumentError.new("This url is not a sales nav thread or profile url")
+        end
         @session = session
-        @thread = thread
         @message = message
       end
-
       def execute(send = true)
-        return false unless visit_thread
-
-        write_message
+        return false unless visit
+        write_message(@message)
         send_message(send)
-        message_sent?
-      end
-
-      def visit_thread
-        @session.visit(@thread)
-        wait_messages_to_appear
-      end
-
-      def wait_messages_to_appear
-        puts 'waiting messages to appear'
-        messages_appear = check_until(500) do
-          @session.all(messages_css).count.positive?
-        end
-        messages_appear
-      end
-
-      def write_message
-        puts 'Writing message...'
-        message_field = check_and_find(@session, message_field_css)
-        message_field.send_keys(@message)
-        puts 'Message has been written.'
-      end
-
-      def send_message(send)
-        puts 'Sending message...'
-        send_button = check_and_find(@session, send_button_css)
-        return send unless send
-
-        send_button.click
-        puts 'Message has been sent.'
-        true
-      end
-
-      def message_sent?
-        puts 'Checking the message has been sent...'
-        return false if @session.all(messages_css)[-1].nil?
-
-        return false if @session.all(messages_css)[-1].text != @message
-
-        puts 'Confirmed'
-        true
+        message_sent?(@message)
       end
     end
   end

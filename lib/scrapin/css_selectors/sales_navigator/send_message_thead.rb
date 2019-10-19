@@ -1,10 +1,10 @@
 module CssSelectors
   module SalesNavigator
-    module SendMessage
+    module SendMessageThread
       def message_field_css
         '.compose-form__message-field'
       end
-
+      
       def send_button_css
         '.artdeco-button--primary'
       end

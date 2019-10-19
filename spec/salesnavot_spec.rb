@@ -209,6 +209,16 @@ RSpec.describe ScrapIn do
                                                         '. Thanks!')
       send_message.execute(false)
     end
+
+    it ' sends a message from profile url' do
+      seb_sales_thread = 'https://www.linkedin.com/sales/people/ACwAAB2tnsMBfAVq-L4xuYiXAzrugszqNs7Sg1o,NAME_SEARCH,6zds'
+      send_message = @session.sales_nav_send_message(seb_sales_thread,
+                                                    'Hi, this is a test message at ' +
+                                                        Time.now.strftime('%H:%M:%S').to_s +
+                                                        '. Thanks!')
+      send_message.execute(false)
+    end
+    
   end
 
 
