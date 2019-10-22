@@ -17,8 +17,8 @@ module ScrapIn
       def find_lead_name(count)
         return false unless @session.has_selector?(nth_lead_css(count), wait: 3)
 
-        # item = check_and_find(@session, nth_lead_css(count))
-        item = @session.find(nth_lead_css(count))
+        item = check_and_find(@session, nth_lead_css(count))
+        # item = @session.find(nth_lead_css(count))
         scroll_to(item)
         name = item.text
         return false if name.empty?

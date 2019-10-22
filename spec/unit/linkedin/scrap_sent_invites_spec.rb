@@ -124,6 +124,20 @@ RSpec.describe ScrapIn::LinkedIn::ScrapSentInvites do
       end
     end
 
+    context 'no selector for nth lead' do
+      before do
+        count = 0
+        50.times do
+          has_not_selector(session, nth_lead_css(count))
+        end
+      end
+
+      it do
+        expect { scrap_sent_invites.execute }
+          .to raise_error(ScrapIn::CssNotFound)
+      end
+    end
+
     context 'normal behavior' do
       it do
         50.times do
