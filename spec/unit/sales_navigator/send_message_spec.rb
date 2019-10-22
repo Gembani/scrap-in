@@ -11,11 +11,12 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
   let(:session) { instance_double('Capybara::Session', 'session') }
   let(:thread_url) { 'https://www.linkedin.com/sales/inbox/6572101845743910912' }
   let(:profile_url) { 'https://www.linkedin.com/sales/people/6572101845743910912' }
-  
+  let(:profile_url_2) { 'https://www.linkedin.com/sales/profile/264165374,vjcr,NAME_SEARCH' }
+
   let(:not_compatible_url) { 'https://www.linkedin.com/asfas' }
   
-
-  let(:sales_nav_url) { 'https://www.linkedin.com/sales/people/ACwAAB2tnsMBfAVq-L4xuYiXAzrugszqNs7Sg1o,NAME_SEARCH,6zds' }
+	
+  
   let(:message) { 'Message to send to lead' }
 
   let(:messages_array) { [] }
@@ -56,6 +57,52 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
     before do 
       allow(session).to receive(:current_url).with(no_args).and_return("www.google.com")
       allow(session).to receive(:visit).with(profile_url)
+      has_selector(session, profile_send_button)
+      find(session, profile_send_node, profile_send_button)
+      has_selector(session, 'textarea')
+      find(session, text_area_node, 'textarea')
+      has_selector(session, profile_send_message_button)
+      find(session, profile_send_message_button_node, profile_send_message_button)
+      expect(salesnav_messages_instance.execute).to eq(true)
+    end
+    
+    it {
+      expect(profile_send_node).to have_received(:click)
+    }
+ 
+    it {
+      expect(profile_send_message_button_node).to have_received(:click)
+    }
+ 
+    it {
+      expect(text_area_node).to have_received(:send_keys)
+    }
+ 
+  end
+
+  context 'when using profile url 2' do 
+    let(:profile_send_node) do
+      node = instance_double('Capybara::Node::Element', 'profile_send_node')
+      allow(node).to receive(:click).with(no_args)
+      node
+    end
+    let(:text_area_node) do
+      node = instance_double('Capybara::Node::Element', 'text_area_node')
+      allow(node).to receive(:send_keys).with(message)
+      node
+    end
+    let(:profile_send_message_button_node) do
+      node = instance_double('Capybara::Node::Element', 'profile_send_message_button')
+      allow(node).to receive(:click).with(no_args)
+      node
+    end
+    
+    
+    let(:salesnav_messages_instance) { subject.new(session, profile_url_2, message) }
+    
+    before do 
+      allow(session).to receive(:current_url).with(no_args).and_return("www.google.com")
+      allow(session).to receive(:visit).with(profile_url_2)
       has_selector(session, profile_send_button)
       find(session, profile_send_node, profile_send_button)
       has_selector(session, 'textarea')

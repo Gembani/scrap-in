@@ -3,7 +3,7 @@ require 'forwardable'
 module ScrapIn
   module SalesNavigator
     class SendMessage
-      PROFILE_MATCHER =   /https:\/\/(www\.|)linkedin\.com\/sales\/people\/.*/
+      PROFILE_MATCHER =   /https:\/\/(www\.|)linkedin\.com\/sales\/(people|profile)\/.*/
       THREAD_MATCHER  =   /https:\/\/(www\.|)linkedin\.com\/sales\/inbox\/.*/
     
       include Tools
