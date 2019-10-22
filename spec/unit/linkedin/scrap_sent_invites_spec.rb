@@ -28,6 +28,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapSentInvites do
     50.times do
       has_selector(session, nth_lead_css(count, invitation: false), wait: 10)
       has_selector(session, nth_lead_css(count), wait: 3)
+      has_selector(session, nth_lead_css(count))
 
       allow(session).to receive(:find).with(nth_lead_css(count)).and_return(item_node)
       allow(item_node).to receive(:native)
