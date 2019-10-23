@@ -151,7 +151,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapSentInvites do
       end
 
       it do
-        expect { scrap_sent_invites.execute { |name| }}
+        expect { scrap_sent_invites.execute { |name| } }
           .to raise_error(ScrapIn::CssNotFound)
       end
     end

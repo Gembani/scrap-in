@@ -38,7 +38,7 @@ module ScrapIn
           )
             count = 0
             break unless next_page
-        end
+          end
           find_lead_name(count) { |name| yield name }
           count += 1
         end
