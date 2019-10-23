@@ -74,12 +74,9 @@ RSpec.describe ScrapIn::LinkedIn::ScrapSentInvites do
         has_not_selector(session, invitation_list_css)
       end
 
-      it 'init list return false' do
-        expect(scrap_sent_invites.init_list(visit_url)).to eq(false)
-      end
-
-      it 'execute return false' do
-        expect(scrap_sent_invites.execute).to eq(false)
+      it do
+        expect { scrap_sent_invites.init_list(visit_url) }
+          .to raise_error(ScrapIn::CssNotFound)
       end
     end
 

@@ -18,7 +18,6 @@ module ScrapIn
         return false unless @session.has_selector?(nth_lead_css(count), wait: 3)
 
         item = check_and_find(@session, nth_lead_css(count))
-        # item = @session.find(nth_lead_css(count))
         scroll_to(item)
         name = item.text
         return false if name.empty?
@@ -33,6 +32,9 @@ module ScrapIn
         
         count = 0
         num_times.times.each do
+          raise CssNotFound.new(nth_lead_css(count)) unless check_until(400) do 
+            @session.has_selector?(nth_lead_css(count))
+          end
           unless @session.has_selector?(
             nth_lead_css(count, invitation: false), wait: 10
           )
@@ -47,6 +49,9 @@ module ScrapIn
 
       def init_list(link)
         @session.visit(link)
+        raise CssNotFound.new(invitation_list_css) unless check_until(400) do 
+          @session.has_selector?(invitation_list_css)
+        end
         return false unless @session.has_selector?(invitation_list_css)
 
         true
