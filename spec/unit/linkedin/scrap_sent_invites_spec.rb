@@ -139,6 +139,23 @@ RSpec.describe ScrapIn::LinkedIn::ScrapSentInvites do
       end
     end
 
+    context 'no selector for next button' do
+      before do
+        count = 0
+        50.times do
+          has_not_selector(session, nth_lead_css(count, invitation: false), wait: 10)
+          allow(session).to receive(:current_url).and_return(url_pre_click_1)
+          has_not_selector(session, next_button_css)
+          count += 1
+        end
+      end
+
+      it do
+        expect { scrap_sent_invites.execute { |name| }}
+          .to raise_error(ScrapIn::CssNotFound)
+      end
+    end
+
     context 'normal behavior' do
       it do
         50.times do
