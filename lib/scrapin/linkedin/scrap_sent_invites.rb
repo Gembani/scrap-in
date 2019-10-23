@@ -12,16 +12,16 @@ module ScrapIn
       end
 
       def find_lead_name(count)
-        @session.has_selector?(nth_lead_css(count), wait: 3)
+        return false unless @session.has_selector?(nth_lead_css(count), wait: 3)
 
         item = check_and_find(@session, nth_lead_css(count))
         scroll_to(item)
         name = item.text
-        # return false if name.empty?
+        return false if name.empty?
         
         @invited_leads.push name
         yield name
-        # true
+        true
       end
       
       def execute(num_times = 50)
