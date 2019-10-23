@@ -8,36 +8,31 @@ module ScrapIn
       def initialize(session)
         @session = session
         @invited_leads = []
-      end
-
-      def target_page
-        'https://www.linkedin.com/mynetwork/invitation-manager/sent/'
+        @target_page = 'https://www.linkedin.com/mynetwork/invitation-manager/sent/'
       end
 
       def find_lead_name(count)
-        return false unless @session.has_selector?(nth_lead_css(count), wait: 3)
+        @session.has_selector?(nth_lead_css(count), wait: 3)
 
         item = check_and_find(@session, nth_lead_css(count))
         scroll_to(item)
         name = item.text
-        return false if name.empty?
+        # return false if name.empty?
         
         @invited_leads.push name
         yield name
-        true
+        # true
       end
       
       def execute(num_times = 50)
-        return false unless init_list(target_page)
+        init_list(@target_page)
         
         count = 0
         num_times.times.each do
           raise CssNotFound.new(nth_lead_css(count)) unless check_until(400) do 
             @session.has_selector?(nth_lead_css(count))
           end
-          unless @session.has_selector?(
-            nth_lead_css(count, invitation: false), wait: 10
-          )
+          unless @session.has_selector?(nth_lead_css(count, invitation: false), wait: 10)
             count = 0
             break unless next_page
           end
@@ -52,7 +47,6 @@ module ScrapIn
         raise CssNotFound.new(invitation_list_css) unless check_until(400) do 
           @session.has_selector?(invitation_list_css)
         end
-        return false unless @session.has_selector?(invitation_list_css)
 
         true
       end
