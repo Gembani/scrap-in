@@ -95,7 +95,6 @@ module ScrapIn
           puts "Link = #{link}"
           puts "Profile_image = #{profile_image}"
           if (item == @session.all('.result-lockup__icon-link').last)
-            byebug
           end
           yield link, profile_image
         end
