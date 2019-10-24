@@ -1,11 +1,11 @@
 module ScrapIn
-  # Goes on list page and get profile and image links of all leads
   module SalesNavigator
+    # Goes on list page and get profile and image links of all leads
     class ScrapSearchList
       include Tools
       include CssSelectors::SalesNavigator::ScrapSearchList
 
-      def initialize(list_identifier, session)
+      def initialize(session, list_identifier)
         @session = session
         @list_identifier = list_identifier
         @links = []
@@ -13,6 +13,7 @@ module ScrapIn
         @error = nil
         @processed_page = 1
         @max_page = 1
+        @homepage = 'https://www.linkedin.com/sales'
       end
 
       def execute(page = 1)
@@ -20,7 +21,8 @@ module ScrapIn
         go_to_saved_search
 
         puts "Processing page = #{@processed_page}"
-        @max_page = @session.find(pagination_list_css).all('li').last.find('button').text.to_i
+        raise ArgumentError, "there is no page #{page} for #{@list_identifier}" unless @session.all(pagination_list_css).count
+        @max_page = @session.all(pagination_list_css).last.text.to_i
 
         if @processed_page > @max_page
           @error = "Page #{@processed_page} doesn't exist as the maximum page is #{@max_page}"
@@ -34,23 +36,24 @@ module ScrapIn
           return 1
         end
 
-        find_page_leads do |a, b|
-          yield a, b
+        find_page_leads do |link, image|
+          yield link, image
         end
         @processed_page + 1
       end
 
       def click_on_page(page)
         page_button = @session.all(page_css(page), wait: 30).first
-        scroll_to(page_button)
-        sleep(4)
+        scroll_to_first = check_until(500) do 
+          scroll_to(page_button)
+        end
         page_button.click
         
         check_results_loaded
       end
 
       def check_results_loaded
-        raise 'NOT LOADED' unless check_until(500) do
+        raise CssNotFound, results_loaded_css unless check_until(500) do
           @session.has_selector?(results_loaded_css)
         end
       end
@@ -86,27 +89,35 @@ module ScrapIn
         ensure_leads_are_loaded
         find_leads_size_on_page
         puts 'Getting the links and the image source of each profile on the page...'
-        @session.all(name_css).each do |item|
-          href = item[:href]
-          profile_image = (item.find('img')[:src] if item.has_selector?('img', wait: 0))
-          puts "Link = #{href}"
-          yield href, profile_image
+        @session.all('.result-lockup__icon-link').each do |item|
+          link = item[:href]
+          profile_image = (check_and_find(item, '.lazy-image')[:src] if item.has_selector?('.lazy-image', wait: 0))
+          puts "Link = #{link}"
+          puts "Profile_image = #{profile_image}"
+          if (item == @session.all('.result-lockup__icon-link').last)
+          end
+          yield link, profile_image
         end
         puts 'Done'
       end
 
       def ensure_leads_are_loaded
-        raise CssNotFound, name_css unless @session.has_selector?(name_css)
+        check_until(500) do
+          @session.has_selector?('.result-lockup__icon-link')
+        end
       end
 
       def find_leads_size_on_page
-        items = @session.all(name_css)
+        items = @session.all('.result-lockup__icon-link')
         size = items.count
         count = 0
-        while size < 20
+        while size < 20 && size.positive?
           scroll_to(items.last)
-          items = @session.all(name_css)
+          items = @session.all('.result-lockup__icon-link')
           size = items.count
+          # check_until(500) do
+          #   !check_and_find(items.last, '.lazy-image')[:src] if items.last.has_selector?('.lazy-image', wait: 0)
+          # end
           count += 1
           break if processing_last_page?
         end
@@ -118,16 +129,12 @@ module ScrapIn
 
       def go_to_saved_search
         puts 'Going to the Homepage'
-        @session.visit(homepage)
+        @session.visit(@homepage)
         puts "Hovering the mouse over the button 'Saved searches'"
-        @session.find(searches_hover_css).hover
+        check_and_find(@session, searches_hover_css).hover
         puts 'Clicking on the search of interest'
-        @session.find(searches_hover_css).find(searches_list_css).find('li', text: @list_identifier).click_link
+        check_and_find(@session, searches_hover_css + ' li', text: @list_identifier).click_link
         @saved_search_url = @session.current_url
-      end
-
-      def homepage
-        'https://www.linkedin.com/sales'
       end
     end
   end
