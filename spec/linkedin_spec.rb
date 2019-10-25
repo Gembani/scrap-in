@@ -18,7 +18,6 @@ RSpec.describe ScrapIn do
       scrap_in = 'https://www.linkedin.com/in/scrap-in-b72a77192/'
       linkedin_scrap_lead = @session.linkedin_scrap_lead(linkedin_url: scrap_in, get_sales_nav_url: true)
       data = linkedin_scrap_lead.to_hash()
-      # puts "Error: #{scrap.error}" unless scrap.error.empty?
       expect(data[:sales_nav_url]).not_to be_nil
       expect(data[:linkedin_url]).not_to be_nil
       expect(data[:name]).not_to be_nil
@@ -39,7 +38,7 @@ RSpec.describe ScrapIn do
       expect(linkedin_scrap_sent_invites.invited_leads.length).to be >= 10
     end
 
-    it 'scraps up to 10000 leads names with pending invites' do
+    xit 'scraps up to 10000 leads names with pending invites' do
       count = 1
       number_of_invites = 10_000
       linkedin_scrap_sent_invites = @session.linkedin_scrap_sent_invites
@@ -50,9 +49,9 @@ RSpec.describe ScrapIn do
       expect(linkedin_scrap_sent_invites.invited_leads.length).to be <= number_of_invites
     end
 	end
-	
+
 	describe '.linkedin_profile_views' do
-    it 'shows the profiles of up to 5 people who viewed our profile recently' do
+		it 'shows the profiles of up to 5 people who viewed our profile recently' do
       count = 1
       n = 5
       linkedin_profile_views = @session.linkedin_profile_views
@@ -77,9 +76,7 @@ RSpec.describe ScrapIn do
 	
 	describe '.linkedin_send_message' do
     it ' sends a message from linkedin profile to a lead' do
-      # https://www.linkedin.com/in/scebula/
-      seb_linkedin_thread = 'https://www.linkedin.com/messaging/thread/6260168385326256128/'
-      linkedin_send_message = @session.linkedin_send_message(seb_linkedin_thread,
+      linkedin_send_message = @session.linkedin_send_message(ENV.fetch('l_send_message_url'),
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
                                                         '. Thanks!')
@@ -99,7 +96,7 @@ RSpec.describe ScrapIn do
   end
 
   describe '.linkedin_scrap_threads' do
-    it 'scraps threads' do # For now we don't care
+    it 'scraps threads' do
       @session.linkedin_scrap_threads.execute(70) do |name, thread|
         puts "#{name}, #{thread}"
       end
@@ -107,40 +104,35 @@ RSpec.describe ScrapIn do
 	end
 	
 	describe '.linkedin_invite' do
+		# Warning: This test sends real invitations.
     context 'Connect button is visible and no note is added' do
       it 'invite the lead' do
-        lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
-        linkedin_invite = @session.linkedin_invite(lead_url)
-        value = linkedin_invite.execute(lead_url)
+        linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url'))
+        value = linkedin_invite.execute(ENV.fetch('l_invite_url'))
         expect(value).to be(true)
       end
     end
     
     context 'Connect button is in \'More...\' section and no note is added' do
       it 'invite the lead' do
-        lead_url = 'https://www.linkedin.com/in/nenad-akanovic-460aa9174/'
-        linkedin_invite = @session.linkedin_invite(lead_url)
-        value = linkedin_invite.execute(lead_url)
+        linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url_2'))
+        value = linkedin_invite.execute(ENV.fetch('l_invite_url_2'))
         expect(value).to be(true)
       end
     end
 
     context 'Connect button is visible and a note is added' do
       it 'invite the lead with a message' do
-        lead_url = 'https://www.linkedin.com/in/valentin-piatko/'
-        note = 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.'
-        linkedin_invite = @session.linkedin_invite(lead_url, note)
-        value = linkedin_invite.execute(lead_url, note)
+				linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url'), ENV.fetch('l_invite_note'))
+        value = linkedin_invite.execute(ENV.fetch('l_invite_url'), ENV.fetch('l_invite_note'))
         expect(value).to be(true)
       end
     end
 
     context 'Connect button is in \'More...\' section and a note is added' do
       it 'invite the lead with a message' do
-        lead_url = 'https://www.linkedin.com/in/nenad-akanovic-460aa9174/'
-        note = 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.'
-        linkedin_invite = @session.linkedin_invite(lead_url, note)
-        value = linkedin_invite.execute(lead_url, note)
+        linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url_2'), ENV.fetch('l_invite_note'))
+        value = linkedin_invite.execute(ENV.fetch('l_invite_url_2'), ENV.fetch('l_invite_note'))
         expect(value).to be(true)
       end
     end
@@ -149,7 +141,7 @@ RSpec.describe ScrapIn do
 	describe '.linkedin_scrap_messages' do
     context 'when a lead as an open conversation' do
       it do
-        messages = @session.linkedin_scrap_messages('https://www.linkedin.com/messaging/thread/6260168385326256128/')
+        messages = @session.linkedin_scrap_messages(ENV.fetch('l_scrap_messages_url'))
         messages.execute(13) do |message, direction|
 
           if direction == :incoming
