@@ -13,7 +13,7 @@ RSpec.describe ScrapIn do
     expect(ScrapIn::VERSION).not_to be nil
   end
 
-  describe '.sales_nav_scrap_search_list' do
+  xdescribe '.sales_nav_scrap_search_list' do
     let(:list_name) { 'Rspec' }
     let(:last_page) { 100 }
     before do
@@ -80,20 +80,16 @@ RSpec.describe ScrapIn do
 
   describe '.sales_nav_scrap_lead' do
     it 'scraps location, phones, emails and website links for a lead' do
-      seb_link = 'https://www.linkedin.com/sales/people/ACoAAB2tnsMByAipkq4gQ5rxjAeaMynf6T2ku70,name,MoVL'
-
-      sales_nav_scrap_lead = @session.sales_nav_scrap_lead(sales_nav_url: seb_link)
+      sales_nav_scrap_lead = @session.sales_nav_scrap_lead(sales_nav_url: ENV.fetch('s_scrap_lead_url'))
       data = sales_nav_scrap_lead.to_hash
-      # puts "Error: #{scrap.error}" unless scrap.error.empty?
       expect(data[:sales_nav_url]).not_to be_nil
       expect(data[:name]).not_to be_nil
       expect(data[:location]).not_to be_nil
       expect(data[:links].first).to eq('https://gembani.com')
-      
-      
+
       expect(data[:emails].count).to be > 0
       expect(data[:phones].count).to be > 0
-      expect(data[:links].count).to eq(0)
+      expect(data[:links].count).to be > 0
     end
   end
 
@@ -105,19 +101,18 @@ RSpec.describe ScrapIn do
       # allow_any_instance_of(Salesnavot::Invite).to receive(:pending_after_invite?).and_return(true)
     end
     it 'sends invite and send a message' do ## Integration
-      message = 'Hello there'
-      url = 'https://www.linkedin.com/sales/people/ACwAABOC43QB_33UK_zSdjpGT874CI8sI8O2g-Y,NAME_SEARCH,WIxj?_ntb=VRQIgoLqSS%2BxwUkvus4PVA%3D%3D'
-      sales_nav_invite = @session.sales_nav_invite(url, message)
+      # message = 'Hello there'
+      # url = 'https://www.linkedin.com/sales/people/ACwAABOC43QB_33UK_zSdjpGT874CI8sI8O2g-Y,NAME_SEARCH,WIxj?_ntb=VRQIgoLqSS%2BxwUkvus4PVA%3D%3D'
+      sales_nav_invite = @session.sales_nav_invite(ENV.fetch('s_invite_url'), ENV.fetch('s_invite_message'))
       value = sales_nav_invite.execute
       expect(value).to be true
       puts 'Invite sent !'
     end
 
     it 'sends invite and send a message when already friends' do ## Integration
-      message = 'Hello there'
-      url = 'https://www.linkedin.com/sales/people/ACwAABI1H9EBeHSOuawCiNLkn6VEP1LHzEz420I,NAME_SEARCH,94gX?_ntb=2zSSN%2FB4Q4uh%2BwB9HHTBCA%3D%3D'
-   
-      sales_nav_invite = @session.sales_nav_invite(url, message)
+      # message = 'Hello there'
+      # url = 'https://www.linkedin.com/sales/people/ACwAABI1H9EBeHSOuawCiNLkn6VEP1LHzEz420I,NAME_SEARCH,94gX?_ntb=2zSSN%2FB4Q4uh%2BwB9HHTBCA%3D%3D'
+      sales_nav_invite = @session.sales_nav_invite(ENV.fetch('s_invite_url_2'), ENV.fetch('s_invite_message_2'))
       value = sales_nav_invite.execute
       expect(value).to be false
       puts 'already friends'
@@ -126,8 +121,8 @@ RSpec.describe ScrapIn do
 
   describe '.sales_nav_send_message' do
     it ' sends a message from sales nav conversation thread to a lead' do
-      seb_sales_thread = 'https://www.linkedin.com/sales/inbox/6572101845743910912'
-      send_message = @session.sales_nav_send_message(seb_sales_thread,
+      # seb_sales_thread = 'https://www.linkedin.com/sales/inbox/6572101845743910912'
+      send_message = @session.sales_nav_send_message(ENV.fetch('s_send_message_url'),
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
                                                         '. Thanks!')
@@ -135,8 +130,8 @@ RSpec.describe ScrapIn do
     end
 
     it ' sends a message from profile url' do
-      seb_sales_thread = 'https://www.linkedin.com/sales/people/ACwAAB2tnsMBfAVq-L4xuYiXAzrugszqNs7Sg1o,NAME_SEARCH,6zds'
-      send_message = @session.sales_nav_send_message(seb_sales_thread,
+      # seb_sales_thread = 'https://www.linkedin.com/sales/people/ACwAAB2tnsMBfAVq-L4xuYiXAzrugszqNs7Sg1o,NAME_SEARCH,6zds'
+      send_message = @session.sales_nav_send_message(ENV.fetch('s_send_message_url_2'),
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
                                                         '. Thanks!')
@@ -180,10 +175,10 @@ RSpec.describe ScrapIn do
       # let's mock some methods in order to not send the inmail
     end
     it 'sends inmail' do
-      url = 'https://www.linkedin.com/sales/people/ACwAABoqzPMBkNjA1A2yhrvf3CmyLD3fQWqTLCg,NAME_SEARCH,Q68x'
+      # url = 'https://www.linkedin.com/sales/people/ACwAABoqzPMBkNjA1A2yhrvf3CmyLD3fQWqTLCg,NAME_SEARCH,Q68x'
       message = 'Hello from Paris. I\'m'
       subject = 'Introduction'
-      sales_nav_send_inmail = @session.sales_nav_send_inmail(url, subject, message)
+      sales_nav_send_inmail = @session.sales_nav_send_inmail(ENV.fetch('s_send_inmail_url'), subject, message)
       expect(sales_nav_send_inmail.execute).to be true
     end
   end
@@ -193,16 +188,17 @@ RSpec.describe ScrapIn do
       it 'raises error' do
         count = 0
         scrap_value = 100
-        stephane_messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6588308325002158080')
-        expect { stephane_messages.execute(scrap_value, 'CEBULA Sébastien') }.to raise_error(ScrapIn::LeadNameMismatch)
+        stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url'))#('https://www.linkedin.com/sales/inbox/6588308325002158080')
+        expect { stephane_messages.execute(scrap_value, 'CEBULA Sébastien') }.to raise_error(ScrapIn::LeadNameMismatch) # REMOVE 'CEBULA Sebastien'
       end
     end
+
     context 'when a lead as an open conversation' do
       it 'scraps all messages from thread_url if the number of messages < scrap_value' do
         20.times do
           count = 0
           scrap_value = 100
-          stephane_messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6588308325002158080')
+          stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_2'))#('https://www.linkedin.com/sales/inbox/6588308325002158080')
           stephane_messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
               print 'CONTACT ->  '
@@ -220,8 +216,7 @@ RSpec.describe ScrapIn do
         20.times do
           count = 0
           scrap_value = 2
-          # messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6563813822195433472')
-          messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6572101845743910912')
+          messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_3'))#('https://www.linkedin.com/sales/inbox/6572101845743910912')
 
           messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
@@ -240,7 +235,7 @@ RSpec.describe ScrapIn do
         20.times do
           count = 0
           scrap_value = 25
-          seb_messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6564811480502460416')
+          seb_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_4'))#('https://www.linkedin.com/sales/inbox/6564811480502460416')
           seb_messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
               print 'CONTACT ->  '
@@ -258,7 +253,7 @@ RSpec.describe ScrapIn do
         20.times do
           count = 0
           scrap_value = 25
-          messages = @session.sales_nav_scrap_messages('https://www.linkedin.com/sales/inbox/6560550015541043200')
+          messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_4'))#('https://www.linkedin.com/sales/inbox/6560550015541043200')
           messages.execute(scrap_value) do |message, direction|
             if direction == :incoming
               print 'CONTACT ->  '
