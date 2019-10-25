@@ -17,6 +17,8 @@ RSpec.describe ScrapIn do
     let(:list_name) { 'Rspec' }
     let(:last_page) { 100 }
     before do
+      
+    
       @sales_nav_scrap_search_list = @session.sales_nav_scrap_search_list(list_name)
     end
 

@@ -24,6 +24,6 @@ module SalesNavigatorMethods
   end
 
   def sales_nav_scrap_search_list(list_identifier)
-    ScrapIn::SalesNavigator::ScrapSearchList.new(list_identifier, @capybara)
+    ScrapIn::SalesNavigator::ScrapSearchList.new(@capybara, list_identifier)
   end
 end
