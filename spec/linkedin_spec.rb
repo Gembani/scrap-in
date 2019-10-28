@@ -38,7 +38,7 @@ RSpec.describe ScrapIn do
       expect(linkedin_scrap_sent_invites.invited_leads.length).to be >= 10
     end
 
-    xit 'scraps up to 10000 leads names with pending invites' do
+    it 'scraps up to 10000 leads names with pending invites' do
       count = 1
       number_of_invites = 10_000
       linkedin_scrap_sent_invites = @session.linkedin_scrap_sent_invites
@@ -103,12 +103,12 @@ RSpec.describe ScrapIn do
     end
 	end
 	
-	describe '.linkedin_invite' do
+	describe '.linkedin_invite' do #change it
 		# Warning: This test sends real invitations.
     context 'Connect button is visible and no note is added' do
       it 'invite the lead' do
         linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url'))
-        value = linkedin_invite.execute(ENV.fetch('l_invite_url'))
+        value = linkedin_invite.execute(ENV.fetch('l_invite_url'), '', false)
         expect(value).to be(true)
       end
     end
@@ -116,7 +116,7 @@ RSpec.describe ScrapIn do
     context 'Connect button is in \'More...\' section and no note is added' do
       it 'invite the lead' do
         linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url_2'))
-        value = linkedin_invite.execute(ENV.fetch('l_invite_url_2'))
+        value = linkedin_invite.execute(ENV.fetch('l_invite_url_2'), '', false)
         expect(value).to be(true)
       end
     end
@@ -124,7 +124,7 @@ RSpec.describe ScrapIn do
     context 'Connect button is visible and a note is added' do
       it 'invite the lead with a message' do
 				linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url'), ENV.fetch('l_invite_note'))
-        value = linkedin_invite.execute(ENV.fetch('l_invite_url'), ENV.fetch('l_invite_note'))
+        value = linkedin_invite.execute(ENV.fetch('l_invite_url'), ENV.fetch('l_invite_note'), false)
         expect(value).to be(true)
       end
     end
@@ -132,7 +132,7 @@ RSpec.describe ScrapIn do
     context 'Connect button is in \'More...\' section and a note is added' do
       it 'invite the lead with a message' do
         linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url_2'), ENV.fetch('l_invite_note'))
-        value = linkedin_invite.execute(ENV.fetch('l_invite_url_2'), ENV.fetch('l_invite_note'))
+        value = linkedin_invite.execute(ENV.fetch('l_invite_url_2'), ENV.fetch('l_invite_note'), false)
         expect(value).to be(true)
       end
     end

@@ -7,12 +7,12 @@ module ScrapIn
         @session = session
       end
 
-      def execute(lead_url, note = '')
+      def execute(lead_url, note = '', send = true)
         visit_lead_url(lead_url)
         return false unless search_for_connect_button
 
         search_for_add_a_note_button(note)
-        sending_invitation_message
+        sending_invitation_message(send)
         confirmation_invite_is_sent
         true
       end
@@ -46,10 +46,10 @@ module ScrapIn
         input_note_area.send_keys(note)
       end
       
-      def sending_invitation_message
+      def sending_invitation_message(send)
         puts 'Sending invitation message'
         new_buttons_popup = @session.all(buttons_css)
-        click_button(new_buttons_popup, 'Send invitation')
+        click_button(new_buttons_popup, 'Send invitation') if send
       end
 
       def confirmation_invite_is_sent

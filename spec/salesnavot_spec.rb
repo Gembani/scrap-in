@@ -13,7 +13,7 @@ RSpec.describe ScrapIn do
     expect(ScrapIn::VERSION).not_to be nil
   end
 
-  xdescribe '.sales_nav_scrap_search_list' do
+  describe '.sales_nav_scrap_search_list' do
     let(:list_name) { 'Rspec' }
     let(:last_page) { 100 }
     before do
@@ -141,7 +141,7 @@ RSpec.describe ScrapIn do
 
   describe '.sales_nav_scrap_threads' do
     context 'when scrapping open threads' do
-      it 'wants to scrap 100 threads but there is less open conversations' do
+      xit 'wants to scrap 100 threads but there is less open conversations' do
         count = 0
         @session.sales_nav_scrap_threads.execute(100) do |name, thread|
           puts "#{name}, #{thread}"
