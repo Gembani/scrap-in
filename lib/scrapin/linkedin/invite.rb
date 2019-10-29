@@ -13,7 +13,7 @@ module ScrapIn
 
         search_for_add_a_note_button(note)
         sending_invitation_message(send)
-        confirmation_invite_is_sent
+        confirmation_invite_is_sent if send
         true
       end
       

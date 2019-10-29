@@ -103,8 +103,7 @@ RSpec.describe ScrapIn do
     end
 	end
 	
-	describe '.linkedin_invite' do #change it
-		# Warning: This test sends real invitations.
+	describe '.linkedin_invite' do
     context 'Connect button is visible and no note is added' do
       it 'invite the lead' do
         linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url'))
