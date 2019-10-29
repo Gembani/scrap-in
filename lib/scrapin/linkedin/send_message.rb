@@ -12,11 +12,11 @@ module ScrapIn
         @error = 'An error occured when sending the message.'
       end
 
-      def execute(send = true)
+      def execute
         return false unless visit_profile
 
         write_message
-        send_message(send)
+        send_message
         message_sent?
       end
 
@@ -42,10 +42,9 @@ module ScrapIn
         puts 'Message has been written.'
       end
 
-      def send_message(send)
+      def send_message
         puts 'Sending message...'
         send_button = check_and_find(@session, send_button_css)
-        return send unless send
 
         send_button.click
         puts 'Message has been sent.'
