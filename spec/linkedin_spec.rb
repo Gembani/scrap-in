@@ -30,22 +30,11 @@ RSpec.describe ScrapIn do
 	describe '.linkedin_scrap_sent_invites' do
     it 'scraps up to 40 leads names with pending invites' do
       linkedin_scrap_sent_invites = @session.linkedin_scrap_sent_invites
-      linkedin_scrap_sent_invites.execute(40) do |invited_lead|
+      linkedin_scrap_sent_invites.execute(100) do |invited_lead|
         puts invited_lead
       end
       expect(linkedin_scrap_sent_invites.invited_leads.length).to be <= 40
       expect(linkedin_scrap_sent_invites.invited_leads.length).to be >= 10
-    end
-
-    it 'scraps up to 10000 leads names with pending invites' do
-      count = 1
-      number_of_invites = 10_000
-      linkedin_scrap_sent_invites = @session.linkedin_scrap_sent_invites
-      linkedin_scrap_sent_invites.execute(number_of_invites) do |invite|
-        puts count.to_s + ' -> ' + invite.to_s
-        count += 1
-      end
-      expect(linkedin_scrap_sent_invites.invited_leads.length).to be <= number_of_invites
     end
 	end
 
@@ -105,32 +94,16 @@ RSpec.describe ScrapIn do
 	describe '.linkedin_invite' do
     context 'Connect button is visible and no note is added' do
       it 'invite the lead' do
-        linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url'))
-        value = linkedin_invite.execute(ENV.fetch('l_invite_url'), '', false)
+        linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url_connect_button_visible'))
+        value = linkedin_invite.execute(ENV.fetch('l_invite_url_connect_button_visible'), 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.', false)
         expect(value).to be(true)
       end
     end
     
     context 'Connect button is in \'More...\' section and no note is added' do
       it 'invite the lead' do
-        linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url_2'))
-        value = linkedin_invite.execute(ENV.fetch('l_invite_url_2'), '', false)
-        expect(value).to be(true)
-      end
-    end
-
-    context 'Connect button is visible and a note is added' do
-      it 'invite the lead with a message' do
-				linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url'), ENV.fetch('l_invite_note'))
-        value = linkedin_invite.execute(ENV.fetch('l_invite_url'), ENV.fetch('l_invite_note'), false)
-        expect(value).to be(true)
-      end
-    end
-
-    context 'Connect button is in \'More...\' section and a note is added' do
-      it 'invite the lead with a message' do
-        linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url_2'), ENV.fetch('l_invite_note'))
-        value = linkedin_invite.execute(ENV.fetch('l_invite_url_2'), ENV.fetch('l_invite_note'), false)
+        linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url_must_click_on_more'))
+        value = linkedin_invite.execute(ENV.fetch('l_invite_url_must_click_on_more'), 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.', false)
         expect(value).to be(true)
       end
     end
