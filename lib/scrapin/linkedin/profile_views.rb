@@ -25,6 +25,9 @@ module ScrapIn
         count = 0
         bad_profile_count = 0 # semi private or last element (informative element)
         until count == num_times
+          if count % 6 == 0
+            scroll_to_bottom
+          end
           position = bad_profile_count + count + 1 # +1 because nth-child starts at 1
           profile_type = verify_profile_type(position)
           raise ScrapIn::CssNotFound.new(message: 'One of the 3 searched css has changed') if profile_type == :css_error
@@ -45,13 +48,11 @@ module ScrapIn
         return :semi_private if profile_is_semi_private(position)
         return :last if profile_is_last_element(position)
         return :aggregated if profile_is_aggregated(position)
-
         :css_error
       end
 
       def find_profile_view(position)
         item = check_and_find(@session, public_profile_css(position), wait: 1)
-        scroll_to(item)
         item
       end
 

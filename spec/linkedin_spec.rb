@@ -30,11 +30,12 @@ RSpec.describe ScrapIn do
 	describe '.linkedin_scrap_sent_invites' do
     it 'scraps up to 40 leads names with pending invites' do
       linkedin_scrap_sent_invites = @session.linkedin_scrap_sent_invites
+      invited_leads = []
       linkedin_scrap_sent_invites.execute(100) do |invited_lead|
-        puts invited_lead
+        invited_leads << invited_lead
       end
-      expect(linkedin_scrap_sent_invites.invited_leads.length).to be <= 40
-      expect(linkedin_scrap_sent_invites.invited_leads.length).to be >= 10
+      expect(invited_leads.length).to be <= 100
+      expect(invited_leads.length).to be > 1
     end
 	end
 
@@ -55,7 +56,7 @@ RSpec.describe ScrapIn do
       n = 100
       linkedin_profile_views = @session.linkedin_profile_views
       linkedin_profile_views.execute(n) do |name, time_ago|
-        puts "#{count} -> #{name} , #{time_ago} ago."
+        puts "#{count} -> #{name}, #{time_ago} ago."
         count += 1
       end
       expect(linkedin_profile_views.profile_viewed_by.length).to be <= n
