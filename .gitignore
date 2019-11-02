@@ -26,5 +26,6 @@
 .vscode/settings.json
 
 coverage
+mock_response_selenium.json
 
 deep_cover

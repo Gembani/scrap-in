@@ -7,7 +7,7 @@ RSpec.describe ScrapIn do
   end
 
   after(:all) do
-    @session.driver.quit
+   
   end
   it 'has a version number_of_invites' do
     expect(ScrapIn::VERSION).not_to be nil
