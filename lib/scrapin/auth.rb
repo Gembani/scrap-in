@@ -9,6 +9,7 @@ module ScrapIn
 
     def login!(username, password, linkedin = false)
       @linkedin = linkedin
+      
       enter_credentials(username, password)
       success = homepage_is_loaded?
       raise IncorrectPassword if @session.has_selector?(password_error_css, wait: 1)
@@ -22,11 +23,24 @@ module ScrapIn
         @session.has_field?(placeholder: search_placeholder, wait: 1)
       end
     end
-
+    def current_url_already_logged
+      if @linkedin
+        @session.current_url == 'https://www.linkedin.com/feed/'
+      else
+        @session.current_url == 'https://www.linkedin.com/sales/homepage'
+      end
+    end
+      
     def enter_credentials(username, password)
       puts 'Visiting login screen'
       @session.visit(homepage)
-
+      already_logged_in = check_until(5) do 
+        current_url_already_logged
+      end
+      if already_logged_in
+        puts "already logged in"
+        return
+      end
       puts "Filling in email... -> #{username}"
       username_field = check_and_find(@session, username_input_css)
       username_field.click
@@ -54,7 +68,7 @@ module ScrapIn
     end
 
     def linkedin_homepage
-      'https://www.linkedin.com/login'
+      'https://www.linkedin.com'
     end
 
     def sales_navigator_homepage
