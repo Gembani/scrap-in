@@ -102,7 +102,6 @@ RSpec.describe ScrapIn do
     end
     it 'sends invite and send a message' do ## Integration
       # message = 'Hello there'
-      # url = 'https://www.linkedin.com/sales/people/ACwAABOC43QB_33UK_zSdjpGT874CI8sI8O2g-Y,NAME_SEARCH,WIxj?_ntb=VRQIgoLqSS%2BxwUkvus4PVA%3D%3D'
       sales_nav_invite = @session.sales_nav_invite(ENV.fetch('s_invite_url'), ENV.fetch('s_invite_message'))
       value = sales_nav_invite.execute
       expect(value).to be true
@@ -111,7 +110,6 @@ RSpec.describe ScrapIn do
 
     it 'sends invite and send a message when already friends' do ## Integration
       # message = 'Hello there'
-      # url = 'https://www.linkedin.com/sales/people/ACwAABI1H9EBeHSOuawCiNLkn6VEP1LHzEz420I,NAME_SEARCH,94gX?_ntb=2zSSN%2FB4Q4uh%2BwB9HHTBCA%3D%3D'
       sales_nav_invite = @session.sales_nav_invite(ENV.fetch('s_invite_url_2'), ENV.fetch('s_invite_message_2'))
       value = sales_nav_invite.execute
       expect(value).to be false
@@ -121,7 +119,6 @@ RSpec.describe ScrapIn do
 
   describe '.sales_nav_send_message' do
     it ' sends a message from sales nav conversation thread to a lead' do
-      # seb_sales_thread = 'https://www.linkedin.com/sales/inbox/6572101845743910912'
       send_message = @session.sales_nav_send_message(ENV.fetch('s_send_message_url'),
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
@@ -130,7 +127,6 @@ RSpec.describe ScrapIn do
     end
 
     it ' sends a message from profile url' do
-      # seb_sales_thread = 'https://www.linkedin.com/sales/people/ACwAAB2tnsMBfAVq-L4xuYiXAzrugszqNs7Sg1o,NAME_SEARCH,6zds'
       send_message = @session.sales_nav_send_message(ENV.fetch('s_send_message_url_2'),
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
@@ -175,7 +171,6 @@ RSpec.describe ScrapIn do
       # let's mock some methods in order to not send the inmail
     end
     it 'sends inmail' do
-      # url = 'https://www.linkedin.com/sales/people/ACwAABoqzPMBkNjA1A2yhrvf3CmyLD3fQWqTLCg,NAME_SEARCH,Q68x'
       message = 'Hello from Paris. I\'m'
       subject = 'Introduction'
       sales_nav_send_inmail = @session.sales_nav_send_inmail(ENV.fetch('s_send_inmail_url'), subject, message)
@@ -188,8 +183,8 @@ RSpec.describe ScrapIn do
       it 'raises error' do
         count = 0
         scrap_value = 100
-        stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url'))#('https://www.linkedin.com/sales/inbox/6588308325002158080')
-        expect { stephane_messages.execute(scrap_value, 'CEBULA Sébastien') }.to raise_error(ScrapIn::LeadNameMismatch) # REMOVE 'CEBULA Sebastien'
+        stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url'))
+        expect { stephane_messages.execute(scrap_value, 'CEBULA Sébastien') }.to raise_error(ScrapIn::LeadNameMismatch) 
       end
     end
 
@@ -197,7 +192,7 @@ RSpec.describe ScrapIn do
       it 'scraps all messages from thread_url if the number of messages < scrap_value' do
         count = 0
         scrap_value = 100
-        stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_2'))#('https://www.linkedin.com/sales/inbox/6588308325002158080')
+        stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_2'))
         stephane_messages.execute(scrap_value) do |message, direction|
           if direction == :incoming
             print 'CONTACT ->  '
@@ -213,7 +208,7 @@ RSpec.describe ScrapIn do
       it 'scraps the scrap_value last messages from thread_url and scroll only for these messages to load' do
         count = 0
         scrap_value = 25
-        seb_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_3'))#('https://www.linkedin.com/sales/inbox/6564811480502460416')
+        seb_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_3'))
         seb_messages.execute(scrap_value) do |message, direction|
           if direction == :incoming
             print 'CONTACT ->  '
@@ -229,7 +224,7 @@ RSpec.describe ScrapIn do
       it 'Scraps correctly the sender\'s name' do
         count = 0
         scrap_value = 25
-        messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_4'))#('https://www.linkedin.com/sales/inbox/6560550015541043200')
+        messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_4'))
         messages.execute(scrap_value) do |message, direction|
           if direction == :incoming
             print 'CONTACT ->  '
