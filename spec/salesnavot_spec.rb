@@ -126,7 +126,7 @@ RSpec.describe ScrapIn do
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
                                                         '. Thanks!')
-      send_message.execute(false)
+      send_message.execute(true)
     end
 
     it ' sends a message from profile url' do
@@ -135,7 +135,7 @@ RSpec.describe ScrapIn do
                                                     'Hi, this is a test message at ' +
                                                         Time.now.strftime('%H:%M:%S').to_s +
                                                         '. Thanks!')
-      send_message.execute(false)
+      send_message.execute(true)
     end
   end
 
@@ -195,74 +195,49 @@ RSpec.describe ScrapIn do
 
     context 'when a lead as an open conversation' do
       it 'scraps all messages from thread_url if the number of messages < scrap_value' do
-        20.times do
-          count = 0
-          scrap_value = 100
-          stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_2'))#('https://www.linkedin.com/sales/inbox/6588308325002158080')
-          stephane_messages.execute(scrap_value) do |message, direction|
-            if direction == :incoming
-              print 'CONTACT ->  '
-            else
-              print 'YOU ->  '
-            end
-            puts message
-            count += 1
+        count = 0
+        scrap_value = 100
+        stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_2'))#('https://www.linkedin.com/sales/inbox/6588308325002158080')
+        stephane_messages.execute(scrap_value) do |message, direction|
+          if direction == :incoming
+            print 'CONTACT ->  '
+          else
+            print 'YOU ->  '
           end
+          puts message
+          count += 1
           expect(count).to be < scrap_value
         end
       end
 
-      it 'scraps the scrap_value last messages from thread_url' do
-        20.times do
-          count = 0
-          scrap_value = 2
-          messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_3'))#('https://www.linkedin.com/sales/inbox/6572101845743910912')
-
-          messages.execute(scrap_value) do |message, direction|
-            if direction == :incoming
-              print 'CONTACT ->  '
-            else
-              print 'YOU ->  '
-            end
-            puts message
-            count += 1
-          end
-          expect(count).to eq(scrap_value)
-        end
-      end
-
       it 'scraps the scrap_value last messages from thread_url and scroll only for these messages to load' do
-        20.times do
-          count = 0
-          scrap_value = 25
-          seb_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_4'))#('https://www.linkedin.com/sales/inbox/6564811480502460416')
-          seb_messages.execute(scrap_value) do |message, direction|
-            if direction == :incoming
-              print 'CONTACT ->  '
-            else
-              print 'YOU ->  '
-            end
-            puts message
-            count += 1
+        count = 0
+        scrap_value = 25
+        seb_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_3'))#('https://www.linkedin.com/sales/inbox/6564811480502460416')
+        seb_messages.execute(scrap_value) do |message, direction|
+          if direction == :incoming
+            print 'CONTACT ->  '
+          else
+            print 'YOU ->  '
           end
+          puts message
+          count += 1
           expect(count).to eq(scrap_value)
         end
       end
 
       it 'Scraps correctly the sender\'s name' do
-        20.times do
-          count = 0
-          scrap_value = 25
-          messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_4'))#('https://www.linkedin.com/sales/inbox/6560550015541043200')
-          messages.execute(scrap_value) do |message, direction|
-            if direction == :incoming
-              print 'CONTACT ->  '
-            else
-              print 'YOU ->  '
-            end
-            puts message
-            count += 1
+        count = 0
+        scrap_value = 25
+        messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_4'))#('https://www.linkedin.com/sales/inbox/6560550015541043200')
+        messages.execute(scrap_value) do |message, direction|
+          if direction == :incoming
+            print 'CONTACT ->  '
+          else
+            print 'YOU ->  '
           end
+          puts message
+          count += 1
           expect(count).to be < scrap_value
         end
       end
