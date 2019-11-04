@@ -95,7 +95,7 @@ RSpec.describe ScrapIn do
 	describe '.linkedin_invite' do
     context 'Connect button is visible and no note is added' do
       it 'invite the lead' do
-        linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url_connect_button_visible'))
+        linkedin_invite = @session.linkedin_invite
         value = linkedin_invite.execute(ENV.fetch('l_invite_url_connect_button_visible'), 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.', false)
         expect(value).to be(true)
       end
@@ -103,7 +103,7 @@ RSpec.describe ScrapIn do
     
     context 'Connect button is in \'More...\' section and no note is added' do
       it 'invite the lead' do
-        linkedin_invite = @session.linkedin_invite(ENV.fetch('l_invite_url_must_click_on_more'))
+        linkedin_invite = @session.linkedin_invite
         value = linkedin_invite.execute(ENV.fetch('l_invite_url_must_click_on_more'), 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.', false)
         expect(value).to be(true)
       end
