@@ -17,8 +17,6 @@ RSpec.describe ScrapIn do
     let(:list_name) { 'Rspec' }
     let(:last_page) { 100 }
     before do
-      
-    
       @sales_nav_scrap_search_list = @session.sales_nav_scrap_search_list(list_name)
     end
 
@@ -27,7 +25,7 @@ RSpec.describe ScrapIn do
       max_page = 10
       until page == max_page
         found_links = []
-        next_page_to_process = @sales_nav_scrap_search_list.execute(page) do |link, _image|
+        next_page_to_process = @sales_nav_scrap_search_list.execute(page, ENV.fetch('s_scrap_search_list')) do |link, _image|
           expect(link).to start_with('https://www.linkedin.com/sales/people')
           found_links << link
         end
@@ -39,7 +37,7 @@ RSpec.describe ScrapIn do
 
     it 'gets lead from page 1' do
       found_links = []
-      next_page_to_process = @sales_nav_scrap_search_list.execute(1) do |link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(1, ENV.fetch('s_scrap_search_list')) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
         found_links << link
       end
@@ -48,14 +46,14 @@ RSpec.describe ScrapIn do
     end
 
     it 'gets profile and image links from all leads of the second page of the list and return the next page' do
-      next_page_to_process = @sales_nav_scrap_search_list.execute(3) do |link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(3, ENV.fetch('s_scrap_search_list')) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
       end
       expect(next_page_to_process).to eq(4)
     end
 
     it 'gets profile and image links from all leads of the twelfth page of the list and return the next page' do
-      next_page_to_process = @sales_nav_scrap_search_list.execute(12) do |link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(12, ENV.fetch('s_scrap_search_list')) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
       end
       expect(next_page_to_process).to eq(13)
@@ -63,7 +61,7 @@ RSpec.describe ScrapIn do
 
     it 'gets leads form the last page' do
       found_links = []
-      next_page_to_process = @sales_nav_scrap_search_list.execute(last_page) do |link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(last_page, ENV.fetch('s_scrap_search_list')) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
         found_links << link
       end
@@ -72,7 +70,7 @@ RSpec.describe ScrapIn do
     end
 
     it 'tries to go to the 101th page of the list, doesnt find it and return the first page' do
-      next_page_to_process = @sales_nav_scrap_search_list.execute(101) do |_link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(101, ENV.fetch('s_scrap_search_list')) do |_link, _image|
       end
       expect(next_page_to_process).to eq(1)
     end
