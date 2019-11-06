@@ -5,9 +5,9 @@ module ScrapIn
       include Tools
       include CssSelectors::SalesNavigator::ScrapSearchList
 
-      def initialize(session, list_identifier)
+      def initialize(session, saved_search_link)
         @session = session
-        @list_identifier = list_identifier
+        @saved_search_link = saved_search_link
         @links = []
         @saved_search_url = ''
         @error = nil
@@ -18,10 +18,11 @@ module ScrapIn
 
       def execute(page = 1)
         @processed_page = page
-        go_to_saved_search
+        # go_to_saved_search
+        session.visit(saved_search_link)
 
         puts "Processing page = #{@processed_page}"
-        raise ArgumentError, "there is no page #{page} for #{@list_identifier}" unless @session.all(pagination_list_css).count
+        raise ArgumentError, "there is no page #{page} for #{@saved_search_link}" unless @session.all(pagination_list_css).count
         @max_page = @session.all(pagination_list_css).last.text.to_i
 
         if @processed_page > @max_page
