@@ -23,7 +23,7 @@ module SalesNavigatorMethods
     ScrapIn::SalesNavigator::SendMessage.new(@capybara, thread, message)
   end
 
-  def sales_nav_scrap_search_list(list_identifier)
-    ScrapIn::SalesNavigator::ScrapSearchList.new(@capybara, list_identifier)
+  def sales_nav_scrap_search_list(saved_search_link)
+    ScrapIn::SalesNavigator::ScrapSearchList.new(@capybara, saved_search_link)
   end
 end
