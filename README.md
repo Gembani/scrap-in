@@ -1,6 +1,6 @@
 # Scrapin
 
-ScrapIn is a Ruby tool for LinkedIn and SalesNavigator.
+ScrapIn is a Ruby tool for LinkedIn and SalesNavigator. Feel free to include it in a project as a Gem.
 
 > CAUTION: USE AT YOUR OWN RISK 
 You could be banned from Linkedin if you abuse.
@@ -69,37 +69,23 @@ The `.env` file should contain ce qui suit, in order to run every tes
     s_send_inmail_url=
 
 `username`: LinkedIn and SalesNavigator username
-
 `password`: LinkedIn and SalesNavigator password
 
 `l_scrap_lead_url`: a Linkedin 1st degree contact url
-
 `l_send_message_url`: a Linkedin 1st degree contact thread url. Caution: the test actually sends a message!
-
 `l_invite_url_connect_button`: a Linkedin 2nd or 3rd degree profile url where the connect button is visible
-
 `l_invite_url_must_click_on_more`: a Linkedin 2nd or 3rd degree profile url where the connect button is in the 'More...' menu
-
 `l_scrap_messages_url`: a Linkedin 1st degree contact thread url
 
 `s_scrap_search_list`: a SalesNavigator saved search url
-
 `s_scrap_lead_url`: a SalesNavigator 1st degree contact url
-
 `s_invite_url`: a SalesNavigator 2nd or 3rd degree profile url
-
 `s_invite_url_2`: a SalesNavigator 1st degree profile url
-
 `s_send_message_url`: a SalesNavigator 1st degree contact thread url. Caution: the test actually sends a message!
-
 `s_send_message_url_2`: a SalesNavigator 1st degree contact thread url. Caution: the test actually sends a message!
-
 `s_send_inmail_url`: a SalesNavigator 3rd degree contact thread url. Caution: the test actually sends an inmail!
-
 `s_scrap_messages_url`: a SalesNavigator 1st degree contact thread url
-
 `s_scrap_messages_url_2`: a SalesNavigator 1st degree contact thread url
-
 `s_send_inmail_url`: a SalesNavigator 3rd degree contact profile url
 
 #### Running Commands
