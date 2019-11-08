@@ -100,7 +100,7 @@ RSpec.describe ScrapIn do
     end
     it 'sends invite and send a message' do ## Integration
       # message = 'Hello there'
-      sales_nav_invite = @session.sales_nav_invite(ENV.fetch('s_invite_url'), ENV.fetch('s_invite_message'))
+      sales_nav_invite = @session.sales_nav_invite(ENV.fetch('s_invite_url'), ENV.fetch('s_invite_message'), false)
       value = sales_nav_invite.execute
       expect(value).to be true
       puts 'Invite sent !'
@@ -108,7 +108,7 @@ RSpec.describe ScrapIn do
 
     it 'sends invite and send a message when already friends' do ## Integration
       # message = 'Hello there'
-      sales_nav_invite = @session.sales_nav_invite(ENV.fetch('s_invite_url_2'), ENV.fetch('s_invite_message_2'))
+      sales_nav_invite = @session.sales_nav_invite(ENV.fetch('s_invite_url_2'), ENV.fetch('s_invite_message_2'), false)
       value = sales_nav_invite.execute
       expect(value).to be false
       puts 'already friends'

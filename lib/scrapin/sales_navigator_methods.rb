@@ -3,8 +3,8 @@ module SalesNavigatorMethods
     ScrapIn::SalesNavigator::ScrapLead.new(config, @capybara)
   end
 
-  def sales_nav_invite(sales_nav_profile_link, content)
-    ScrapIn::SalesNavigator::Invite.new(sales_nav_profile_link, @capybara, content)
+  def sales_nav_invite(sales_nav_profile_link, content, send = true)
+    ScrapIn::SalesNavigator::Invite.new(sales_nav_profile_link, @capybara, content, send)
   end
 
   def sales_nav_send_inmail(profile_url, subject, message)

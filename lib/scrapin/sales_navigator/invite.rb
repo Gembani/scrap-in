@@ -7,7 +7,7 @@ module ScrapIn
       include Tools
       include CssSelectors::SalesNavigator::Invite
       attr_reader :error
-      def initialize(sales_nav_url, session, content)
+      def initialize(sales_nav_url, session, content, send)
         @sales_nav_url = sales_nav_url
         @session = session
         @error_types = %i[already_pending out_of_network already_friends email_required invitation_form_did_not_close no_pending_after]
@@ -21,6 +21,7 @@ module ScrapIn
         }
         @error = nil
         @content = content
+        @send = send
       end
 
       def error_message
@@ -46,7 +47,7 @@ module ScrapIn
         end
         return false unless click_and_connect
         return false unless invitation_window_closed?
-        return false unless pending_after_invite?
+        return false unless pending_after_invite? if @send
 
         lead_invited?
       end
@@ -93,8 +94,9 @@ module ScrapIn
         end
         @session.fill_in form_invitation_id, with: @content
         puts 'Sending invitation message'
-        find_and_click(@session, send_button_css)
-        puts 'Message sent'
+        find_and_click(@session, send_button_css) if @send
+        puts 'Message sent' if @send
+        find_and_click(@session, '.artdeco-modal__dismiss') unless @send
         true
       end
 
