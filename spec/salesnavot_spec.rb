@@ -17,11 +17,7 @@ RSpec.describe ScrapIn do
     let(:list_url) { 'https://www.linkedin.com/sales/search/people?savedSearchId=482457033&searchSessionId=yCtzVBWfRSqdGSTHocCmlg%3D%3D' }
     let(:last_page) { 100 }
     before do
-<<<<<<< HEAD
       @sales_nav_scrap_search_list = @session.sales_nav_scrap_search_list(list_name)
-=======
-      @sales_nav_scrap_search_list = @session.sales_nav_scrap_search_list(list_url)
->>>>>>> wip
     end
 
     it 'gets lead from 10 firsts pages' do
@@ -29,11 +25,7 @@ RSpec.describe ScrapIn do
       max_page = 10
       until page > max_page
         found_links = []
-<<<<<<< HEAD
-        next_page_to_process = @sales_nav_scrap_search_list.execute(page, ENV.fetch('s_scrap_search_list')) do |link, _image|
-=======
         next_page_to_process = @sales_nav_scrap_search_list.execute(page) do |link|
->>>>>>> wip
           expect(link).to start_with('https://www.linkedin.com/sales/people')
           puts link
           found_links << link
@@ -44,34 +36,8 @@ RSpec.describe ScrapIn do
       end
     end
 
-<<<<<<< HEAD
-    it 'gets lead from page 1' do
-      found_links = []
-      next_page_to_process = @sales_nav_scrap_search_list.execute(1, ENV.fetch('s_scrap_search_list')) do |link, _image|
-        expect(link).to start_with('https://www.linkedin.com/sales/people')
-        found_links << link
-      end
-      expect(found_links.size).to be >= 20
-      expect(next_page_to_process).to eq(2)
-    end
-
-    it 'gets profile and image links from all leads of the second page of the list and return the next page' do
-      next_page_to_process = @sales_nav_scrap_search_list.execute(3, ENV.fetch('s_scrap_search_list')) do |link, _image|
-        expect(link).to start_with('https://www.linkedin.com/sales/people')
-      end
-      expect(next_page_to_process).to eq(4)
-    end
-
-    it 'gets profile and image links from all leads of the twelfth page of the list and return the next page' do
-      next_page_to_process = @sales_nav_scrap_search_list.execute(12, ENV.fetch('s_scrap_search_list')) do |link, _image|
-        expect(link).to start_with('https://www.linkedin.com/sales/people')
-      end
-      expect(next_page_to_process).to eq(13)
-    end
-=======
 
   
->>>>>>> wip
 
     it 'gets leads form the last page' do
       found_links = []
