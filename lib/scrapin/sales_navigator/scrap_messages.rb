@@ -11,11 +11,9 @@ module ScrapIn
       end
 
       def execute(number_of_messages = 20, lead_name = false)
-        return true unless number_of_messages.positive?
-
         visit_thread_link
-        confirm_lead(lead_name) if lead_name
         loaded_messages = load(number_of_messages)
+        confirm_lead(lead_name) if lead_name
         count = loaded_messages - 1
 
         number_of_messages.times.each do

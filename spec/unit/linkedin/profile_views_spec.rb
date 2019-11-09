@@ -19,7 +19,7 @@ RSpec.describe ScrapIn::LinkedIn::ProfileViews do
 
   describe '.execute' do
     before do
-      allow_any_instance_of(ScrapIn::LinkedIn::ProfileViews).to receive(:scroll_to)
+      allow_any_instance_of(ScrapIn::LinkedIn::ProfileViews).to receive(:scroll_to_bottom)
       allow(session).to receive(:visit).and_return(true)
       allow(session).to receive(:has_selector?).with(viewers_list_css).and_return(true)
 

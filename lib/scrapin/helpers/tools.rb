@@ -7,6 +7,16 @@ module ScrapIn
       JS
       @session.driver.browser.execute_script(script, element.native)
     end
+
+    def scroll_to_bottom
+      script = <<-JS
+        window.scrollTo(0, document.body.scrollHeight);
+      JS
+      @session.driver.browser.execute_script(script, @session.find('body').native)
+    
+    end
+
+    
     
     def scroll_up_to(element)
       script = <<-JS

@@ -62,11 +62,12 @@ RSpec.describe ScrapIn::Session do
       let(:content) { 'content' }
       let(:sales_nav_invite) { instance_double('ScrapIn::SalesNavigator::Invite') }
       before do
-        allow(ScrapIn::SalesNavigator::Invite).to receive(:new).with(sales_nav_profile_link, capybara_session, content).and_return(sales_nav_invite)
+        allow(ScrapIn::SalesNavigator::Invite).to receive(:new).and_return(sales_nav_invite)
       end
       it 'should call the correct initializer' do
-        expect(ScrapIn::SalesNavigator::Invite).to receive(:new).with(sales_nav_profile_link, capybara_session, content).and_return(sales_nav_invite)
         result = subject.sales_nav_invite(sales_nav_profile_link, content)
+        expect(ScrapIn::SalesNavigator::Invite).to have_received(:new).with(sales_nav_profile_link, capybara_session, content, true)
+        
         expect(result).to be(sales_nav_invite)
       end
     end
@@ -76,11 +77,11 @@ RSpec.describe ScrapIn::Session do
       let(:note) { 'note' }
       let(:linkedin_invite) { instance_double('ScrapIn::Linkedin::Invite') }
       before do
-        allow(ScrapIn::LinkedIn::Invite).to receive(:new).with(capybara_session, lead_url).and_return(linkedin_invite)
+        allow(ScrapIn::LinkedIn::Invite).to receive(:new).with(capybara_session).and_return(linkedin_invite)
       end
       it 'should call the correct initializer' do
-        expect(ScrapIn::LinkedIn::Invite).to receive(:new).with(capybara_session, lead_url).and_return(linkedin_invite)
-        result = subject.linkedin_invite(lead_url, note)
+        expect(ScrapIn::LinkedIn::Invite).to receive(:new).with(capybara_session).and_return(linkedin_invite)
+        result = subject.linkedin_invite
         expect(result).to be(linkedin_invite)
       end
     end
@@ -216,10 +217,10 @@ RSpec.describe ScrapIn::Session do
       let(:list_identifier) { 'list_identifier' }
       let(:sales_nav_scrap_search_list) { instance_double('ScrapIn::SalesNavigator::ScrapSearchList') }
       before do
-        allow(ScrapIn::SalesNavigator::ScrapSearchList).to receive(:new).with(list_identifier, capybara_session).and_return(sales_nav_scrap_search_list)
+        allow(ScrapIn::SalesNavigator::ScrapSearchList).to receive(:new).and_return(sales_nav_scrap_search_list)
       end
       it 'should call the correct initializer' do
-        expect(ScrapIn::SalesNavigator::ScrapSearchList).to receive(:new).with(list_identifier, capybara_session).and_return(sales_nav_scrap_search_list)
+        expect(ScrapIn::SalesNavigator::ScrapSearchList).to receive(:new).with(capybara_session, list_identifier).and_return(sales_nav_scrap_search_list)
         result = subject.sales_nav_scrap_search_list(list_identifier)
         expect(result).to be(sales_nav_scrap_search_list)
       end

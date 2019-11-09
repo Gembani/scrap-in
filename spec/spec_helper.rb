@@ -34,3 +34,45 @@ RSpec.configure do |config|
     disable_method(:sleep)
   end
 end
+
+
+require 'selenium/webdriver'
+module Selenium
+  module WebDriver
+    module Remote
+      class Bridge
+        alias_method :original_execute, :execute
+        def execute(*args)
+          if args.first == :new_session && File.exist?('mock_response_selenium.json')
+            return JSON.parse(File.read('mock_response_selenium.json'))
+          else
+            data = original_execute(*args)
+          end
+          if args.first == :new_session
+            File.write('mock_response_selenium.json', {value: data['value']}.to_json)
+          end
+          data
+        end
+      end
+    end
+  end
+end
+
+Capybara::Selenium::Driver.class_eval do
+  def cleanup_browser
+    begin
+      @browser.quit if @browser
+    rescue StandardError
+      # Browser must have already gone
+    end
+  end
+
+
+  def quit
+
+    puts "not quiting selenium session"
+  rescue Errno::ECONNREFUSED
+    # Browser must have already gone
+  end
+end
+

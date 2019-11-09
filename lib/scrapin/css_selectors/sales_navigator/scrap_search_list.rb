@@ -7,6 +7,10 @@ module CssSelectors
         'li.search-results__result-item div.search-results__result-container'
       end
 
+      def nth_result_css(count)
+        "ol.search-results__result-list > li:nth-child(#{count + 1}) .result-lockup__icon-link"
+      end
+
       def page_css(page)
         "[data-page-number='#{page}']"
       end
@@ -19,8 +23,8 @@ module CssSelectors
         'dt.result-lockup__name a'
       end
 
-      def searches_hover_css
-        '.nav-saved-searches'
+      def last_page_css
+        'ol.search-results__pagination-list li:last-child'
       end
 
       def searches_container_css

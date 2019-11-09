@@ -68,13 +68,12 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
     it { expect(subject.execute).to eq(true) }
   end
 
-  context 'when wants the class to do the job but do not send the message' do
+  context 'when wants the class to do the job' do
     before do
       messages_array.pop
-      subject.execute(false)
+      subject.execute
     end
     it { expect(session).to have_received(:visit) }
     it { expect(message_field_node).to have_received(:send_keys) }
-    it { expect(subject.execute(false)).to eq(false) }
   end
 end
