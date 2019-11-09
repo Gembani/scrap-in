@@ -62,11 +62,12 @@ RSpec.describe ScrapIn::Session do
       let(:content) { 'content' }
       let(:sales_nav_invite) { instance_double('ScrapIn::SalesNavigator::Invite') }
       before do
-        allow(ScrapIn::SalesNavigator::Invite).to receive(:new).with(sales_nav_profile_link, capybara_session, content).and_return(sales_nav_invite)
+        allow(ScrapIn::SalesNavigator::Invite).to receive(:new).and_return(sales_nav_invite)
       end
       it 'should call the correct initializer' do
-        expect(ScrapIn::SalesNavigator::Invite).to receive(:new).with(sales_nav_profile_link, capybara_session, content).and_return(sales_nav_invite)
         result = subject.sales_nav_invite(sales_nav_profile_link, content)
+        expect(ScrapIn::SalesNavigator::Invite).to have_received(:new).with(sales_nav_profile_link, capybara_session, content, true)
+        
         expect(result).to be(sales_nav_invite)
       end
     end

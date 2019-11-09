@@ -24,7 +24,7 @@ module CssSelectors
       end
 
       def last_page_css
-        'ol.search-results__pagination-list li:last-child button'
+        'ol.search-results__pagination-list li:last-child'
       end
 
       def searches_container_css

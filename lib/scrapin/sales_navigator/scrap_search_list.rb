@@ -9,7 +9,6 @@ module ScrapIn
         @session = session
         @saved_search_link = saved_search_link
         @links = []
-        @saved_search_url = ''
         @error = nil
         @homepage = 'https://www.linkedin.com/sales'
       end
@@ -70,6 +69,7 @@ module ScrapIn
           scroll_to(element)
         end
         last_page = check_and_find(@session, last_page_css).text.to_i
+        
         if (page == last_page) 
           return 1
         else
@@ -82,10 +82,6 @@ module ScrapIn
           @session.has_selector?('.result-lockup__icon-link')
         end
       end
-
-
-
-      
     end
   end
 end

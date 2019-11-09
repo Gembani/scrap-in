@@ -7,7 +7,7 @@ module ScrapIn
       include Tools
       include CssSelectors::SalesNavigator::Invite
       attr_reader :error
-      def initialize(sales_nav_url, session, content, send)
+      def initialize(sales_nav_url, session, content, send = true)
         @sales_nav_url = sales_nav_url
         @session = session
         @error_types = %i[already_pending out_of_network already_friends email_required invitation_form_did_not_close no_pending_after]

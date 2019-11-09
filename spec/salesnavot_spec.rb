@@ -14,10 +14,10 @@ RSpec.describe ScrapIn do
   end
 
   describe '.sales_nav_scrap_search_list' do
-    let(:list_url) { 'https://www.linkedin.com/sales/search/people?savedSearchId=482457033&searchSessionId=yCtzVBWfRSqdGSTHocCmlg%3D%3D' }
+    let(:list_url) { ENV.fetch('s_scrap_search_list') }
     let(:last_page) { 100 }
     before do
-      @sales_nav_scrap_search_list = @session.sales_nav_scrap_search_list(list_name)
+      @sales_nav_scrap_search_list = @session.sales_nav_scrap_search_list(list_url)
     end
 
     it 'gets lead from 10 firsts pages' do
@@ -35,25 +35,17 @@ RSpec.describe ScrapIn do
         page += 1
       end
     end
-
-
   
-
     it 'gets leads form the last page' do
       found_links = []
-      next_page_to_process = @sales_nav_scrap_search_list.execute(last_page, ENV.fetch('s_scrap_search_list')) do |link, _image|
+      next_page_to_process = @sales_nav_scrap_search_list.execute(last_page) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')
         found_links << link
       end
-      expect(found_links.size).to eq(16)
+      expect(found_links.size).to eq(25)
       expect(next_page_to_process).to eq(1)
     end
 
-    it 'tries to go to the 101th page of the list, doesnt find it and return the first page' do
-      next_page_to_process = @sales_nav_scrap_search_list.execute(101, ENV.fetch('s_scrap_search_list')) do |_link, _image|
-      end
-      expect(next_page_to_process).to eq(1)
-    end
   end
 
   describe '.sales_nav_scrap_lead' do
@@ -72,14 +64,7 @@ RSpec.describe ScrapIn do
   end
 
   describe '.sales_nav_invite' do
-    before do
-      # Let's mock here some method
-      # allsales_nav_ow_any_instance_of(Salesnavot::Invite).to receive(:click_and_connect).and_return(true)
-      # allow_any_instance_of(Salesnavot::Invite).to receive(:lead_invited?).and_return(true)
-      # allow_any_instance_of(Salesnavot::Invite).to receive(:pending_after_invite?).and_return(true)
-    end
     it 'sends invite and send a message' do ## Integration
-      # message = 'Hello there'
       sales_nav_invite = @session.sales_nav_invite(ENV.fetch('s_invite_url'), ENV.fetch('s_invite_message'), false)
       value = sales_nav_invite.execute
       expect(value).to be true
@@ -87,11 +72,9 @@ RSpec.describe ScrapIn do
     end
 
     it 'sends invite and send a message when already friends' do ## Integration
-      # message = 'Hello there'
       sales_nav_invite = @session.sales_nav_invite(ENV.fetch('s_invite_url_2'), ENV.fetch('s_invite_message_2'), false)
       value = sales_nav_invite.execute
       expect(value).to be false
-      puts 'already friends'
     end
   end
 
@@ -144,7 +127,7 @@ RSpec.describe ScrapIn do
     end
   end
 
-  describe '.sales_nav_send_inmail' do
+  xdescribe '.sales_nav_send_inmail' do
     before do
       # let's mock some methods in order to not send the inmail
     end
@@ -162,7 +145,7 @@ RSpec.describe ScrapIn do
         count = 0
         scrap_value = 100
         stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url'))
-        expect { stephane_messages.execute(scrap_value, 'CEBULA Sébastien') }.to raise_error(ScrapIn::LeadNameMismatch) 
+        expect { stephane_messages.execute(scrap_value, 'TOM STOCK') }.to raise_error(ScrapIn::LeadNameMismatch) 
       end
     end
 
@@ -170,40 +153,8 @@ RSpec.describe ScrapIn do
       it 'scraps all messages from thread_url if the number of messages < scrap_value' do
         count = 0
         scrap_value = 100
-        stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_2'))
+        stephane_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url'))
         stephane_messages.execute(scrap_value) do |message, direction|
-          if direction == :incoming
-            print 'CONTACT ->  '
-          else
-            print 'YOU ->  '
-          end
-          puts message
-          count += 1
-          expect(count).to be < scrap_value
-        end
-      end
-
-      it 'scraps the scrap_value last messages from thread_url and scroll only for these messages to load' do
-        count = 0
-        scrap_value = 25
-        seb_messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_3'))
-        seb_messages.execute(scrap_value) do |message, direction|
-          if direction == :incoming
-            print 'CONTACT ->  '
-          else
-            print 'YOU ->  '
-          end
-          puts message
-          count += 1
-          expect(count).to eq(scrap_value)
-        end
-      end
-
-      it 'Scraps correctly the sender\'s name' do
-        count = 0
-        scrap_value = 25
-        messages = @session.sales_nav_scrap_messages(ENV.fetch('s_scrap_messages_url_4'))
-        messages.execute(scrap_value) do |message, direction|
           if direction == :incoming
             print 'CONTACT ->  '
           else
