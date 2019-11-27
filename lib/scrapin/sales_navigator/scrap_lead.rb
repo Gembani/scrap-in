@@ -11,7 +11,7 @@ module ScrapIn
       def initialize(config, session)
         @popup_open = false
         @sales_nav_url = config[:sales_nav_url] || ''
-        raise 'Lead\'s salesnav url is not valid' unless @sales_nav_url.include?('linkedin.com/sales/people/')
+        raise 'Lead\'s salesnav url is not valid' unless @sales_nav_url.include?('linkedin.com/sales/people/') || @sales_nav_url.include?('https://www.linkedin.com/sales/profile/')
 
         @session = session
       end
