@@ -16,6 +16,16 @@ module ScrapIn
     
     end
 
+    ## Doesn't work because can't figure out how to disable permissions to use clipboard
+    def get_clipboard_contents
+      script = <<-JS
+        var cb = arguments[0];
+        navigator.clipboard.readText().then(function (text) {cb(text)})
+      JS
+      @session.driver.browser.execute_async_script(script)
+    end 
+
+
     
     
     def scroll_up_to(element)
