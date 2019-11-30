@@ -24,9 +24,9 @@ module ScrapIn
         {
           name: name,
           location: location,
-          sales_nav_url: @sales_nav_url,
+          sales_nav_url: sales_nav_url,
           first_degree: first_degree?,
-          linkedin_url: linkedin_url
+          linkedin_url: linkedin_url          
         }.merge(scrap_datas)
       end
 
@@ -41,7 +41,7 @@ module ScrapIn
       def to_json(*_args)
         to_hash.to_json
       end
-
+      
       def scrap_phones
         open_popup
         css = phones_block_css
@@ -105,6 +105,10 @@ module ScrapIn
         raise CssNotFound, location_css unless @session.has_selector?(location_css)
 
         @session.find(location_css).text
+      end
+
+      def sales_nav_url
+        @session.current_url
       end
 
       def first_degree?

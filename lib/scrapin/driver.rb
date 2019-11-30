@@ -13,10 +13,12 @@ Capybara.register_driver :scrapin_driver do |app|
       "zal:name": 'linkedin',
       "zal:build": 'linkedin',
       "idleTimeout": '3600',
-      'chromeOptions': {
+      'goog:chromeOptions': {
         'args': [
           'no-sandbox',
-          'window-size=1920x1080'
+          'start-maximized',
+          'window-size=1920x1080',
+          'disable-permissions-api'
         ]
       }
     }
