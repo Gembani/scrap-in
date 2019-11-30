@@ -10,16 +10,25 @@ module ScrapIn
     def login!(username, password, linkedin = false)
       @linkedin = linkedin
       
+      raise CaptchaError if is_security_check?
+      
       enter_credentials(username, password)
       success = homepage_is_loaded?
       raise IncorrectPassword if @session.has_selector?(password_error_css, wait: 1)
+      raise CaptchaError if is_security_check?
       raise CssNotFound, "Input with placeholder = #{search_placeholder}" unless success
     end
 
     private
-
+    def is_security_check? 
+      if @session.has_selector?('main h1')
+        return @session.find('main h1').text == "Let's do a quick security check"
+      else
+        return false
+      end
+    end
     def homepage_is_loaded?
-      check_until(10) do
+        check_until(10) do
         @session.has_field?(placeholder: search_placeholder, wait: 1)
       end
     end
@@ -37,6 +46,11 @@ module ScrapIn
       already_logged_in = check_until(5) do 
         current_url_already_logged
       end
+      
+      # security_check = check_until(5) do 
+      #   @session.find()
+      # end
+
       if already_logged_in
         puts "already logged in"
         return

@@ -14,16 +14,17 @@ module ScrapIn
         'https://www.linkedin.com/mynetwork/invitation-manager/sent/'
       end
 
-      def find_lead_name(count)
+      def find_lead(count)
         return unless @session.has_selector?(nth_lead_css(count), wait: 3)
-
         item = @session.find(nth_lead_css(count))
         scroll_to(item)
+        
         name = item.text
+        url = item.find(:xpath ,'..')[:href]
         return if name.empty?
 
         @invited_leads.push name
-        yield name
+        yield url, name
       end
 
       def execute(num_times = 50)
@@ -36,10 +37,12 @@ module ScrapIn
             count = 0
             break unless next_page
           end
-          find_lead_name(count) { |name| yield name }
+          find_lead(count) { |url, name| yield url, name }
           count += 1
         end
       end
+
+
 
       def init_list(link)
         @session.visit(link)

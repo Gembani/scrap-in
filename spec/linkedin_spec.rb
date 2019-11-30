@@ -31,7 +31,8 @@ RSpec.describe ScrapIn do
     it 'scraps up to 40 leads names with pending invites' do
       linkedin_scrap_sent_invites = @session.linkedin_scrap_sent_invites
       invited_leads = []
-      linkedin_scrap_sent_invites.execute(100) do |invited_lead|
+      linkedin_scrap_sent_invites.execute(100) do |url, invited_lead|
+        puts url, invited_lead
         invited_leads << invited_lead
       end
       expect(invited_leads.length).to be <= 100
