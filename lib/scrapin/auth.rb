@@ -22,7 +22,7 @@ module ScrapIn
     private
     def is_security_check? 
       if @session.has_selector?('main h1')
-        return @session.find('main h1').text == "Let's do a quick security check"
+        return @session.all('main h1').first.text == "Let's do a quick security check"
       else
         return false
       end
