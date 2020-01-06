@@ -44,6 +44,7 @@ RSpec.describe ScrapIn::Auth do
 
       has_not_selector(session, password_error_css, wait: 1)
       has_selector(session, alert_header_css)
+      has_not_selector(session, security_check_css) # There is no captcha verification
     end
 
     context 'when we log in into sales navigator' do

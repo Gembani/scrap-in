@@ -48,7 +48,7 @@ module ScrapIn
     def find_and_click(node, css)
       raise CssNotFound, css unless node.has_selector?(css)
 
-      node.find(css).click 
+      node.find(css).click
     end
     
     def check_and_find_first(node, *config)

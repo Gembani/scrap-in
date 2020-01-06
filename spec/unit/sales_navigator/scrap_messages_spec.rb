@@ -52,6 +52,8 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapMessages do
     # Return array of loaded messages to avoid infinite loop
     allow(session).to receive(:first).with(sales_messages_css, wait: 5).and_return(sales_messages)
     # Return node for messages
+
+    allow(session).to receive(:current_url).and_return(thread_link)
   end
 
   describe '.initialize' do

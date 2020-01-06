@@ -26,7 +26,7 @@ module ScrapIn
           location: location,
           sales_nav_url: sales_nav_url,
           first_degree: first_degree?,
-          linkedin_url: linkedin_url          
+          linkedin_url: linkedin_url
         }.merge(scrap_datas)
       end
 
@@ -87,11 +87,11 @@ module ScrapIn
 
       def linkedin_url
         close_popup
-        find_and_click(@session, 'div.profile-topcard-actions > artdeco-dropdown')
-        find_and_click(@session, "artdeco-dropdown-item[data-control-name='view_linkedin']")
+        find_and_click(@session, profile_actions_css)
+        find_and_click(@session, linkedin_link_css)
         @session.driver.browser.switch_to.window(@session.driver.browser.window_handles.last)
         url = @session.current_url 
-        @session.driver.browser.execute_script("window.close()", @session.find("body"))
+        @session.driver.browser.execute_script("window.close()", @session.find(body))
         @session.driver.browser.switch_to.window(@session.driver.browser.window_handles.first)
         url
       end

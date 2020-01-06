@@ -30,13 +30,13 @@ RSpec.describe ScrapIn do
           puts link
           found_links << link
         end
-        expect(found_links.size).to eq(25)
+        expect(found_links.size).to be > 20
         expect(next_page_to_process).to eq(page + 1)
         page += 1
       end
     end
   
-    it 'gets leads form the last page' do
+    it 'gets leads from the last page' do
       found_links = []
       next_page_to_process = @sales_nav_scrap_search_list.execute(last_page) do |link, _image|
         expect(link).to start_with('https://www.linkedin.com/sales/people')

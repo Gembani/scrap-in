@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 RSpec.shared_examples 'a popup closed method' do 
-  include CssSelectors::SalesNavigator::ScrapLead
   context 'not on leads page, go to lead page' do 
     before do
       allow(session).to receive(:current_url).with(no_args).and_return('google.com')
@@ -35,7 +34,6 @@ RSpec.shared_examples 'a popup closed method' do
 end
 
 RSpec.shared_examples 'a popup open method' do 
-  include CssSelectors::SalesNavigator::ScrapLead
   let(:more_info_button) { instance_double('Capybara::Node::Element') }
   context 'not on leads page, go to lead page, open popup' do 
     before do
@@ -75,6 +73,7 @@ end
 
 RSpec.describe ScrapIn::SalesNavigator::ScrapLead do
   include ScrapIn::Tools
+  include CssSelectors::SalesNavigator::ScrapLead
   let(:session) { instance_double('Capybara::Session') }
   let(:sales_nav_url) { 'linkedin.com/sales/people/adsahsdfasd' }
   let(:config) do
@@ -339,16 +338,31 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapLead do
     let(:location) { 'location_payload' }
     let(:first_degree?) { 'first_degree_payload' }
     let(:scrap_datas) { { scrap: 'data' } }
+    let(:linkedin_url) { 'linkedin_url' }
+    let(:profile_actions_node) { instance_double('Capybara::Node::Element', 'profile_actions') }
+    let(:linkedin_link_node) { instance_double('Capybara::Node::Element', 'linkedin_link') }
     
     before do
       allow(subject).to receive(:name).with(no_args).and_return(name)
       allow(subject).to receive(:location).with(no_args).and_return(location)
       allow(subject).to receive(:first_degree?).with(no_args).and_return(first_degree?)
       allow(subject).to receive(:scrap_datas).with(no_args).and_return(scrap_datas)
+      allow(session).to receive(:current_url).and_return(sales_nav_url, linkedin_url)
+      allow(session).to receive(:visit).with(sales_nav_url)
+      has_selector(session, profile_actions_css)
+      allow(session).to receive(:find).with(profile_actions_css).and_return(profile_actions_node)
+      allow(profile_actions_node).to receive(:click)
+      has_selector(session, linkedin_link_css)
+      allow(session).to receive(:find).with(linkedin_link_css).and_return(linkedin_link_node)
+      allow(linkedin_link_node).to receive(:click)
+      disable_script
+      mock_tab_switch
+      has_selector(session, body)
+      allow(session).to receive(:find).with(body).and_return(body)
     end
     
     it {
-      expect(subject.to_hash).to eq(sales_nav_url: sales_nav_url, name: name, location: location, first_degree: first_degree?, scrap: 'data')
+      expect(subject.to_hash).to eq(linkedin_url: linkedin_url, sales_nav_url: sales_nav_url, name: name, location: location, first_degree: first_degree?, scrap: 'data')
     }
   end
 end

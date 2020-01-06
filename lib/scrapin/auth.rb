@@ -10,34 +10,38 @@ module ScrapIn
     def login!(username, password, linkedin = false)
       @linkedin = linkedin
       
-      raise CaptchaError if is_security_check?
+      raise CaptchaError if security_check?
       
       enter_credentials(username, password)
       success = homepage_is_loaded?
       raise IncorrectPassword if @session.has_selector?(password_error_css, wait: 1)
-      raise CaptchaError if is_security_check?
+      raise CaptchaError if security_check?
       raise CssNotFound, "Input with placeholder = #{search_placeholder}" unless success
     end
 
     private
-    def is_security_check? 
-      if @session.has_selector?('main h1')
-        return @session.all('main h1').first.text == "Let's do a quick security check"
+
+    def security_check? 
+      if @session.has_selector?(security_check_css)
+        item = check_and_find_first(@session, security_check_css)
+        item.text == "Let's do a quick security check"
       else
-        return false
+        false
       end
     end
+
     def homepage_is_loaded?
-        check_until(10) do
+      check_until(10) do
         @session.has_field?(placeholder: search_placeholder, wait: 1)
       end
     end
+
     def current_url_already_logged
-      if @linkedin
-        @session.current_url == 'https://www.linkedin.com/feed/'
-      else
-        @session.current_url == 'https://www.linkedin.com/sales/homepage'
-      end
+      @session.current_url == if @linkedin
+                                'https://www.linkedin.com/feed/'
+                              else
+                                'https://www.linkedin.com/sales/homepage'
+                              end
     end
       
     def enter_credentials(username, password)
@@ -52,7 +56,7 @@ module ScrapIn
       # end
 
       if already_logged_in
-        puts "already logged in"
+        puts 'already logged in'
         return
       end
       puts "Filling in email... -> #{username}"

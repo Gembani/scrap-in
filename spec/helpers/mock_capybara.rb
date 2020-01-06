@@ -51,10 +51,32 @@ module MockCapybara
   end
 
   def disable_script
-    driver = double('driver')
-    browser = double('browser')
-    allow(session).to receive(:driver).and_return(driver)
-    allow(driver).to receive(:browser).and_return(browser)
-    allow(browser).to receive(:execute_script)
+    unless session.methods.include?(:driver)
+      driver = double('driver')
+      allow(session).to receive(:driver).and_return(driver)
+    end
+    unless session.driver.methods.include?(:browser)
+      browser = double('browser')
+      allow(session.driver).to receive(:browser).and_return(browser)
+    end
+    allow(session.driver.browser).to receive(:execute_script)
+  end
+
+  def mock_tab_switch
+    unless session.methods.include?(:driver)
+      driver = double('driver')
+      allow(session).to receive(:driver).and_return(driver)
+    end
+    unless session.driver.methods.include?(:browser)
+      browser = double('browser')
+      allow(session.driver).to receive(:browser).and_return(browser)
+    end
+    switch_to = double('switch_to')
+    window_handles = double('window_handles')
+    allow(session.driver.browser).to receive(:switch_to).and_return(switch_to)
+    allow(session.driver.browser).to receive(:window_handles).and_return(window_handles)
+    allow(switch_to).to receive(:window)
+    allow(window_handles).to receive(:first)
+    allow(window_handles).to receive(:last)
   end
 end

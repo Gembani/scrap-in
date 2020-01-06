@@ -67,12 +67,9 @@ Capybara::Selenium::Driver.class_eval do
     end
   end
 
-
   def quit
-
     puts "not quiting selenium session"
   rescue Errno::ECONNREFUSED
     # Browser must have already gone
   end
 end
-

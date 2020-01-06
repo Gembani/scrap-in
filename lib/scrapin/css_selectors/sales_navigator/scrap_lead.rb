@@ -45,6 +45,18 @@ module CssSelectors
       def degree_css
         '.label-16dp'
       end
+
+      def profile_actions_css
+        'div.profile-topcard-actions > artdeco-dropdown'
+      end
+
+      def linkedin_link_css
+        "artdeco-dropdown-item[data-control-name='view_linkedin']"
+      end
+
+      def body
+        'body'
+      end
     end
   end
 end
