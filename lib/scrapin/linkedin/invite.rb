@@ -9,6 +9,7 @@ module ScrapIn
 
       def execute(lead_url, note = '', send = true)
         visit_lead_url(lead_url)
+        return true if pending?
         click_connect_button
         add_a_note(note)
         sending_invitation_message(send)
@@ -19,6 +20,15 @@ module ScrapIn
       def visit_lead_url(lead_url)
         @session.visit(lead_url)
         puts 'Lead profile has been visited'
+      end
+
+      def pending?
+        button = check_and_find(@session, css_more_button)
+        button.click
+        dropdown_item = check_and_find_first(@session, more_dropdown_css)
+        is_pending = dropdown_item.text.split("\n").include?("Pending")
+        button.click
+        is_pending
       end
 
       def click_connect_button

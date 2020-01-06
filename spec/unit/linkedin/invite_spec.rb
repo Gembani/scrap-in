@@ -47,12 +47,12 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
     end
     context 'click on message button dirrectly' do 
       let(:connect_button) {  instance_double('Capybara::Node::Element', 'connect_button')}
-      
+
       before do
         has_selector(session, connect_buttons_css)
         find(session, connect_button, connect_buttons_css)
         allow(connect_button).to receive(:click)
-        
+        lead_invite_is_not_pending
         expect(invite_instance.execute(lead_url, note)).to eq(true)
       end
       it {
@@ -74,27 +74,20 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
     end
 
     context 'click on message more info and then connect button' do 
-      let(:more_button) {  instance_double('Capybara::Node::Element', 'more_button')}
+      # let(:more_button) {  instance_double('Capybara::Node::Element', 'more_button')}
       let(:connect_in_more_button) {  instance_double('Capybara::Node::Element', 'connect_button')}
       
       before do
         has_not_selector(session, connect_buttons_css)
-        has_selector(session, css_more_button)
-        
-        find(session, more_button, css_more_button)
-        allow(more_button).to receive(:click)
 
         has_selector(session, connect_in_more_button_css)
         find(session, connect_in_more_button, connect_in_more_button_css)
         allow(connect_in_more_button).to receive(:click)
-
+        lead_invite_is_not_pending
         expect(invite_instance.execute(lead_url, note)).to eq(true)
       end
       it {
         expect(session).to have_received(:visit).with(lead_url)
-      }
-      it{
-        expect(more_button).to have_received(:click).with(no_args)
       }
       it{
         expect(connect_in_more_button).to have_received(:click).with(no_args)

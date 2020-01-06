@@ -79,4 +79,16 @@ module MockCapybara
     allow(window_handles).to receive(:first)
     allow(window_handles).to receive(:last)
   end
+
+  def lead_invite_is_not_pending
+    more_button = instance_double('Capybara::Node::Element', 'more_button')
+    more_dropdown = instance_double('Capybara::Node::Element', 'more_dropdown')
+    has_selector(session, css_more_button)
+    find(session, more_button, css_more_button)
+    allow(more_button).to receive(:click)
+
+    has_selector(session, more_dropdown_css)
+    allow(session).to receive(:first).and_return(more_dropdown)
+    allow(more_dropdown).to receive(:text).and_return('Follow\nConnect')
+  end
 end

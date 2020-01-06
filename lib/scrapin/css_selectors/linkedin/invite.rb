@@ -8,6 +8,7 @@ module CssSelectors
       def css_more_button
         'artdeco-dropdown > artdeco-dropdown-trigger > button'
       end
+
       def connect_in_more_button_css
         '[type^="connect-icon"]'
       end
@@ -27,6 +28,10 @@ module CssSelectors
 
       def confirmation_text
         'Your invitation to'
+      end
+
+      def more_dropdown_css
+        '.pv-s-profile-actions__overflow-dropdown'
       end
     end
   end

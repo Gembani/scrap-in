@@ -15,7 +15,7 @@ module CssSelectors
       end
 
       def next_button_css
-        'ol.mn-invitation-pagination > li > a > li-icon[aria-label="Next item"]'
+        'button[aria-label="Next"]'
       end
     end
   end

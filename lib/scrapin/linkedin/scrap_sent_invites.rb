@@ -52,6 +52,7 @@ module ScrapIn
      
       def next_page
         url_pre_click = @session.current_url
+        byebug
         find_and_click(@session, next_button_css)
         
         check_until(1000) do 
