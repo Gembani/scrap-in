@@ -47,7 +47,8 @@ module ScrapIn
         end
         return false unless click_and_connect
         return false unless invitation_window_closed?
-        return false unless pending_after_invite? if @send
+
+        return false if @send && !pending_after_invite?
 
         lead_invited?
       end
@@ -62,6 +63,7 @@ module ScrapIn
       def friend?
         raise CssNotFound, degree_css unless @session.has_selector?(degree_css, wait: 4)
         return true if @session.find(degree_css).text == '1st'
+
         false
       end
 

@@ -23,10 +23,7 @@ module ScrapIn
         navigator.clipboard.readText().then(function (text) {cb(text)})
       JS
       @session.driver.browser.execute_async_script(script)
-    end 
-
-
-    
+    end     
     
     def scroll_up_to(element)
       script = <<-JS

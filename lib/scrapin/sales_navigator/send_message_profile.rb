@@ -9,9 +9,7 @@ module ScrapIn
       end
 
       def visit
-        if @session.current_url != @profile
-          @session.visit(@profile)
-        end
+        @session.visit(@profile) if @session.current_url != @profile
         true
       end
 
@@ -28,11 +26,12 @@ module ScrapIn
         puts 'Sending message...'
         button_field = check_and_find(@session, profile_send_message_button)
         return send unless send
+
         button_field.click
         puts 'Message has been sent.'
       end
 
-      def message_sent?(message)
+      def message_sent?(_message)
         sleep(2)
         true
       end

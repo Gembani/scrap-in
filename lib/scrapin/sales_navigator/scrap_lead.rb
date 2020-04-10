@@ -11,7 +11,9 @@ module ScrapIn
       def initialize(config, session)
         @popup_open = false
         @sales_nav_url = config[:sales_nav_url] || ''
-        raise 'Lead\'s salesnav url is not valid' unless @sales_nav_url.include?('linkedin.com/sales/people/') || @sales_nav_url.include?('https://www.linkedin.com/sales/profile/')
+        unless @sales_nav_url.include?('linkedin.com/sales/people/') || @sales_nav_url.include?('https://www.linkedin.com/sales/profile/')
+          raise 'Lead\'s salesnav url is not valid'
+        end
 
         @session = session
       end
@@ -91,14 +93,10 @@ module ScrapIn
         find_and_click(@session, linkedin_link_css)
         @session.driver.browser.switch_to.window(@session.driver.browser.window_handles.last)
         url = @session.current_url 
-        @session.driver.browser.execute_script("window.close()", @session.find(body))
+        @session.driver.browser.execute_script('window.close()', @session.find(body))
         @session.driver.browser.switch_to.window(@session.driver.browser.window_handles.first)
         url
-      end
-      
-      
-
-      
+      end             
 
       def location
         close_popup

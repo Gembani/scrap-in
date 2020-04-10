@@ -46,7 +46,6 @@ RSpec.describe ScrapIn::LinkedIn::ScrapFriends do
 
       allow(friends_array[count]).to receive(:native)
 
-
       has_selector(friends_array[count], friend_name_css)
       has_selector(friends_array[count], time_ago_css)
       has_selector(friends_array[count], link_css)

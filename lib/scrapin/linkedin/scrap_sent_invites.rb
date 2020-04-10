@@ -16,11 +16,12 @@ module ScrapIn
 
       def find_lead(count)
         return unless @session.has_selector?(nth_lead_css(count), wait: 3)
+
         item = @session.find(nth_lead_css(count))
         scroll_to(item)
         
         name = item.text
-        url = item.find(:xpath ,'..')[:href]
+        url = item.find(:xpath, '..')[:href]
         return if name.empty?
 
         @invited_leads.push name
@@ -29,6 +30,7 @@ module ScrapIn
 
       def execute(num_times = 50)
         return unless init_list(target_page)
+
         count = 0
         num_times.times.each do
           unless @session.has_selector?(
@@ -42,11 +44,10 @@ module ScrapIn
         end
       end
 
-
-
       def init_list(link)
         @session.visit(link)
         return false unless @session.has_selector?(invitation_list_css)
+
         true
       end
      
@@ -56,7 +57,7 @@ module ScrapIn
         find_and_click(@session, next_button_css)
         
         check_until(1000) do 
-          url_pre_click !=  @session.current_url
+          url_pre_click != @session.current_url
         end
       end
     end

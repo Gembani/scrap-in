@@ -28,7 +28,7 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
       'thread_link_two',
       'Initial Thread link',
       'Thread Link after click',
-      'thread_link_three',
+      'thread_link_three'
     ]
   end
 
@@ -36,7 +36,7 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
     [
       current_urls[0],
       current_urls[3],
-      current_urls[6],
+      current_urls[6]
     ]
   end
 

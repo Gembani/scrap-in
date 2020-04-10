@@ -28,7 +28,7 @@ RSpec.describe ScrapIn::Auth do
       allow(auth).to receive(:sales_navigator_homepage).and_return(sales_navigator_homepage)
 
       allow(session).to receive(:visit)
-      allow(session).to receive(:current_url).with(no_args).and_return("www.test.com")
+      allow(session).to receive(:current_url).with(no_args).and_return('www.test.com')
       username_field = instance_double('Capybara::Node::Element', 'username_field')
       allow(username_field).to receive(:click)
       allow(username_field).to receive(:send_keys).with(username)

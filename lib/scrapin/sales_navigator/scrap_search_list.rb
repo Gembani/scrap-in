@@ -22,7 +22,7 @@ module ScrapIn
       end
 
       def click_on_page(page)
-        #sometimes the click on page two fails... not sure why.
+        # sometimes the click on page two fails... not sure why.
         raise "Did not successfully click on #{page}" unless check_until(5) do 
           puts "clicking on page #{page}"
           page_button = check_and_find(@session, page_css(page))
@@ -47,6 +47,7 @@ module ScrapIn
         # While "clicking" on page 2, url changes in the way we can substitue "page=x"
         click_on_page(2)
         return if page == 2
+
         url = @session.current_url.sub('page=2', "page=#{page}")
         puts "Going to page #{page}"
         @session.visit(url)
@@ -57,29 +58,31 @@ module ScrapIn
       def find_page_leads(page)
         ensure_leads_are_loaded
        
-        count = 0;
-        raise CssNotFound.new(nth_result_css(count)) unless  check_until(5) do
+        count = 0
+        raise CssNotFound, nth_result_css(count) unless check_until(5) do
           @session.has_selector?(nth_result_css(count))
         end
+
         loop do 
           break unless @session.has_selector?(nth_result_css(count), wait: 5)
+
           element = @session.find(nth_result_css(count))
           link = element[:href]
           yield link
-          count = count + 1
+          count += 1
           scroll_to(element)
         end
         last_page = check_and_find(@session, last_page_css).text.to_i
         
-        if (page == last_page) 
-          return 1
+        if page == last_page 
+          1
         else
-          return page + 1
+          page + 1
         end
       end
 
       def ensure_leads_are_loaded
-        raise CssNotFound,'.result-lockup__icon-link' unless  check_until(5) do
+        raise CssNotFound, '.result-lockup__icon-link' unless check_until(5) do
           @session.has_selector?('.result-lockup__icon-link')
         end
       end

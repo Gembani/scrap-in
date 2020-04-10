@@ -29,9 +29,7 @@ module ScrapIn
           linkedin_url: @linkedin_url,
           first_degree: first_degree?
         }.merge(scrap_datas)
-        if @get_sales_nav_url
-          data[:sales_nav_url] = sales_nav_url
-        end
+        data[:sales_nav_url] = sales_nav_url if @get_sales_nav_url
         data
       end
 
@@ -48,7 +46,7 @@ module ScrapIn
         find_and_click(@session, sales_nav_button_css)
         @session.driver.browser.switch_to.window(@session.driver.browser.window_handles.last)
         url = @session.current_url 
-        @session.driver.browser.execute_script("window.close()", @session.find("body"))
+        @session.driver.browser.execute_script('window.close()', @session.find('body'))
         @session.driver.browser.switch_to.window(@session.driver.browser.window_handles.first)
         url
       end

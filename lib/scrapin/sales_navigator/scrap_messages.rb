@@ -41,9 +41,7 @@ module ScrapIn
       end
 
       def visit_thread_link
-        if @session.current_url != @thread_link
-          @session.visit(@thread_link)
-        end
+        @session.visit(@thread_link) if @session.current_url != @thread_link
         wait_messages_to_appear
         puts 'Sales messages have been visited.'
       end

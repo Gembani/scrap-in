@@ -56,13 +56,13 @@ module ScrapIn
         puts 'Checking the message has been sent...'
         if @session.all(messages_css)[-1].nil?
           puts @error.to_s
-          return false
+          false
         elsif @session.all(messages_css)[-1].text != @message
           puts @error.to_s
-          return false
+          false
         else
           puts 'Confirmed'
-          return true
+          true
         end
       end
     end

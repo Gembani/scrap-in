@@ -15,7 +15,7 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
 
   let(:not_compatible_url) { 'https://www.linkedin.com/asfas' }
   
-	
+  
   
   let(:message) { 'Message to send to lead' }
 
@@ -27,11 +27,11 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
   let(:button_node) { instance_double('Capybara::Node::Element', 'button_node') }
 
   let(:new_node) { instance_double('Capybara::Node::Element', 'new_node') }
-  context  'when incompatible url' do 
-    let(:url) {"www.google"}
+  context 'when incompatible url' do 
+    let(:url) { 'www.google' }
 
     it {
-     expect{ described_class.new(session, url, message) }.to raise_error(ArgumentError)
+      expect { described_class.new(session, url, message) }.to raise_error(ArgumentError)
     }
   end
   context 'when using profile url' do 
@@ -55,7 +55,7 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
     let(:salesnav_messages_instance) { subject.new(session, profile_url, message) }
     
     before do 
-      allow(session).to receive(:current_url).with(no_args).and_return("www.google.com")
+      allow(session).to receive(:current_url).with(no_args).and_return('www.google.com')
       allow(session).to receive(:visit).with(profile_url)
       has_selector(session, profile_send_button)
       find(session, profile_send_node, profile_send_button)
@@ -101,7 +101,7 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
     let(:salesnav_messages_instance) { subject.new(session, profile_url_2, message) }
     
     before do 
-      allow(session).to receive(:current_url).with(no_args).and_return("www.google.com")
+      allow(session).to receive(:current_url).with(no_args).and_return('www.google.com')
       allow(session).to receive(:visit).with(profile_url_2)
       has_selector(session, profile_send_button)
       find(session, profile_send_node, profile_send_button)
@@ -130,7 +130,7 @@ RSpec.describe ScrapIn::SalesNavigator::SendMessage do
     before do
       disable_puts
       allow(session).to receive(:visit)
-      allow(session).to receive(:current_url).with(no_args).and_return("testtests")
+      allow(session).to receive(:current_url).with(no_args).and_return('testtests')
       10.times { messages_array << Faker::Lorem.unique.sentence }
       has_selector(session, messages_css)
       allow(session).to receive(:all).with(messages_css).and_return(conversation_array)

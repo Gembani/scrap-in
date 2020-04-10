@@ -24,9 +24,9 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
   end
   
   describe '.execute' do
-    let(:add_a_note_button) {  instance_double('Capybara::Node::Element', 'add_a_note_button')}
-    let(:note_textarea) {  instance_double('Capybara::Node::Element', 'note_textarea')}
-    let(:send_invitation_button) {  instance_double('Capybara::Node::Element', 'send_invitation_button')}
+    let(:add_a_note_button) { instance_double('Capybara::Node::Element', 'add_a_note_button') }
+    let(:note_textarea) { instance_double('Capybara::Node::Element', 'note_textarea') }
+    let(:send_invitation_button) { instance_double('Capybara::Node::Element', 'send_invitation_button') }
       
     before do 
       has_selector(session, add_a_note_button_css)
@@ -46,7 +46,7 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
       
     end
     context 'click on message button dirrectly' do 
-      let(:connect_button) {  instance_double('Capybara::Node::Element', 'connect_button')}
+      let(:connect_button) {  instance_double('Capybara::Node::Element', 'connect_button') }
 
       before do
         has_selector(session, connect_buttons_css)
@@ -58,10 +58,10 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
       it {
         expect(session).to have_received(:visit).with(lead_url)
       }
-      it{
+      it {
         expect(connect_button).to have_received(:click).with(no_args)
       }
-      it{
+      it {
         expect(add_a_note_button).to have_received(:click).with(no_args)
       }
 
@@ -75,7 +75,7 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
 
     context 'click on message more info and then connect button' do 
       # let(:more_button) {  instance_double('Capybara::Node::Element', 'more_button')}
-      let(:connect_in_more_button) {  instance_double('Capybara::Node::Element', 'connect_button')}
+      let(:connect_in_more_button) { instance_double('Capybara::Node::Element', 'connect_button') }
       
       before do
         has_not_selector(session, connect_buttons_css)
@@ -89,10 +89,10 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
       it {
         expect(session).to have_received(:visit).with(lead_url)
       }
-      it{
+      it {
         expect(connect_in_more_button).to have_received(:click).with(no_args)
       }
-      it{
+      it {
         expect(add_a_note_button).to have_received(:click).with(no_args)
       }
 
@@ -105,15 +105,15 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
     end
 
     context 'raise if both don\'t exist' do 
-      let(:more_button) {  instance_double('Capybara::Node::Element', 'more_button')}
-      let(:connect_in_more_button) {  instance_double('Capybara::Node::Element', 'connect_button')}
+      let(:more_button) {  instance_double('Capybara::Node::Element', 'more_button') }
+      let(:connect_in_more_button) { instance_double('Capybara::Node::Element', 'connect_button') }
       
       before do
         has_not_selector(session, connect_buttons_css)
         has_not_selector(session, css_more_button)
       end
       it {
-        expect{invite_instance.execute(lead_url, note)}.to raise_error(ScrapIn::CssNotFound)
+        expect { invite_instance.execute(lead_url, note) }.to raise_error(ScrapIn::CssNotFound)
       }
     end
   end

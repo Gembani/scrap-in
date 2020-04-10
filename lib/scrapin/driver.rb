@@ -4,7 +4,7 @@ Capybara.register_driver :scrapin_driver do |app|
   driver = Capybara::Selenium::Driver.new(
     app,
     browser: :remote,
-    options:options,
+    options: options,
     url: ENV.fetch('hud_url'),
     desired_capabilities: {
       "browser": 'chrome',

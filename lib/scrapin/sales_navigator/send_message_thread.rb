@@ -10,9 +10,7 @@ module ScrapIn
       end
 
       def visit
-        if @session.current_url != @thread
-          @session.visit(@thread)
-        end
+        @session.visit(@thread) if @session.current_url != @thread
         wait_messages_to_appear
       end
 
@@ -23,16 +21,19 @@ module ScrapIn
         end
         messages_appear
       end
+
       def write_message(message)
         puts 'Writing message...'
         message_field = check_and_find(@session, message_field_css)
         message_field.send_keys(message)
         puts 'Message has been written.'
       end
+
       def send_message(send)
         puts 'Sending message...'
         send_button = check_and_find(@session, send_button_css)
         return send unless send
+
         send_button.click
         puts 'Message has been sent.'
         true
@@ -43,6 +44,7 @@ module ScrapIn
         return false if @session.all(messages_css)[-1].nil?
 
         return false if @session.all(messages_css)[-1].text != message
+
         puts 'Confirmed'
         true
       end

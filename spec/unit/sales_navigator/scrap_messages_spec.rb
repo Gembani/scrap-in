@@ -221,7 +221,7 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapMessages do
           expect do
             salesnav_messages_instance.execute(1, 'CEBULA Sébastien') { |_message, _direction| }
           end
-          .to raise_error(ScrapIn::LeadNameMismatch)
+            .to raise_error(ScrapIn::LeadNameMismatch)
         end
       end
     end

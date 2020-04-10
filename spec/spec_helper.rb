@@ -1,6 +1,6 @@
 require 'deep-cover'
 require 'simplecov'
-if ENV["COVERAGE"]
+if ENV['COVERAGE']
   DeepCover.start
   DeepCover::AutoRun.run!('.').report!(**DeepCover.config)
   # SimpleCov.start do 
@@ -20,7 +20,7 @@ require 'unit/helpers/messages_helpers'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
-  config.example_status_persistence_file_path = ".rspec_status"
+  config.example_status_persistence_file_path = '.rspec_status'
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
@@ -35,22 +35,20 @@ RSpec.configure do |config|
   end
 end
 
-
 require 'selenium/webdriver'
 module Selenium
   module WebDriver
     module Remote
       class Bridge
-        alias_method :original_execute, :execute
+        alias original_execute execute
         def execute(*args)
           if args.first == :new_session && File.exist?('mock_response_selenium.json')
             return JSON.parse(File.read('mock_response_selenium.json'))
           else
             data = original_execute(*args)
           end
-          if args.first == :new_session
-            File.write('mock_response_selenium.json', {value: data['value']}.to_json)
-          end
+
+          File.write('mock_response_selenium.json', { value: data['value'] }.to_json) if args.first == :new_session
           data
         end
       end
@@ -60,15 +58,15 @@ end
 
 Capybara::Selenium::Driver.class_eval do
   def cleanup_browser
-    begin
-      @browser.quit if @browser
-    rescue StandardError
-      # Browser must have already gone
-    end
+    
+    @browser&.quit
+  rescue StandardError
+    # Browser must have already gone
+    
   end
 
   def quit
-    puts "not quiting selenium session"
+    puts 'not quiting selenium session'
   rescue Errno::ECONNREFUSED
     # Browser must have already gone
   end

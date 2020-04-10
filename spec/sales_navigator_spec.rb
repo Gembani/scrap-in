@@ -45,7 +45,6 @@ RSpec.describe ScrapIn do
       expect(found_links.size).to eq(25)
       expect(next_page_to_process).to eq(1)
     end
-
   end
 
   describe '.sales_nav_scrap_lead' do
@@ -81,17 +80,17 @@ RSpec.describe ScrapIn do
   describe '.sales_nav_send_message' do
     it ' sends a message from sales nav conversation thread to a lead' do
       send_message = @session.sales_nav_send_message(ENV.fetch('s_send_message_url'),
-                                                    'Hi, this is a test message at ' +
-                                                        Time.now.strftime('%H:%M:%S').to_s +
-                                                        '. Thanks!')
+                                                     'Hi, this is a test message at ' +
+                                                         Time.now.strftime('%H:%M:%S').to_s +
+                                                         '. Thanks!')
       send_message.execute(true)
     end
 
     it ' sends a message from profile url' do
       send_message = @session.sales_nav_send_message(ENV.fetch('s_send_message_url_2'),
-                                                    'Hi, this is a test message at ' +
-                                                        Time.now.strftime('%H:%M:%S').to_s +
-                                                        '. Thanks!')
+                                                     'Hi, this is a test message at ' +
+                                                         Time.now.strftime('%H:%M:%S').to_s +
+                                                         '. Thanks!')
       send_message.execute(true)
     end
   end
