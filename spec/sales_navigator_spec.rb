@@ -25,9 +25,9 @@ RSpec.describe ScrapIn do
       max_page = 10
       until page > max_page
         found_links = []
+        puts "page #{page}"
         next_page_to_process = @sales_nav_scrap_search_list.execute(page) do |link|
           expect(link).to start_with('https://www.linkedin.com/sales/people')
-          puts link
           found_links << link
         end
         expect(found_links.size).to be > 20

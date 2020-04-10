@@ -26,7 +26,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapThreads do
 
     create_node_array(threads_list_array, 12)
     allow(session).to receive(:visit).with(messages_link)
-
+    allow(linkedin_threads_instance).to receive(:scroll_to)
     count = 0
     12.times do
       has_selector(session, threads_block_css)

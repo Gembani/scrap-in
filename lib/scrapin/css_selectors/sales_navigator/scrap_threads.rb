@@ -15,7 +15,7 @@ module CssSelectors
       end
 
       def thread_name_css
-        'artdeco-entity-lockup-title' 
+        '.artdeco-entity-lockup__title' 
       end
 
       def message_css

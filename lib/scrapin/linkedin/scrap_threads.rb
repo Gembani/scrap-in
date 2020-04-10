@@ -20,6 +20,7 @@ module ScrapIn
             break
           else
             conversation = find_conversation(count)
+            scroll_to(conversation)
             name = conversation.text
             conversation.click
             thread_link = @session.current_url

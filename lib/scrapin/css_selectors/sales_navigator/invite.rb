@@ -3,11 +3,11 @@ module CssSelectors
     # All css selectors used in ScrapIn::Invite Class
     module Invite
       def action_button_css
-        'div.profile-topcard-actions > artdeco-dropdown'
+        'div.profile-topcard-actions > .artdeco-dropdown'
       end
 
       def connect_button_css
-        'artdeco-dropdown-item[data-control-name="connect"]'
+        '.artdeco-dropdown__item[data-control-name="connect"]'
       end
 
       def send_button_css

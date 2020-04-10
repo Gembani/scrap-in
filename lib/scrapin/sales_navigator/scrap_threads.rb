@@ -60,7 +60,6 @@ module ScrapIn
         threads_list = check_and_find(@session, threads_list_css)
         threads_list_elements = threads_list.all(threads_list_elements_css, wait: 5)[count]
         return false if threads_list_elements.nil?
-
         check_and_find(threads_list_elements, thread_name_css, wait: 5)
       end
 

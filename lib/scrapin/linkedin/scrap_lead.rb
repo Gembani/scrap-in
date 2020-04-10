@@ -66,6 +66,7 @@ module ScrapIn
       # We expect the user to only scrap 1st degree leads
       def first_degree?
         close_popup
+        'li.pv-top-card-v3__distance-badge.inline-block.v-align-text-bottom.t-16.t-black--light.t-normal span.dist-value'
         check_and_find(@session, degree_css, wait: 5).text == '1st'
       end
 

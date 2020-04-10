@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 gemspec
 gem 'byebug'
 gem 'colorize'
+gem 'solargraph', require: false
 gem 'faker', '~> 1.9', '>= 1.9.1'
 gem 'simplecov', require: false, group: :test
 gem 'deep-cover'

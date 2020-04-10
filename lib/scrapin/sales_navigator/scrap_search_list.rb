@@ -22,22 +22,22 @@ module ScrapIn
       end
 
       def click_on_page(page)
-        page_button = @session.all(page_css(page), wait: 30).first
-        scroll_to_first = check_until(500) do 
-          scroll_to(page_button)
+        #sometimes the click on page two fails... not sure why.
+        raise "Did not successfully click on #{page}" unless check_until(5) do 
+          puts "clicking on page #{page}"
+          page_button = check_and_find(@session, page_css(page))
+          page_button.click
+          @session.current_url.include?("page=#{page}")
         end
-        page_button.click
+        
+        
         check_results_loaded
       end
 
       def check_results_loaded
-        raise CssNotFound, results_loaded_css unless check_until(500) do
+        raise CssNotFound, results_loaded_css unless check_until(10) do
           @session.has_selector?(results_loaded_css)
         end
-      end
-
-      def empty_results?
-        @session.has_selector?(no_results_css, wait: 3)
       end
 
       # if page 2 empty results fails - don't use this with a too small search!
@@ -47,7 +47,6 @@ module ScrapIn
         # While "clicking" on page 2, url changes in the way we can substitue "page=x"
         click_on_page(2)
         return if page == 2
-
         url = @session.current_url.sub('page=2', "page=#{page}")
         puts "Going to page #{page}"
         @session.visit(url)
@@ -57,9 +56,11 @@ module ScrapIn
 
       def find_page_leads(page)
         ensure_leads_are_loaded
-        puts 'Getting the links '
+       
         count = 0;
-        raise CssNotFound.new(nth_result_css(count)) unless @session.has_selector?(nth_result_css(count))
+        raise CssNotFound.new(nth_result_css(count)) unless  check_until(5) do
+          @session.has_selector?(nth_result_css(count))
+        end
         loop do 
           break unless @session.has_selector?(nth_result_css(count), wait: 5)
           element = @session.find(nth_result_css(count))
@@ -78,7 +79,7 @@ module ScrapIn
       end
 
       def ensure_leads_are_loaded
-        check_until(500) do
+        raise CssNotFound,'.result-lockup__icon-link' unless  check_until(5) do
           @session.has_selector?('.result-lockup__icon-link')
         end
       end

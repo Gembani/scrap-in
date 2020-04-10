@@ -1,0 +1,6 @@
+rspec ./spec/sales_navigator_spec.rb:23 # ScrapIn.sales_nav_scrap_search_list gets lead from 10 firsts pages
+rspec ./spec/sales_navigator_spec.rb:39 # ScrapIn.sales_nav_scrap_search_list gets leads from the last page
+rspec ./spec/sales_navigator_spec.rb:52 # ScrapIn.sales_nav_scrap_lead scraps location, phones, emails and website links for a lead
+rspec ./spec/sales_navigator_spec.rb:67 # ScrapIn.sales_nav_invite sends invite and send a message
+rspec ./spec/sales_navigator_spec.rb:119 # ScrapIn.sales_nav_scrap_threads when scrapping open threads scraps 30 threads, needs to scroll down 1 time to load older conversations
+rspec ./spec/sales_navigator_spec.rb:144 # ScrapIn.sales_nav_scrap_messages when a lead has an open conversation but does not match the given name param raises error

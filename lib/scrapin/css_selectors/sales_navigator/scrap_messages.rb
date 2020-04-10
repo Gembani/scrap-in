@@ -27,7 +27,7 @@ module CssSelectors
       end
 
       def lead_name_css
-        '.conversation-insights__section.pt4 artdeco-entity-lockup-title > span:first-child'
+        '.conversation-insights__section.pt4 .artdeco-entity-lockup__title > span:first-child'
       end
     end
   end

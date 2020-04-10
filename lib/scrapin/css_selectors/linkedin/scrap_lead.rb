@@ -23,7 +23,7 @@ module CssSelectors
       end
 
       def degree_css
-        'li.pv-top-card-v3__distance-badge.inline-block.v-align-text-bottom.t-16.t-black--light.t-normal span.dist-value' # find
+        '.distance-badge .dist-value' # find
       end
 
       def websites_css

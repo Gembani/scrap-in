@@ -47,11 +47,11 @@ module CssSelectors
       end
 
       def profile_actions_css
-        'div.profile-topcard-actions > artdeco-dropdown'
+        'div.profile-topcard-actions > .artdeco-dropdown'
       end
 
       def linkedin_link_css
-        "artdeco-dropdown-item[data-control-name='view_linkedin']"
+        ".artdeco-dropdown__item[data-control-name='view_linkedin']"
       end
 
       def body
