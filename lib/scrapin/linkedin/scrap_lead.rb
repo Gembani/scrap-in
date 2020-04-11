@@ -58,13 +58,16 @@ module ScrapIn
 
       def location
         close_popup
-        check_and_find(@session, location_css, wait: 5).text
+        # on linkedin sometimes location doesn't exist
+        location_container = @session.all(location_css).first
+        return nil unless location_container
+
+        location_container.text
       end
 
       # We expect the user to only scrap 1st degree leads
       def first_degree?
         close_popup
-        'li.pv-top-card-v3__distance-badge.inline-block.v-align-text-bottom.t-16.t-black--light.t-normal span.dist-value'
         check_and_find(@session, degree_css, wait: 5).text == '1st'
       end
 
