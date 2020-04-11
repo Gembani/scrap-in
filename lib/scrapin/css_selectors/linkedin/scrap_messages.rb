@@ -6,6 +6,10 @@ module CssSelectors
         '.msg-s-event-listitem__body'
       end
 
+      def lead_name_css
+        '.msg-thread__link-to-profile h2'
+      end
+
       def messages_thread_css
         '.msg-s-message-list-container'
       end

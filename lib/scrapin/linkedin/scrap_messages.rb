@@ -9,11 +9,12 @@ module ScrapIn
         @thread_link = thread_link
       end
       
-      def execute(number_of_messages = 20)
+      def execute(number_of_messages = 20, lead_name = false)
         raise ArgumentError, 'Parameter should be positive' unless number_of_messages.positive? # ArgumentError.new
-
+        
         raise CssNotFound, messages_thread_css unless visit_thread_link
 
+        confirm_lead(lead_name) if lead_name
         loaded_messages = load(number_of_messages)
         raise CssNotFound, all_messages_css if loaded_messages.zero?
 
@@ -28,7 +29,12 @@ module ScrapIn
         end
         true
       end
-    
+
+      def confirm_lead(lead_name)
+        lead_name_in_thread = check_and_find(@session, lead_name_css).text
+        raise LeadNameMismatch.new(lead_name, lead_name_in_thread) unless lead_name_in_thread.include?(lead_name)
+      end
+
       def visit_thread_link
         @session.visit(@thread_link)
         return false unless wait_messages_to_appear

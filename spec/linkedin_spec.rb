@@ -116,7 +116,7 @@ RSpec.describe ScrapIn do
     context 'when a lead as an open conversation' do
       it do
         messages = @session.linkedin_scrap_messages(ENV.fetch('l_scrap_messages_url'))
-        messages.execute(13) do |message, direction|
+        messages.execute(13, ENV.fetch('l_scrap_messages_name')) do |message, direction|
           if direction == :incoming
             print 'CONTACT ->  '
           else
