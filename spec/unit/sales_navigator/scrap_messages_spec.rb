@@ -3,9 +3,24 @@
 require 'spec_helper'
 
 RSpec.describe ScrapIn::SalesNavigator::ScrapMessages do
+  
   include CssSelectors::SalesNavigator::ScrapMessages
   include ScrapIn::Tools
 
+  def create_conversation(array)
+    array.each_with_index do |element, count|
+      has_selector(element, content_css, wait: 5)
+      has_selector(element, sender_css, wait: 2, visible: false)
+
+      content = { 'innerHTML' => message_content(count) }
+      content = { 'innerHTML' => 'beginnning of the conversation' } if count.zero?
+
+      # Alternate senders to see incoming and outgoing directions
+      sender = count.even? ? { 'innerHTML' => '   You   ' } : { 'innerHTML' => '   Sender   ' }
+      allow(element).to receive(:find).with(content_css, wait: 5).and_return(content)
+      allow(element).to receive(:first).with(sender_css, wait: 2, visible: false).and_return(sender)
+    end
+  end
   let(:session) { instance_double('Capybara::Session', 'session') }
   let(:sales_messages) { instance_double('Capybara::Node::Element', 'sales_messages') }
   let(:message_thread) { instance_double('Capybara::Node::Element', 'message_thread') }
@@ -48,9 +63,9 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapMessages do
                                           .and_return(message_thread_elements) # Return the messages array
     allow(sales_messages).to receive(:find).with(message_thread_css, wait: 5).and_return(message_thread)
 
-    allow(session).to receive(:all).with(sales_loaded_messages_css, wait: 5).and_return(sales_loaded_messages)
+    allow(session).to receive(:all).with(loaded_messages_css, wait: 5).and_return(sales_loaded_messages)
     # Return array of loaded messages to avoid infinite loop
-    allow(session).to receive(:first).with(sales_messages_css, wait: 5).and_return(sales_messages)
+    allow(session).to receive(:first).with(messages_css, wait: 5).and_return(sales_messages)
     # Return node for messages
 
     allow(session).to receive(:current_url).and_return(thread_link)
@@ -133,7 +148,7 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapMessages do
 
     context 'when cannot wait message to appear' do
       context 'when cannot load messages' do
-        before { allow(session).to receive(:all).with(sales_loaded_messages_css, wait: 5).and_return([]) }
+        before { allow(session).to receive(:all).with(loaded_messages_css, wait: 5).and_return([]) }
         it do
           expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
             .to raise_error('Cannot scrap conversation. Timeout !')
@@ -142,13 +157,13 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapMessages do
     end
 
     context 'when cannot find the sales_message_css' do
-      before { has_not_selector(session, sales_messages_css, wait: 5) }
+      before { has_not_selector(session, messages_css, wait: 5) }
       it do
         expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
       end
       it do
         expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
-          .to raise_error(/#{sales_messages_css}/)
+          .to raise_error(/#{messages_css}/)
       end
     end
 

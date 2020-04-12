@@ -2,7 +2,7 @@ module CssSelectors
   module SalesNavigator
     # All css selectors used in ScrapIn::SalesNavigator::Messages Class
     module ScrapMessages
-      def sales_messages_css
+      def messages_css
         '.thread-container'
       end
 
@@ -14,7 +14,7 @@ module CssSelectors
         'li'
       end
 
-      def sales_loaded_messages_css
+      def loaded_messages_css
         '.thread-container li'
       end
 

@@ -1,72 +1,13 @@
+require 'scrapin/scrap_messages.rb'
 module ScrapIn
   module LinkedIn
-    # Class which yield messages and direction in linkedin
+    # Class which yield messages and direction in sales conversation
     class ScrapMessages
       include Tools
+      include ScrapIn::ScrapMessages
       include CssSelectors::LinkedIn::ScrapMessages
-      def initialize(session, thread_link)
-        @session = session
-        @thread_link = thread_link
-      end
-      
-      def execute(number_of_messages = 20, lead_name = false)
-        raise ArgumentError, 'Parameter should be positive' unless number_of_messages.positive? # ArgumentError.new
-        
-        raise CssNotFound, messages_thread_css unless visit_thread_link
-
-        confirm_lead(lead_name) if lead_name
-        loaded_messages = load(number_of_messages)
-        raise CssNotFound, all_messages_css if loaded_messages.zero?
-
-        count = loaded_messages - 1
-        max = loaded_messages > number_of_messages ? number_of_messages : loaded_messages
-        max.times.each do
-          message = @session.all(all_messages_css)
-          content = check_and_find(message[count], message_content_css).text
-          direction = message[count][:class].include?(sender_css) ? :incoming : :outgoing
-          count -= 1
-          yield content, direction
-        end
-        true
-      end
-
-      def confirm_lead(lead_name)
-        lead_name_in_thread = check_and_find(@session, lead_name_css).text
-        raise LeadNameMismatch.new(lead_name, lead_name_in_thread) unless lead_name_in_thread.include?(lead_name)
-      end
-
-      def visit_thread_link
-        @session.visit(@thread_link)
-        return false unless wait_messages_to_appear
-
-        puts 'Messages have been visited.'
-        true
-      end
-      
-      def wait_messages_to_appear
-        puts 'waiting messages to appear'
-        messages_appear = check_until(500) do
-          @session.all(messages_thread_css).count.positive?
-        end
-        messages_appear
-      end
-
-      def load(number_of_messages)
-        loaded_messages = count_loaded_messages
-        while loaded_messages < number_of_messages && loaded_messages.positive?
-          first_message = check_and_find_first(@session, all_messages_css)
-          check_until(500) do
-            scroll_to(first_message)
-          end
-          return loaded_messages if loaded_messages == count_loaded_messages
-
-          loaded_messages = count_loaded_messages
-        end
-        loaded_messages
-      end
-
-      def count_loaded_messages
-        @session.all(all_messages_css).count
+      def sender(message)
+        message.find(sender_css_container)[:class].include?(sender_css) ? :incoming : :outgoing
       end
     end
   end
