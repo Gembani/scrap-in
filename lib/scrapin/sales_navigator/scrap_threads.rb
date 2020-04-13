@@ -47,12 +47,8 @@ module ScrapIn
       end
 
       def wait_messages_page_to_load
-        time = 0
-        while @session.all(message_css, wait: 5).count < 2
-          puts 'Waiting messages to appear'
-          sleep(0.2)
-          time += 0.2
-          raise 'Cannot scrap conversation. Timeout !' if time > 60
+        raise 'No conversations loaded' unless check_until(3) do 
+          @session.all(message_css, wait: 5).count > 2
         end
       end
 
