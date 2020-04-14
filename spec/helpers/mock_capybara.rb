@@ -22,6 +22,10 @@ module MockCapybara
     allow(node).to receive(:find).with(*config).and_return(return_value)
   end
 
+  def all(node, return_value, *config)
+    allow(node).to receive(:all).with(*config).and_return(return_value)
+  end
+
   def visit_succeed(url)
     allow(session).to receive(:visit).with(url)
   end

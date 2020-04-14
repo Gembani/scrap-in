@@ -56,28 +56,28 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
     create_node_array(thread_name_array, 3)
     create_node_array(one_message_array)
 
-    has_selector(session, message_css, wait: 5)
+    has_selector(session, message_css)
 
     allow(session).to receive(:visit).with('https://www.linkedin.com/sales/inbox/')
     
-    has_selector(session, message_css, wait: 5)
-    allow(session).to receive(:all).with(message_css, wait: 5).and_return(message_array)
+    has_selector(session, message_css)
+    allow(session).to receive(:all).with(message_css).and_return(message_array)
 
     has_selector(session, threads_list_css)
 
     find(session, threads_list, threads_list_css)
 
-    has_selector(threads_list, loaded_threads_css, wait: 5)
-    allow(threads_list).to receive(:all).with(loaded_threads_css, wait: 5).and_return(loaded_threads_array)
+    has_selector(threads_list, loaded_threads_css)
+    allow(threads_list).to receive(:all).with(loaded_threads_css).and_return(loaded_threads_array)
 
-    has_selector(threads_list, threads_list_elements_css, wait: 5)
-    allow(threads_list).to receive(:all).with(threads_list_elements_css, wait: 5).and_return(threads_list_array)
+    has_selector(threads_list, threads_list_elements_css)
+    allow(threads_list).to receive(:all).with(threads_list_elements_css).and_return(threads_list_array)
 
     create_node_array(threads_list_array, 3)
     count = 0
     threads_list_array.each do |threads_list_elements|
-      has_selector(threads_list_elements, thread_name_css, wait: 5)
-      allow(threads_list_elements).to receive(:find).with(thread_name_css, wait: 5).and_return(thread_name_array[count])
+      has_selector(threads_list_elements, thread_name_css)
+      allow(threads_list_elements).to receive(:find).with(thread_name_css).and_return(thread_name_array[count])
       allow(thread_name_array[count]).to receive(:text).and_return(names_array[count])
       allow(thread_name_array[count]).to receive(:click)
       count += 1
@@ -126,11 +126,11 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
 
     context 'wait_messages_page_to_load loop receive only one node at every loop' do
       before do
-        allow(session).to receive(:all).with(message_css, wait: 5).and_return(one_message_array)
+        allow(session).to receive(:all).with(message_css).and_return(one_message_array)
       end
       it {
         expect { sales_nav_threads_instance.execute { |_name, _thread_link| } }
-          .to raise_error('Cannot scrap conversation. Timeout !')
+          .to raise_error('No conversations loaded')
       }
     end
 
@@ -159,7 +159,7 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
     context 'the selector for thread name was not found' do
       before do
         threads_list_array.each do |threads_list_elements|
-          has_not_selector(threads_list_elements, thread_name_css, wait: 5)
+          has_not_selector(threads_list_elements, thread_name_css)
         end
       end
       it {
@@ -174,8 +174,8 @@ RSpec.describe ScrapIn::SalesNavigator::ScrapThreads do
 
     context 'when an error occurs while loading messages' do
       before do
-        has_selector(threads_list, threads_list_elements_css, wait: 5)
-        allow(threads_list).to receive(:all).with(threads_list_elements_css, wait: 5).and_return([])
+        has_selector(threads_list, threads_list_elements_css)
+        allow(threads_list).to receive(:all).with(threads_list_elements_css).and_return([])
         sales_nav_threads_instance.execute { |_name, _thread_link| }
       end
       it { expect(sales_nav_threads_instance.find_conversation(0)).to eq(false) }

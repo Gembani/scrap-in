@@ -38,7 +38,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
     allow(name_node).to receive(:text).and_return(name)
 
     has_selector(session, location_css, wait: 5)
-    find(session, location_node, location_css, wait: 5)
+    all(session, [location_node], location_css)
     allow(location_node).to receive(:text).and_return(location)
 
     has_selector(session, degree_css, wait: 5)
@@ -110,12 +110,15 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
       end
 
       context 'when no location_css' do
-        before { has_not_selector(session, location_css, wait: 5) }
-        it { expect { subject.location }.to raise_error(/#{location_css}/) }
-        it { expect { subject.location }.to raise_error(ScrapIn::CssNotFound) }
+        before do
+          all(session, [], location_css)
+        end
+        it { expect(subject.location).to eq(nil) }
       end
 
       context 'when want the location' do
+        
+        
         it { expect(subject.location).to eq(location) }
       end
 

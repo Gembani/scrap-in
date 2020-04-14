@@ -48,21 +48,21 @@ module ScrapIn
 
       def wait_messages_page_to_load
         raise 'No conversations loaded' unless check_until(3) do 
-          @session.all(message_css, wait: 5).count > 2
+          @session.all(message_css).count > 2
         end
       end
 
       def find_conversation(count)
         threads_list = check_and_find(@session, threads_list_css)
-        threads_list_elements = threads_list.all(threads_list_elements_css, wait: 5)[count]
+        threads_list_elements = threads_list.all(threads_list_elements_css)[count]
         return false if threads_list_elements.nil?
 
-        check_and_find(threads_list_elements, thread_name_css, wait: 5)
+        check_and_find(threads_list_elements, thread_name_css)
       end
 
       def set_limit
         threads_list = check_and_find(@session, threads_list_css)
-        threads_list.all(loaded_threads_css, wait: 5).count
+        threads_list.all(loaded_threads_css).count
       end
     end
   end
