@@ -33,11 +33,11 @@ module ScrapIn
       true
     end
 
-    def check_until(amount_of_time)
-      amount_of_time.times do
+    def try_until_true(max_retries, sleep_in_between = 0.001)
+      max_retries.times do
         return true if yield
 
-        sleep(0.001)
+        sleep(sleep_in_between)
       end
       false
     end

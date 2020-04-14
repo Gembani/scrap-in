@@ -8,7 +8,7 @@ describe ScrapIn::Tools do
   end
   it 'does something' do
     count = 0
-    subject.check_until(5) do 
+    subject.try_until_true(5) do 
       count = + 1
       true
     end

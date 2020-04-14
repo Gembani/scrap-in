@@ -33,7 +33,7 @@ module ScrapIn
 
       def search_for_message_button
         puts 'Checking if message button has appeared on profile page'
-        button_found = check_until(500) do
+        button_found = try_until_true(3) do
           @session.has_selector?(message_button_css, text: message_button_text, wait: 0)
         end
         raise CssNotFound.new(message_button_css, text = message_button_text) unless button_found
@@ -81,7 +81,7 @@ module ScrapIn
         visit_profile
         puts 'Clicking on Message button'
         click_message_link
-        message_exists = check_until(500) do
+        message_exists = try_until_true(3) do
           @session.has_selector?(message_container, text: @inmail_message, wait: 5)
         end
         raise CssNotFound.new(message_container, text: @inmail_message) unless message_exists

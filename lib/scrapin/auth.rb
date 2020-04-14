@@ -31,7 +31,7 @@ module ScrapIn
     end
 
     def homepage_is_loaded?
-      check_until(10) do
+      try_until_true(10) do
         @session.has_field?(placeholder: search_placeholder, wait: 1)
       end
     end
@@ -47,11 +47,11 @@ module ScrapIn
     def enter_credentials(username, password)
       puts 'Visiting login screen'
       @session.visit(homepage)
-      already_logged_in = check_until(5) do 
+      already_logged_in = try_until_true(3) do 
         current_url_already_logged
       end
       
-      # security_check = check_until(5) do 
+      # security_check = try_until_true(5) do 
       #   @session.find()
       # end
 

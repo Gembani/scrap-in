@@ -23,7 +23,7 @@ module ScrapIn
 
       def click_on_page(page)
         # sometimes the click on page two fails... not sure why.
-        raise "Did not successfully click on #{page}" unless check_until(5) do 
+        raise "Did not successfully click on #{page}" unless try_until_true(5) do 
           puts "clicking on page #{page}"
           page_button = check_and_find(@session, page_css(page))
           page_button.click
@@ -35,7 +35,7 @@ module ScrapIn
       end
 
       def check_results_loaded
-        raise CssNotFound, results_loaded_css unless check_until(10) do
+        raise CssNotFound, results_loaded_css unless try_until_true(3) do
           @session.has_selector?(results_loaded_css)
         end
       end
@@ -59,7 +59,7 @@ module ScrapIn
         ensure_leads_are_loaded
        
         count = 0
-        raise CssNotFound, nth_result_css(count) unless check_until(5) do
+        raise CssNotFound, nth_result_css(count) unless try_until_true(5) do
           @session.has_selector?(nth_result_css(count))
         end
 
@@ -82,7 +82,7 @@ module ScrapIn
       end
 
       def ensure_leads_are_loaded
-        raise CssNotFound, '.result-lockup__icon-link' unless check_until(5) do
+        raise CssNotFound, '.result-lockup__icon-link' unless try_until_true(5) do
           @session.has_selector?('.result-lockup__icon-link')
         end
       end

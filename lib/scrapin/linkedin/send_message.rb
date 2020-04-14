@@ -29,7 +29,7 @@ module ScrapIn
 
       def wait_messages_to_appear
         puts 'waiting messages to appear'
-        messages_appear = check_until(500) do
+        messages_appear = try_until_true(3) do
           @session.all(messages_css).count.positive?
         end
         messages_appear

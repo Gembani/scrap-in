@@ -27,7 +27,7 @@ module ScrapIn
             if count > 0
               old_url = @session.current_url
               conversation.click
-              raise 'url did not change' unless check_until(500) do  
+              raise 'url did not change' unless try_until_true(5, 5) do  
                 old_url != @session.current_url
               end
             end
@@ -47,7 +47,7 @@ module ScrapIn
       end
 
       def wait_messages_page_to_load
-        raise 'No conversations loaded' unless check_until(3) do 
+        raise 'No conversations loaded' unless try_until_true(3) do 
           @session.all(message_css).count > 2
         end
       end
