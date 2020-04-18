@@ -24,6 +24,10 @@ module CssSelectors
     def sales_navigator_placeholder
       'Search by keywords or boolean'
     end
+    
+    def new_sales_navigator_placeholder
+      'Search for leads and accounts'
+    end
 
     def security_check_css
       'main h1'

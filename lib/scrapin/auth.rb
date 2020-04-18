@@ -32,7 +32,11 @@ module ScrapIn
 
     def homepage_is_loaded?
       try_until_true(10) do
-        @session.has_field?(placeholder: search_placeholder, wait: 1)
+        has_field = @session.has_field?(placeholder: search_placeholder, wait: 1)
+        if !@linkedin && !has_field
+          has_field = @session.has_field?(placeholder: new_sales_navigator_placeholder, wait: 1) 
+        end
+        has_field
       end
     end
 
