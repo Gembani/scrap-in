@@ -7,8 +7,12 @@ module CssSelectors
         'li.search-results__result-item div.search-results__result-container'
       end
 
-      def nth_result_css(count)
+      def nth_result_link_css(count)
         "ol.search-results__result-list > li:nth-child(#{count + 1}) .result-lockup__icon-link"
+      end
+
+      def nth_result_name_css(count)
+        "ol.search-results__result-list > li:nth-child(#{count + 1}) .result-lockup__name"
       end
 
       def page_css(page)

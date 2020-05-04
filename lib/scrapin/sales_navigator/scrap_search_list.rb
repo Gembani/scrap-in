@@ -16,8 +16,8 @@ module ScrapIn
       def execute(page = 1)
         @session.visit(@saved_search_link)
         visit_page(page)
-        find_page_leads(page) do |link|
-          yield link
+        find_page_leads(page) do |link, name|
+          yield link, name
         end
       end
 
@@ -59,18 +59,20 @@ module ScrapIn
         ensure_leads_are_loaded
        
         count = 0
-        raise CssNotFound, nth_result_css(count) unless try_until_true(5) do
-          @session.has_selector?(nth_result_css(count))
+        raise CssNotFound, nth_result_link_css(count) unless try_until_true(5) do
+          @session.has_selector?(nth_result_link_css(count))
         end
 
         loop do 
-          break unless @session.has_selector?(nth_result_css(count), wait: 5)
+          break unless @session.has_selector?(nth_result_link_css(count), wait: 5)
 
-          element = @session.find(nth_result_css(count))
-          link = element[:href]
-          yield link
+          link_element = @session.find(nth_result_link_css(count))
+          name_element = @session.find(nth_result_name_css(count))
+          link = link_element[:href]
+          name = name_element.text
+          yield link, name
           count += 1
-          scroll_to(element)
+          scroll_to(link_element)
         end
         last_page = check_and_find(@session, last_page_css).text.to_i
         
