@@ -23,7 +23,8 @@ module ScrapIn
             conversation = find_conversation(count)
             return false if conversation == false
 
-            name = conversation.text
+            # name = conversation.text
+            name = find_lead_name
             if count > 0
               old_url = @session.current_url
               conversation.click
@@ -58,6 +59,10 @@ module ScrapIn
         return false if threads_list_elements.nil?
 
         check_and_find(threads_list_elements, thread_name_css)
+      end
+
+      def find_lead_name
+        check_and_find(@session, lead_name_css).text
       end
 
       def set_limit

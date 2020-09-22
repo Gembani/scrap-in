@@ -15,11 +15,15 @@ module CssSelectors
       end
 
       def thread_name_css
-        '.artdeco-entity-lockup__title' 
+        '.artdeco-entity-lockup__title'
       end
 
       def message_css
         '.thread-container li'
+      end
+
+      def lead_name_css
+        '.inbox__right-rail-container > .conversation-insights__section .artdeco-entity-lockup__title > span:first-child'
       end
     end
   end
