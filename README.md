@@ -1,11 +1,18 @@
 # Scrapin
 
 ScrapIn is a Ruby tool for LinkedIn and SalesNavigator. Feel free to include it in a project as a Gem.
+We use it alsmost entirley SalesNavigator, we encourage you to do the same
 
 > CAUTION: USE AT YOUR OWN RISK 
 You could be banned from Linkedin if you abuse.
 
-## Getting Started
+#### This readme is very much a WIP
+We just decided to release this as open source it's what powers https://www.getzendin.com/
+
+
+### We are a nice team!
+If you want to use this, please feel free to contact us if you get stuck - we'll help you out.
+
 
 ### Prerequisites
 
@@ -110,6 +117,9 @@ SeleniumSessionManager.instance.user_session(user.email, user.linkedin_password
 	end
 end
 ```
+
+### Sharing sessions
+Linkedin will ban you if you have too many connections. We share sessions between runs. To acheive this, we monkeypatch selenium webdriver checkout the spec_helper for more information
 
 ## Authors
 - Nick Stock
