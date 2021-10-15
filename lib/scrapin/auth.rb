@@ -11,8 +11,9 @@ module ScrapIn
       @linkedin = linkedin
       
       raise CaptchaError if security_check?
-      
-      enter_credentials(username, password)
+      is_already_logged_in = homepage_is_loaded?
+      return true if is_already_logged_in
+      enter_credentials(username, password)  
       success = homepage_is_loaded?
       raise IncorrectPassword if @session.has_selector?(password_error_css, wait: 1)
       raise CaptchaError if security_check?

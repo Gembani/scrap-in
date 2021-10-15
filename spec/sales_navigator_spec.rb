@@ -15,7 +15,7 @@ RSpec.describe ScrapIn do
 
   describe '.sales_nav_scrap_search_list' do
     let(:list_url) { ENV.fetch('s_scrap_search_list') }
-    let(:last_page) { 100 }
+    let(:last_page) { 20 }
     before do
       @sales_nav_scrap_search_list = @session.sales_nav_scrap_search_list(list_url)
     end

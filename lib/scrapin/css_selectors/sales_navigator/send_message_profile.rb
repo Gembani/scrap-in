@@ -2,7 +2,7 @@ module CssSelectors
   module SalesNavigator
     module SendMessageProfile
       def profile_send_button
-        '.button-secondary-large'
+        '.profile-topcard-actions > .artdeco-button--secondary'
       end
 
       def profile_send_message_button

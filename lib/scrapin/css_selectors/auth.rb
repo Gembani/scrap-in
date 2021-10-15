@@ -26,7 +26,7 @@ module CssSelectors
     end
     
     def new_sales_navigator_placeholder
-      'Search for leads and accounts'
+      'Search'
     end
 
     def security_check_css
