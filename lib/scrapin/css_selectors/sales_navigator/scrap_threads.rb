@@ -3,7 +3,7 @@ module CssSelectors
   module SalesNavigator
     module ScrapThreads
       def threads_list_css
-        '.infinite-scroller ul'
+        '.left-rail  ul.list-style-none'
       end
 
       def threads_list_elements_css
@@ -22,6 +22,10 @@ module CssSelectors
         '.thread-container li'
       end
 
+      def lead_link_css
+        '.conversation-insights__section.pt4 a'
+      end
+      
       def lead_name_css
         '.inbox__right-rail-container > .conversation-insights__section .artdeco-entity-lockup__title > span:first-child'
       end

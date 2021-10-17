@@ -98,7 +98,7 @@ RSpec.describe ScrapIn do
 
   describe '.sales_nav_scrap_threads' do
     context 'when scrapping open threads' do
-      xit 'wants to scrap 100 threads but there is less open conversations' do
+      it 'wants to scrap 100 threads but there is less open conversations' do
         count = 0
         @session.sales_nav_scrap_threads.execute(100) do |name, thread|
           puts "#{name}, #{thread}"

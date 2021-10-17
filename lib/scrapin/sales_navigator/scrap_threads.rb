@@ -23,8 +23,6 @@ module ScrapIn
             conversation = find_conversation(count)
             return false if conversation == false
 
-            # name = conversation.text
-            name = find_lead_name
             if count > 0
               old_url = @session.current_url
               conversation.click
@@ -32,8 +30,11 @@ module ScrapIn
                 old_url != @session.current_url
               end
             end
+            # name = conversation.text
+            name = find_lead_name
+            link = find_lead_link
             thread_link = @session.current_url
-            yield name, thread_link
+            yield name, thread_link, link
             count += 1
           end
           sleep(1.5)
@@ -54,6 +55,7 @@ module ScrapIn
       end
 
       def find_conversation(count)
+        
         threads_list = check_and_find(@session, threads_list_css)
         threads_list_elements = threads_list.all(threads_list_elements_css)[count]
         return false if threads_list_elements.nil?
@@ -61,6 +63,10 @@ module ScrapIn
         check_and_find(threads_list_elements, thread_name_css)
       end
 
+      def find_lead_link
+        check_and_find(@session, lead_link_css)[:href]
+      end
+      
       def find_lead_name
         check_and_find(@session, lead_name_css).text
       end
