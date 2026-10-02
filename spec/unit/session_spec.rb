@@ -12,7 +12,7 @@ RSpec.describe ScrapIn::Session do
 
     platform_name = linkedin ? 'linkedin' : 'sales navigator'
     before do
-      allow(ENV).to receive(:fetch).with('driver').and_return(driver)
+      allow(ENV).to receive(:fetch).with('driver', 'scrapin_driver').and_return(driver)
       allow(Capybara::Session).to receive(:new).with(driver.to_sym).and_return(capybara_session)
       allow(auth).to receive(:login!).with(username, password, linkedin)
       allow(ScrapIn::Auth).to receive(:new).with(capybara_session).and_return(auth)

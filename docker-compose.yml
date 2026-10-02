@@ -1,0 +1,45 @@
+# Chrome runs inside the `browser` container so it never grabs your screen.
+# Watch / take over (captchas, 2FA) at http://localhost:7900 or vnc://localhost:5900.
+services:
+  browser:
+    build:
+      context: docker
+      dockerfile: browser.Dockerfile
+    # Chrome locks its profile by hostname; keep it stable so restarts can reuse the profile.
+    hostname: browser
+    shm_size: 2gb
+    environment:
+      SE_VNC_NO_PASSWORD: 'true'
+      SE_NODE_MAX_SESSIONS: '1'
+      SE_NODE_SESSION_TIMEOUT: '1800'
+      SE_SCREEN_WIDTH: '1920'
+      SE_SCREEN_HEIGHT: '1080'
+    ports:
+      - '127.0.0.1:4444:4444' # WebDriver, for running specs from the host
+      - '127.0.0.1:7900:7900' # noVNC in your web browser
+      - '127.0.0.1:5900:5900' # plain VNC (macOS Screen Sharing)
+    volumes:
+      - chrome-profile:/home/seluser/chrome-profile
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -sf http://localhost:4444/status | grep -q "\"ready\": true"']
+      interval: 5s
+      retries: 20
+
+  scrapin:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      HUB_URL: http://browser:4444
+      CHROME_PROFILE_DIR: /home/seluser/chrome-profile
+    volumes:
+      - .:/app
+    depends_on:
+      browser:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+volumes:
+  chrome-profile:

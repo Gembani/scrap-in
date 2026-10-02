@@ -13,49 +13,49 @@ module ScrapIn
       def execute(num_times = 40)
         return false unless visit_target_page
 
-        count = 0
-        num_times.times do
-          search_for_name_and_time_ago(count) do |name, time_ago, link|
-            yield name, time_ago, link
-          end
-          count += 1
+        num_times.times do |count|
+          friend = get_next_friend(count)
+          break unless friend
+
+          yield name(friend), time_ago(friend), link(friend)
         end
         true
-      end
-
-      def search_for_name_and_time_ago(count)
-        friend = get_next_friend(count)
-        if friend && @session.has_selector?(friend_name_css) &&
-           @session.has_selector?(time_ago_css) && @session.has_selector?(link_css)
-          name = check_and_find(friend, friend_name_css).text
-          link = check_and_find(friend, link_css)[:href].chomp('/')
-          time_ago = check_and_find(friend, time_ago_css).text
-          yield name, time_ago, link
-        end
       end
 
       def visit_target_page
         @session.visit(@connection_url)
-        return false unless wait_messages_to_appear
+        return false unless wait_friends_to_appear
 
-        puts 'Messages have been visited.'
+        puts 'Connections have been visited.'
         true
       end
-      
-      def wait_messages_to_appear
-        puts 'waiting messages to appear'
-        messages_appear = try_until_true(3) do
-          @session.has_selector?(nth_friend_css(0))
+
+      def wait_friends_to_appear
+        puts 'waiting connections to appear'
+        try_until_true(3) do
+          @session.has_selector?(friend_card_css)
         end
-        messages_appear
       end
 
       def get_next_friend(count)
-        return nil unless @session.has_selector?(nth_friend_css(count))
-
-        friend = check_and_find(@session, nth_friend_css(count))
-        scroll_to(friend)
+        friends = @session.all(friend_card_css, wait: 0)
+        friends = load_more_items(friend_card_css, friends.size) if count >= friends.size
+        friend = friends[count]
+        scroll_to(friend) if friend
         friend
+      end
+
+      def name(friend)
+        check_and_find(friend, friend_name_css).text
+      end
+
+      # "Connected on October 2, 2026" -> "October 2, 2026"
+      def time_ago(friend)
+        check_and_find(friend, 'p', text: connected_on_regex).text.sub(connected_on_regex, '')
+      end
+
+      def link(friend)
+        check_and_find_first(friend, link_css)[:href].chomp('/')
       end
     end
   end

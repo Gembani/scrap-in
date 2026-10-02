@@ -1,5 +1,5 @@
 module ScrapIn
-  # Class which yield messages and direction in sales conversation
+  # Class which yield messages and direction in a conversation
   module ScrapMessages
     include Tools
     
@@ -16,22 +16,31 @@ module ScrapIn
       count = loaded_messages - 1
 
       number_of_messages.times.each do
-        if count < 1
-          count += 1 # When there is not enough messages to scrap the first one is "beginnning of the conversation"
-          # and should be ignore
+        if count < first_message_index
+          count += 1
           puts "Maximum scrapped messages reached, total [#{loaded_messages - count}]"
           break
         else
           message = get_message(count)
-          message_content = check_and_find(message, content_css, wait: 5)['innerHTML']
+          content = message_content(message)
         end
-        yield message_content, sender(message)
+        yield content, sender(message) unless content.nil?
         count -= 1
       end
       sleep(0.5)
       true
     end
     
+    # When there is not enough messages to scrap the first element is "beginning of the conversation"
+    # and should be ignored
+    def first_message_index
+      1
+    end
+
+    def message_content(message)
+      check_and_find(message, content_css, wait: 5)['innerHTML']
+    end
+
     def confirm_lead(lead_name)
       lead_name_in_thread = check_and_find(@session, lead_name_css).text
       raise LeadNameMismatch.new(lead_name, lead_name_in_thread) unless lead_name_in_thread.include?(lead_name)
@@ -40,7 +49,7 @@ module ScrapIn
     def visit_thread_link
       @session.visit(@thread_link) if @session.current_url != @thread_link
       wait_messages_to_appear
-      puts 'Sales messages have been visited.'
+      puts 'Messages have been visited.'
     end
 
     def wait_messages_to_appear
@@ -50,7 +59,7 @@ module ScrapIn
       end
     end
 
-    # Only the 10 first messages are loaded in Sales, then they are loaded 10 by 10
+    # Only the 10 first messages are loaded, then they are loaded 10 by 10
     def load(number_of_messages)
       loaded_messages = count_loaded_messages
       while loaded_messages < number_of_messages
@@ -66,8 +75,8 @@ module ScrapIn
     end
 
     def find_message_thread
-      sales_messages = check_and_find_first(@session, messages_css, wait: 5)
-      check_and_find(sales_messages, message_thread_css, wait: 5)
+      messages = check_and_find_first(@session, messages_css, wait: 5)
+      check_and_find(messages, message_thread_css, wait: 5)
     end
 
     def count_loaded_messages

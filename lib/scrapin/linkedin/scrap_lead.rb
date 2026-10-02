@@ -5,17 +5,14 @@ module ScrapIn
       include Tools
       include CssSelectors::LinkedIn::ScrapLead
 
-      attr_reader :name, :emails, :url, :linkedin_url,
-                  :sales_nav_url, :links, :phones, :error, :location
+      attr_reader :linkedin_url
 
       def initialize(config, session)
         @popup_open = false
         @linkedin_url = config[:linkedin_url] || ''
-        @get_sales_nav_url = config[:get_sales_nav_url] || false
         raise 'Lead\'s linkedin url is not valid' unless @linkedin_url.include?('linkedin.com/in/')
-        
+
         @session = session
-        @info_popup = @linkedin_url + 'detail/contact-info/'
       end
 
       def execute
@@ -23,14 +20,12 @@ module ScrapIn
       end
 
       def to_hash
-        data = {
+        {
           name: name,
           location: location,
           linkedin_url: @linkedin_url,
           first_degree: first_degree?
         }.merge(scrap_datas)
-        data[:sales_nav_url] = sales_nav_url if @get_sales_nav_url
-        data
       end
 
       def scrap_datas
@@ -41,84 +36,66 @@ module ScrapIn
         data
       end
 
-      def sales_nav_url
-        close_popup
-        find_and_click(@session, sales_nav_button_css)
-        @session.driver.browser.switch_to.window(@session.driver.browser.window_handles.last)
-        url = @session.current_url 
-        @session.driver.browser.execute_script('window.close()', @session.find('body'))
-        @session.driver.browser.switch_to.window(@session.driver.browser.window_handles.first)
-        url
-      end
-
       def name
-        close_popup
-        check_and_find(@session, name_css, wait: 5).text
+        check_and_find(top_card, name_css, wait: 5).text
       end
 
+      # The location is the last line before "· Contact info", it may not exist
       def location
-        close_popup
-        # on linkedin sometimes location doesn't exist
-        location_container = @session.all(location_css).first
-        return nil unless location_container
+        lines = top_card_lines
+        index = lines.index(contact_info_text)
+        return nil unless index
 
-        location_container.text
+        candidates = lines[0...index].reject { |line| line == '·' || line.match?(degree_regex) }
+        candidates.size > 1 ? candidates.last : nil
       end
 
       # We expect the user to only scrap 1st degree leads
       def first_degree?
-        close_popup
-        check_and_find(@session, degree_css, wait: 5).text == '1st'
+        degree = top_card_lines.find { |line| line.match?(degree_regex) }
+        degree&.match(degree_regex)&.captures&.first == '1st'
       end
 
       def scrap_emails
-        open_popup
-        email_list = []
-        return email_list unless @session.has_selector?(emails_css, wait: 5)
-
-        email = @session.find(emails_css, wait: 5).text
-        email_list << email
-        email_list
+        contact_values('Email')
       end
 
       def scrap_links
-        open_popup
-        links_list = []
-        return links_list unless @session.has_selector?(websites_css, wait: 5)
-
-        websites = @session.all(websites_css, wait: 5)
-        websites.each_with_index do |_link, index|
-          links_list << websites[index].text.split[0]
-        end
-        links_list
+        contact_values('Website').map { |text| text.split.first }
       end
 
       def scrap_phones
-        open_popup
-        phones = []
-        return phones unless @session.has_selector?(phone_css, wait: 5)
-
-        phones << @session.first(phone_css, wait: 5).text
-        phones
+        contact_values('Phone')
       end
 
       private
 
-      def go_to_url(url)
-        @session.visit(url) if @session.current_url != url
+      def top_card
+        close_popup
+        check_and_find(@session, top_card_css, wait: 10)
       end
 
-      def open_popup
-        go_to_url(@info_popup)
-        return false if @popup_open
+      def top_card_lines
+        top_card.all('p').map { |paragraph| paragraph.text.strip }
+      end
 
-        @popup_open = false
+      def contact_values(label)
+        open_popup
+        dialog = check_and_find(@session, contact_info_css, wait: 5)
+        dialog.all(:xpath, contact_values_xpath(label), wait: 1).map { |value| value.text.strip }
+      end
+
+      # The contact info overlay only opens from the profile, visiting its url redirects to the profile
+      def open_popup
+        return if @popup_open
+
+        top_card.click_link(contact_info_text)
+        @popup_open = true
       end
 
       def close_popup
-        go_to_url(@linkedin_url)
-        return false unless @popup_open
-
+        on_profile = @session.current_url.start_with?(@linkedin_url.chomp('/'))
+        @session.visit(@linkedin_url) if @popup_open || !on_profile
         @popup_open = false
       end
     end

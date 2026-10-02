@@ -11,10 +11,9 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
       has_selector(element, sender_css, wait: 2, visible: false)
 
       content = { 'innerHTML' => message_content(count) }
-      content = { 'innerHTML' => 'beginnning of the conversation' } if count.zero?
 
       # Alternate senders to see incoming and outgoing directions
-      allow(element).to receive(:find).with(content_css, wait: 5).and_return(content)
+      allow(element).to receive(:first).with(content_css, minimum: 0).and_return(content)
 
       if count.even?
         allow(element).to receive(:find).with(sender_css_container).and_return(class: 'this is a string')
@@ -24,19 +23,19 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
     end
   end
   let(:session) { instance_double('Capybara::Session', 'session') }
-  let(:sales_messages) { instance_double('Capybara::Node::Element', 'sales_messages') }
+  let(:messages_node) { instance_double('Capybara::Node::Element', 'messages_node') }
   let(:message_thread) { instance_double('Capybara::Node::Element', 'message_thread') }
 
   let(:subject) do
     described_class
   end
 
-  let(:salesnav_messages_instance) do
+  let(:messages_instance) do
     subject.new(session, thread_link)
   end
 
   let(:message_thread_elements) { [] }
-  let(:sales_loaded_messages) { [] }
+  let(:loaded_messages) { [] }
   let(:bigger_conversation) { [] }
 
   let(:thread_link) { 'Conversation link to scrap' }
@@ -54,21 +53,21 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
       allow(node).to receive(:native) # Method used by scroll_up_to
       allow(node).to receive(:find).with(sender_css_container).and_return(class: 'this is a string')
     end
-    create_node_array(sales_loaded_messages, 1, 'sales_loaded_messages') # Create at least one message to load
+    create_node_array(loaded_messages, 1, 'loaded_messages') # Create at least one message to load
     # otherwise infinite loop to load conversation
     create_conversation(message_thread_elements) # Create a conversation in an array with messages and senders
 
     has_selector(message_thread, message_thread_elements_css, wait: 5)
-    has_selector(sales_messages, message_thread_css, wait: 5)
+    has_selector(messages_node, message_thread_css, wait: 5)
 
     allow(message_thread).to receive(:first).with(message_thread_elements_css, wait: 5).and_return(message_thread_elements[0])
     allow(message_thread).to receive(:all).with(message_thread_elements_css, wait: 5)
                                           .and_return(message_thread_elements) # Return the messages array
-    allow(sales_messages).to receive(:find).with(message_thread_css, wait: 5).and_return(message_thread)
+    allow(messages_node).to receive(:find).with(message_thread_css, wait: 5).and_return(message_thread)
 
-    allow(session).to receive(:all).with(loaded_messages_css, wait: 5).and_return(sales_loaded_messages)
+    allow(session).to receive(:all).with(loaded_messages_css, wait: 5).and_return(loaded_messages)
     # Return array of loaded messages to avoid infinite loop
-    allow(session).to receive(:first).with(messages_css, wait: 5).and_return(sales_messages)
+    allow(session).to receive(:first).with(messages_css, wait: 5).and_return(messages_node)
     # Return node for messages
 
     allow(session).to receive(:current_url).and_return(thread_link)
@@ -82,8 +81,8 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
     context 'when everything is ok in order to scrap conversation messages' do
       context 'when all the messages have been loaded' do
         it 'puts successfully messages and direction and returns true' do
-          count = 4 # because the conversation size is 5 (-1, the first one does not count)
-          result = salesnav_messages_instance.execute(10) do |message, direction|
+          count = 4 # the conversation size is 5, scrapped from the newest
+          result = messages_instance.execute(10) do |message, direction|
             expect(message).to eq(message_content(count))
             if count.even?
               expect(direction).to eq(:outgoing)
@@ -92,6 +91,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
             end
             count -= 1
           end
+          expect(count).to eq(-1)
           expect(result).to be(true)
         end
       end
@@ -109,7 +109,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
         end
         it 'puts successfully messages and direction and returns true' do
           count = 10 - 1
-          result = salesnav_messages_instance.execute(10) do |message, direction|
+          result = messages_instance.execute(10) do |message, direction|
             expect(message).to eq(message_content(count))
             if count.even?
               expect(direction).to eq(:outgoing)
@@ -124,7 +124,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
 
       context 'when execute with 0 messages expected' do
         it 'returns true' do
-          result = salesnav_messages_instance.execute(0) { |message, direction| }
+          result = messages_instance.execute(0) { |message, direction| }
           expect(result).to be(true)
         end
       end
@@ -132,7 +132,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
       context 'when execute with no number of messages argument' do
         it 'returns true' do
           count = 5 - 1
-          result = salesnav_messages_instance.execute do |message, direction|
+          result = messages_instance.execute do |message, direction|
             expect(message).to eq(message_content(count))
             if count.even?
               expect(direction).to eq(:outgoing)
@@ -145,7 +145,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
         end
       end
       context 'when execute with negative number of messages argument' do
-        it { expect(salesnav_messages_instance.execute(-1000) { |message, direction| }).to be(true) }
+        it { expect(messages_instance.execute(-1000) { |message, direction| }).to be(true) }
       end
     end
 
@@ -153,7 +153,7 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
       context 'when cannot load messages' do
         before { allow(session).to receive(:all).with(loaded_messages_css, wait: 5).and_return([]) }
         it do
-          expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
+          expect { messages_instance.execute(1) { |_message, _direction| } }
             .to raise_error('Cannot scrap conversation. Timeout !')
         end
       end
@@ -162,21 +162,21 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
     context 'when cannot find the sales_message_css' do
       before { has_not_selector(session, messages_css, wait: 5) }
       it do
-        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
+        expect { messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
+        expect { messages_instance.execute(1) { |_message, _direction| } }
           .to raise_error(/#{messages_css}/)
       end
     end
 
     context 'when cannot find the message_thread_css' do
-      before { has_not_selector(sales_messages, message_thread_css, wait: 5) }
+      before { has_not_selector(messages_node, message_thread_css, wait: 5) }
       it do
-        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
+        expect { messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }
+        expect { messages_instance.execute(1) { |_message, _direction| } }
           .to raise_error(/#{message_thread_css}/)
       end
     end
@@ -187,24 +187,24 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
         allow(message_thread).to receive(:all).with(message_thread_elements_css, wait: 5).and_return([])
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
+        expect { messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
       end
       it do
-        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(/#{message_thread_elements_css}/)
+        expect { messages_instance.execute(1) { |_message, _direction| } }.to raise_error(/#{message_thread_elements_css}/)
       end
     end
 
-    context 'when cannot find the content_css' do
+    context 'when messages have no text content (link previews, attachments...)' do
       before do
         message_thread_elements.each do |message|
-          has_not_selector(message, content_css, wait: 5)
+          allow(message).to receive(:first).with(content_css, minimum: 0).and_return(nil)
         end
       end
-      it do
-        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(ScrapIn::CssNotFound)
-      end
-      it do
-        expect { salesnav_messages_instance.execute(1) { |_message, _direction| } }.to raise_error(/#{content_css}/)
+      it 'skips them' do
+        yielded = []
+        result = messages_instance.execute(5) { |message, _direction| yielded << message }
+        expect(yielded).to be_empty
+        expect(result).to be(true)
       end
     end
 
@@ -219,13 +219,13 @@ RSpec.describe ScrapIn::LinkedIn::ScrapMessages do
       end
       context 'when we give the correct one' do
         it 'returns true without raising an error' do
-          expect(salesnav_messages_instance.execute(1, 'STOCK Nicholas') { |_message, _direction| }).to be(true)
+          expect(messages_instance.execute(1, 'STOCK Nicholas') { |_message, _direction| }).to be(true)
         end
       end
       context 'when we give a wrong one' do
         it do
           expect do
-            salesnav_messages_instance.execute(1, 'CEBULA Sébastien') { |_message, _direction| }
+            messages_instance.execute(1, 'CEBULA Sébastien') { |_message, _direction| }
           end
             .to raise_error(ScrapIn::LeadNameMismatch)
         end

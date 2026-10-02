@@ -14,50 +14,38 @@ module ScrapIn
         'https://www.linkedin.com/mynetwork/invitation-manager/sent/'
       end
 
-      def find_lead(count)
-        return unless @session.has_selector?(nth_lead_css(count), wait: 3)
+      def execute(num_times = 50)
+        return unless init_list(target_page)
 
-        item = @session.find(nth_lead_css(count))
+        num_times.times do |count|
+          invitation = get_invitation(count)
+          break unless invitation
+
+          find_lead(invitation) { |url, name| yield url, name }
+        end
+      end
+
+      def get_invitation(count)
+        invitations = @session.all(invitation_css, wait: 0)
+        invitations = load_more_items(invitation_css, invitations.size) if count >= invitations.size
+        invitations[count]
+      end
+
+      def find_lead(item)
         scroll_to(item)
-        
-        name = item.text
-        url = item.find(:xpath, '..')[:href]
+        name = check_and_find_first(item, lead_name_css).text
+        url = check_and_find_first(item, lead_link_css)[:href]
         return if name.empty?
 
         @invited_leads.push name
         yield url, name
       end
 
-      def execute(num_times = 50)
-        return unless init_list(target_page)
-
-        count = 0
-        num_times.times.each do
-          unless @session.has_selector?(
-            nth_lead_css(count, invitation: false), wait: 10
-          )
-            count = 0
-            break unless next_page
-          end
-          find_lead(count) { |url, name| yield url, name }
-          count += 1
-        end
-      end
-
       def init_list(link)
         @session.visit(link)
-        return false unless @session.has_selector?(invitation_list_css)
+        return false unless @session.has_selector?(invitation_css)
 
         true
-      end
-     
-      def next_page
-        url_pre_click = @session.current_url
-        find_and_click(@session, next_button_css)
-        
-        try_until_true(5, 5) do 
-          url_pre_click != @session.current_url
-        end
       end
     end
   end

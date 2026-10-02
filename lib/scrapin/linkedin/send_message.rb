@@ -20,19 +20,20 @@ module ScrapIn
         message_sent?
       end
 
+      # Works on an existing thread url, or on a compose url (messaging/compose/?recipient=...)
+      # for a first message, which has no messages yet
       def visit_profile
-        puts 'Visiting profile...'
+        puts 'Visiting thread...'
 
         @session.visit(@thread)
-        wait_messages_to_appear
+        wait_message_field_to_appear
       end
 
-      def wait_messages_to_appear
-        puts 'waiting messages to appear'
-        messages_appear = try_until_true(3) do
-          @session.all(messages_css).count.positive?
+      def wait_message_field_to_appear
+        puts 'waiting message field to appear'
+        try_until_true(3) do
+          @session.has_selector?(message_field_css)
         end
-        messages_appear
       end
 
       def write_message
@@ -54,16 +55,13 @@ module ScrapIn
 
       def message_sent?
         puts 'Checking the message has been sent...'
-        if @session.all(messages_css)[-1].nil?
-          puts @error.to_s
-          false
-        elsif @session.all(messages_css)[-1].text != @message
-          puts @error.to_s
-          false
-        else
-          puts 'Confirmed'
-          true
-        end
+        sent = try_until_true(10, 1) { last_message_text == @message }
+        puts(sent ? 'Confirmed' : @error)
+        sent
+      end
+
+      def last_message_text
+        @session.all(messages_css).last&.text
       end
     end
   end

@@ -44,7 +44,10 @@ RSpec.describe ScrapIn::Auth do
 
       has_not_selector(session, password_error_css, wait: 1)
       has_selector(session, alert_header_css)
-      has_not_selector(session, security_check_css) # There is no captcha verification
+      has_not_selector(session, security_check_css, wait: 1) # There is no captcha verification
+      # Not logged in yet unless a context says otherwise
+      has_not_field(session, placeholder: linkedin_placeholder, wait: 1)
+      has_not_field(session, placeholder: sales_navigator_placeholder, wait: 1)
     end
 
     context 'when we log in into sales navigator' do
@@ -59,11 +62,18 @@ RSpec.describe ScrapIn::Auth do
           end
         end
         context 'when the credentials are incorrect' do
-          before { has_selector(session, password_error_css, wait: 1) }
+          before do
+            has_not_field(session, placeholder: sales_navigator_placeholder, wait: 1)
+            has_not_field(session, placeholder: new_sales_navigator_placeholder, wait: 1)
+            has_selector(session, password_error_css, wait: 1)
+          end
           it { expect { auth.login!(username, password) }.to raise_error(ScrapIn::IncorrectPassword) }
         end
         context 'when it cannot find the sales navigator search placeholder' do
-          before { has_not_field(session, placeholder: sales_navigator_placeholder, wait: 1) }
+          before do
+            has_not_field(session, placeholder: sales_navigator_placeholder, wait: 1)
+            has_not_field(session, placeholder: new_sales_navigator_placeholder, wait: 1)
+          end
           it { expect { auth.login!(username, password) }.to raise_error(ScrapIn::CssNotFound) }
         end
       end
@@ -80,7 +90,10 @@ RSpec.describe ScrapIn::Auth do
         end
 
         context 'when the credentials are incorrect' do
-          before { has_selector(session, password_error_css, wait: 1) }
+          before do
+            has_not_field(session, placeholder: linkedin_placeholder, wait: 1)
+            has_selector(session, password_error_css, wait: 1)
+          end
           it { expect { auth.login!(username, password, true) }.to raise_error(ScrapIn::IncorrectPassword) }
         end
 

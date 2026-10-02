@@ -2,20 +2,22 @@ module CssSelectors
   # All css selectors used in ScrapIn::Friend Class
   module LinkedIn
     module ScrapFriends
-      def friend_name_css
-        '.mn-connection-card__name'
+      # componentkey is "ConnectionCard_<page offset>-<profile slug>"
+      def friend_card_css
+        '[componentkey^="ConnectionCard_"]'
       end
 
-      def time_ago_css
-        '.time-ago'
+      # The name is the first paragraph of the profile link, the headline is nested deeper
+      def friend_name_css
+        'a[href*="/in/"] > div > p'
       end
 
       def link_css
-        '.mn-connection-card__details a'
+        'a[href*="/in/"]'
       end
 
-      def nth_friend_css(count)
-        "section.mn-connections > ul >  li:nth-child(#{count + 1})"
+      def connected_on_regex
+        /\AConnected on\s*/
       end
     end
   end

@@ -11,7 +11,7 @@ module CssSelectors
       end
 
       def messages_css
-        '.msg-s-event-listitem p'
+        'p.msg-s-event-listitem__body'
       end
     end
   end

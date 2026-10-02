@@ -1,37 +1,57 @@
 module CssSelectors
   module LinkedIn
     module Invite
-      def connect_buttons_css
-        'button[aria-label^="Connect"]'
+      def top_card_css
+        '[componentkey$="Topcard"]'
       end
 
-      def css_more_button
-        'artdeco-dropdown > artdeco-dropdown-trigger > button'
+      def connect_button_css
+        'a[aria-label^="Invite"][aria-label$="to connect"]'
       end
 
-      def connect_in_more_button_css
-        '[type^="connect-icon"]'
+      def more_button_text
+        'More'
+      end
+
+      def menu_item_css
+        '[role="menu"] [role="menuitem"]'
+      end
+
+      def connect_text
+        'Connect'
+      end
+
+      def pending_css
+        '[aria-label^="Pending"]'
+      end
+
+      # The invitation modal is rendered inside this element's shadow root
+      def modal_host_css
+        '#interop-outlet'
+      end
+
+      def modal_css
+        '[role="dialog"]'
+      end
+
+      def send_without_note_button_css
+        'button[aria-label="Send without a note"]'
       end
 
       def add_a_note_button_css
-        'button.artdeco-button--secondary[aria-label="Add a note"]'
+        'button[aria-label="Add a note"]'
       end
 
       def note_area_css
-        '.send-invite__custom-message'
+        'textarea#custom-message'
       end
 
-      def send_invitation_button_css 
+      def send_invitation_button_css
         'button[aria-label="Send invitation"]'
-        
       end
 
-      def confirmation_text
-        'Your invitation to'
-      end
-
-      def more_dropdown_css
-        '.pv-s-profile-actions__overflow-dropdown'
+      def dismiss_button_css
+        'button[aria-label="Dismiss"]'
       end
     end
   end

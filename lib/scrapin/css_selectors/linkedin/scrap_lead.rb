@@ -1,33 +1,32 @@
 module CssSelectors
   module LinkedIn
-    # All css used in ScrapIn::ScrapLead class
+    # All css used in ScrapIn::ScrapLead class.
+    # Profile classes are hashed (b4lmff...) and change per deploy, so we anchor on
+    # componentkey/id suffixes, tags and visible labels instead.
     module ScrapLead
+      def top_card_css
+        '[componentkey$="Topcard"]'
+      end
+
       def name_css
-        'li.inline.t-24.t-black.t-normal.break-words' # find
-      end
-      
-      def sales_nav_button_css
-        '.pv-s-profile-actions--view-profile-in-sales-navigator'
+        'h2'
       end
 
-      def phone_css
-        'span.t-14.t-black.t-normal' # first
+      def degree_regex
+        /\A·\s*(1st|2nd|3rd)/
       end
 
-      def emails_css
-        'section.pv-contact-info__contact-type.ci-email div a' # find
+      def contact_info_text
+        'Contact info'
       end
 
-      def location_css
-        'li.t-16.t-black.t-normal.inline-block' # find
+      def contact_info_css
+        '[id$="ContactInfoDetailSection"]'
       end
 
-      def degree_css
-        '.pv-top-card--list .distance-badge .dist-value' # find
-      end
-
-      def websites_css
-        'section.pv-contact-info__contact-type.ci-websites ul li' # find each + .text.split
+      # The value paragraphs following a label ("Email", "Phone", "Website") in the contact info dialog
+      def contact_values_xpath(label)
+        ".//p[normalize-space()='#{label}']/following-sibling::p"
       end
     end
   end

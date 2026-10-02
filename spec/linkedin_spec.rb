@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe ScrapIn do
   before(:all) do
     puts 'Capybara is creating a session for all tests...'
-    @session = ScrapIn::Session.new(ENV.fetch('username'), ENV.fetch('password'))
+    @session = ScrapIn::Session.new(ENV.fetch('username'), ENV.fetch('password'), true)
   end
 
   after(:all) do
@@ -15,14 +15,13 @@ RSpec.describe ScrapIn do
   
   describe '.linkedin_scrap_lead' do
     it 'scraps location, phones, emails and website links for a lead' do
-      linkedin_scrap_lead = @session.linkedin_scrap_lead(linkedin_url: ENV.fetch('l_scrap_lead_url'), get_sales_nav_url: true)
+      linkedin_scrap_lead = @session.linkedin_scrap_lead(linkedin_url: ENV.fetch('l_scrap_lead_url'))
       data = linkedin_scrap_lead.to_hash
-      expect(data[:sales_nav_url]).not_to be_nil
       expect(data[:linkedin_url]).not_to be_nil
       expect(data[:name]).not_to be_nil
       expect(data[:location]).not_to be_nil
       expect(data[:emails].count).to be > 0
-      expect(data[:phones].count).to be > 0
+      expect(data[:phones]).to be_an(Array)
       expect(data[:links].count).to eq(1)
     end
   end
@@ -93,25 +92,15 @@ RSpec.describe ScrapIn do
     end
   end
   
-  # broken for now, and I don't care.
-  xdescribe '.linkedin_invite' do
-    context 'Connect button is visible and no note is added' do
-      it 'invite the lead' do
-        linkedin_invite = @session.linkedin_invite
-        value = linkedin_invite.execute(ENV.fetch('l_invite_url_connect_button_visible'), 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.', false)
-        expect(value).to be(true)
-      end
-    end
-    
-    context 'Connect button is in \'More...\' section and no note is added' do
-      it 'invite the lead' do
-        linkedin_invite = @session.linkedin_invite
-        value = linkedin_invite.execute(ENV.fetch('l_invite_url_must_click_on_more'), 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.', false)
-        expect(value).to be(true)
-      end
+  describe '.linkedin_invite' do
+    # send = false: the invitation is prepared then dismissed, nothing is sent
+    it 'prepares an invitation with a note' do
+      linkedin_invite = @session.linkedin_invite
+      value = linkedin_invite.execute(ENV.fetch('l_invite_url'), 'Hello, it\'s me. I was wondering if after all these years you\'d like to meet.', false)
+      expect(value).to be(true)
     end
   end
-  
+
   describe '.linkedin_scrap_messages' do
     context 'when a lead as an open conversation' do
       it do

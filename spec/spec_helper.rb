@@ -1,14 +1,7 @@
-require 'deep-cover'
 require 'simplecov'
-if ENV['COVERAGE']
-  DeepCover.start
-  DeepCover::AutoRun.run!('.').report!(**DeepCover.config)
-  # SimpleCov.start do 
-  #   add_filter '/spec/'
-  # end
-end
+SimpleCov.start { add_filter '/spec/' } if ENV['COVERAGE']
 require 'bundler/setup'
-require 'byebug'
+require 'debug'
 require 'colorize'
 require 'dotenv/load'
 require 'faker'
@@ -29,45 +22,8 @@ RSpec.configure do |config|
   config.include MockCapybara
   config.include SendInmailHelpers
   config.include MessagesHelpers
-  
+
   config.before(:each) do
     disable_method(:sleep)
-  end
-end
-
-require 'selenium/webdriver'
-module Selenium
-  module WebDriver
-    module Remote
-      class Bridge
-        alias original_execute execute
-        def execute(*args)
-          if args.first == :new_session && File.exist?('mock_response_selenium.json')
-            return JSON.parse(File.read('mock_response_selenium.json'))
-          else
-            data = original_execute(*args)
-          end
-
-          File.write('mock_response_selenium.json', { value: data['value'] }.to_json) if args.first == :new_session
-          data
-        end
-      end
-    end
-  end
-end
-
-Capybara::Selenium::Driver.class_eval do
-  def cleanup_browser
-    
-    @browser&.quit
-  rescue StandardError
-    # Browser must have already gone
-    
-  end
-
-  def quit
-    puts 'not quiting selenium session'
-  rescue Errno::ECONNREFUSED
-    # Browser must have already gone
   end
 end

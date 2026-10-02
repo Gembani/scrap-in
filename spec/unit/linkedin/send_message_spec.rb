@@ -43,7 +43,11 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
 
   context 'when no message_field_css' do
     before { has_not_selector(session, message_field_css) }
-    it { expect { subject.execute }.to raise_error(ScrapIn::CssNotFound) }
+    it { expect(subject.execute).to eq(false) }
+    it 'does not write anything' do
+      subject.execute
+      expect(message_field_node).not_to have_received(:send_keys)
+    end
   end
 
   context 'when no send_button_css' do
@@ -60,7 +64,7 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
   end
 
   context 'when an error occured when sending message' do
-    before { allow(messages_array).to receive(:[]).with(-1).and_return(messages_array[0]) }
+    before { allow(messages_array).to receive(:last).and_return(messages_array[0]) }
     it { expect(subject.message_sent?).to eq(false) }
   end
 

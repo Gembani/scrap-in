@@ -10,16 +10,17 @@ module CssSelectors
         '.msg-s-message-list'
       end
 
+      # Plain 'li' also matches the emoji reaction menus inside each message
       def message_thread_elements_css
-        'li'
+        'li.msg-s-message-list__event'
       end
 
       def loaded_messages_css
-        '.msg-s-message-list-container li'
+        '.msg-s-message-list-container li.msg-s-message-list__event'
       end
 
       def content_css
-        'p'
+        'p.msg-s-event-listitem__body'
       end
 
       def sender_css_container

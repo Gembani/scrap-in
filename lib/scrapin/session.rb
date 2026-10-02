@@ -4,10 +4,11 @@ module ScrapIn
     include LinkedInMethods
     include SalesNavigatorMethods
 
+    attr_reader :capybara
+
     def initialize(username, password, linkedin = false, capybara = false)
       Capybara.default_max_wait_time = 10 # Seconds
-      # Capybara.default_max_wait_time = 60 # Seconds
-      @capybara = capybara || Capybara::Session.new(ENV.fetch('driver').to_sym)
+      @capybara = capybara || Capybara::Session.new(ENV.fetch('driver', 'scrapin_driver').to_sym)
       auth = ScrapIn::Auth.new(@capybara)
       auth.login!(username, password, linkedin)
     end
