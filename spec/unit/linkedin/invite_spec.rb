@@ -37,8 +37,14 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
       has_selector(modal, css)
       find(modal, button, css)
     end
-    has_selector(modal, note_area_css)
+    has_selector(modal, note_area_css, wait: 2)
     find(modal, note_area, note_area_css)
+    allow(modal).to receive(:text).and_return('Add a note to your invitation?')
+    all(top_card, [paragraph('Jane Doe'), paragraph('· 2nd')], 'p')
+  end
+
+  def paragraph(text)
+    instance_double('Capybara::Node::Element', text, text: text)
   end
 
   context 'when the invitation is already pending' do
@@ -46,6 +52,45 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
     it 'does nothing' do
       expect(subject.execute(lead_url)).to be(true)
       expect(connect_button).not_to have_received(:click)
+      expect(subject.status).to eq(:already_pending)
+    end
+  end
+
+  context 'when the lead is already a connection' do
+    before { all(top_card, [paragraph('Jane Doe'), paragraph('· 1st')], 'p') }
+    it 'does not invite' do
+      expect(subject.execute(lead_url)).to be(false)
+      expect(connect_button).not_to have_received(:click)
+      expect(subject.status).to eq(:already_connected)
+    end
+  end
+
+  context 'when the weekly invitation limit is reached' do
+    before { allow(modal).to receive(:text).and_return("You've reached the weekly invitation limit") }
+    it 'dismisses the modal' do
+      expect(subject.execute(lead_url)).to be(false)
+      expect(modal_buttons[dismiss_button_css]).to have_received(:click)
+      expect(modal_buttons[send_without_note_button_css]).not_to have_received(:click)
+      expect(subject.status).to eq(:limit_reached)
+    end
+  end
+
+  context 'when no personalized note is left' do
+    before { has_not_selector(modal, note_area_css, wait: 2) }
+    it 'does not send without the note' do
+      expect(subject.execute(lead_url, note)).to be(false)
+      expect(modal_buttons[send_invitation_button_css]).not_to have_received(:click)
+      expect(modal_buttons[send_without_note_button_css]).not_to have_received(:click)
+      expect(modal_buttons[dismiss_button_css]).to have_received(:click)
+      expect(subject.status).to eq(:note_unavailable)
+    end
+  end
+
+  context 'when the invitation is not confirmed' do
+    before { allow(top_card).to receive(:has_selector?).with(pending_css, wait: 1).and_return(false) }
+    it 'reports it' do
+      expect(subject.execute(lead_url)).to be(false)
+      expect(subject.status).to eq(:not_confirmed)
     end
   end
 
@@ -56,6 +101,7 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
     it { expect(modal_buttons[send_without_note_button_css]).to have_received(:click) }
     it { expect(modal_buttons[add_a_note_button_css]).not_to have_received(:click) }
     it('confirms the invitation is pending') { expect(@result).to be(true) }
+    it { expect(subject.status).to eq(:sent) }
   end
 
   context 'with a note' do
@@ -70,6 +116,7 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
     it { expect(note_area).to have_received(:send_keys).with(note) }
     it { expect(modal_buttons[send_invitation_button_css]).not_to have_received(:click) }
     it { expect(modal_buttons[dismiss_button_css]).to have_received(:click) }
+    it { expect(subject.status).to eq(:prepared) }
   end
 
   context 'when the connect button is in the More menu' do

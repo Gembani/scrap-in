@@ -39,6 +39,7 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
     has_selector(session, send_button_css)
     find(session, send_button_node, send_button_css)
     allow(send_button_node).to receive(:click)
+    allow(session).to receive(:current_url).and_return('https://www.linkedin.com/messaging/thread/2-abc/')
   end
 
   context 'when no message_field_css' do
@@ -79,5 +80,31 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
     end
     it { expect(session).to have_received(:visit) }
     it { expect(message_field_node).to have_received(:send_keys) }
+  end
+
+  context 'when sent from a thread' do
+    before { subject.execute }
+    it 'remembers the thread url' do
+      expect(subject.thread_url).to eq('https://www.linkedin.com/messaging/thread/2-abc/')
+    end
+  end
+
+  context 'when sent from a profile' do
+    let(:profile) { 'https://www.linkedin.com/in/jane-doe/' }
+    let(:top_card) { instance_double('Capybara::Node::Element', 'top_card') }
+    let(:message_button) { instance_double('Capybara::Node::Element', 'message_button', click: true) }
+
+    before do
+      has_selector(session, profile_top_card_css, wait: 10)
+      find(session, top_card, profile_top_card_css, wait: 10)
+      has_selector(top_card, profile_message_button_css, wait: 5)
+      find(top_card, message_button, profile_message_button_css, wait: 5)
+      allow(session).to receive(:current_url).and_return(profile)
+      @result = subject.execute
+    end
+
+    it { expect(message_button).to have_received(:click) }
+    it { expect(@result).to eq(true) }
+    it('has no thread url yet') { expect(subject.thread_url).to be_nil }
   end
 end

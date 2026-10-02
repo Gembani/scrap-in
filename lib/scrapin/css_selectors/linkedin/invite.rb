@@ -53,6 +53,16 @@ module CssSelectors
       def dismiss_button_css
         'button[aria-label="Dismiss"]'
       end
+
+      # The connection degree line of the top card, "· 1st" means we are already connected
+      def degree_regex
+        /\A·\s*(1st|2nd|3rd)/
+      end
+
+      # Shown in the invitation modal instead of the send buttons once the weekly quota is used
+      def weekly_limit_regex
+        /weekly invitation limit|reached the limit/i
+      end
     end
   end
 end

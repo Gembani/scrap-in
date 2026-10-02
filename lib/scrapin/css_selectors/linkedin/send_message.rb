@@ -13,6 +13,19 @@ module CssSelectors
       def messages_css
         'p.msg-s-event-listitem__body'
       end
+
+      def profile_top_card_css
+        '[componentkey$="Topcard"]'
+      end
+
+      # Opens the messaging overlay from a profile, used for a first message to a connection
+      def profile_message_button_css
+        'a[aria-label^="Message"], button[aria-label^="Message"]'
+      end
+
+      def thread_path
+        '/messaging/thread/'
+      end
     end
   end
 end

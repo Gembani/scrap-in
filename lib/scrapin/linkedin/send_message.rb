@@ -5,6 +5,9 @@ module ScrapIn
       include Tools
       include CssSelectors::LinkedIn::SendMessage
 
+      # The conversation url once the message is sent, when LinkedIn navigated to it
+      attr_reader :thread_url
+
       def initialize(session, thread, message)
         @session = session
         @thread = thread
@@ -17,16 +20,33 @@ module ScrapIn
 
         write_message
         send_message
-        message_sent?
+        sent = message_sent?
+        @thread_url = current_thread_url if sent
+        sent
       end
 
-      # Works on an existing thread url, or on a compose url (messaging/compose/?recipient=...)
-      # for a first message, which has no messages yet
+      # Works on an existing thread url, on a compose url (messaging/compose/?recipient=...),
+      # or on a profile url (linkedin.com/in/...) of a connection for a first message
       def visit_profile
         puts 'Visiting thread...'
 
         @session.visit(@thread)
+        open_message_overlay if profile_url?
         wait_message_field_to_appear
+      end
+
+      def profile_url?
+        @thread.include?('linkedin.com/in/')
+      end
+
+      def open_message_overlay
+        card = check_and_find(@session, profile_top_card_css, wait: 10)
+        check_and_find(card, profile_message_button_css, wait: 5).click
+      end
+
+      def current_thread_url
+        url = @session.current_url
+        url if url.include?(thread_path)
       end
 
       def wait_message_field_to_appear

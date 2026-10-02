@@ -3,23 +3,41 @@ module ScrapIn
     class Invite
       include ScrapIn::Tools
       include CssSelectors::LinkedIn::Invite
+
+      # Why execute returned what it did:
+      # :sent, :prepared (send = false), :already_pending, :already_connected,
+      # :limit_reached (weekly quota), :note_unavailable (no personalized notes left), :not_confirmed
+      attr_reader :status
+
       def initialize(session)
         @session = session
       end
 
       # Free accounts only get a few personalized invitations a month, an empty note sends without one.
       # With send = false the invitation is prepared then dismissed.
+      # Returns true when the lead ends up invited (or would be, with send = false).
       def execute(lead_url, note = '', send = true)
+        @status = nil
         visit_lead_url(lead_url)
-        return true if pending?
+        return finish(:already_pending, true) if pending?
+        return finish(:already_connected, false) if connected?
 
         click_connect_button
         modal = invite_modal
-        add_a_note(modal, note) unless note.to_s.empty?
-        return dismiss(modal) unless send
+        if limit_reached?(modal)
+          dismiss(modal)
+          return finish(:limit_reached, false)
+        end
+
+        if !note.to_s.empty? && !add_a_note(modal, note)
+          dismiss(modal)
+          return finish(:note_unavailable, false)
+        end
+        return finish(:prepared, dismiss(modal)) unless send
 
         sending_invitation_message(modal, note)
-        confirmation_invite_is_sent
+        sent = confirmation_invite_is_sent
+        finish(sent ? :sent : :not_confirmed, sent)
       end
 
       def visit_lead_url(lead_url)
@@ -29,6 +47,10 @@ module ScrapIn
 
       def pending?
         top_card.has_selector?(pending_css, wait: 1)
+      end
+
+      def connected?
+        top_card.all('p').any? { |paragraph| paragraph.text.strip.match(degree_regex)&.captures&.first == '1st' }
       end
 
       def click_connect_button
@@ -47,10 +69,18 @@ module ScrapIn
         check_and_find(host.shadow_root, modal_css, wait: 5)
       end
 
+      def limit_reached?(modal)
+        modal.text.match?(weekly_limit_regex)
+      end
+
+      # The note area only shows up while personalized notes are still available, returns false otherwise
       def add_a_note(modal, note)
         puts 'Adding a note'
         find_and_click(modal, add_a_note_button_css)
-        check_and_find(modal, note_area_css).send_keys(note)
+        return false unless modal.has_selector?(note_area_css, wait: 2)
+
+        modal.find(note_area_css).send_keys(note)
+        true
       end
 
       def sending_invitation_message(modal, note)
@@ -68,6 +98,11 @@ module ScrapIn
       end
 
       private
+
+      def finish(status, result)
+        @status = status
+        result
+      end
 
       def top_card
         check_and_find(@session, top_card_css, wait: 10)
