@@ -22,6 +22,8 @@ module ScrapIn
       def to_hash
         {
           name: name,
+          headline: headline,
+          current_company: current_company,
           location: location,
           linkedin_url: @linkedin_url,
           first_degree: first_degree?
@@ -40,14 +42,24 @@ module ScrapIn
         check_and_find(top_card, name_css, wait: 5).text
       end
 
-      # The location is the last line before "· Contact info", it may not exist
+      # The top card reads: degree, headline, location, "· Contact info", then the current company / school.
+      # The location is the last line before "Contact info", it may not exist
       def location
+        candidates = intro_lines
+        candidates && candidates.size > 1 ? candidates.last : nil
+      end
+
+      # What the person says they do, "Founder | Tech Entrepreneur"
+      def headline
+        candidates = intro_lines
+        candidates&.first
+      end
+
+      # The first line after "Contact info": current company (or school)
+      def current_company
         lines = top_card_lines
         index = lines.index(contact_info_text)
-        return nil unless index
-
-        candidates = lines[0...index].reject { |line| line == '·' || line.match?(degree_regex) }
-        candidates.size > 1 ? candidates.last : nil
+        index ? lines[index + 1] : nil
       end
 
       # We expect the user to only scrap 1st degree leads
@@ -76,7 +88,15 @@ module ScrapIn
       end
 
       def top_card_lines
-        top_card.all('p').map { |paragraph| paragraph.text.strip }
+        @top_card_lines ||= top_card.all('p').map { |paragraph| paragraph.text.strip }
+      end
+
+      def intro_lines
+        lines = top_card_lines
+        index = lines.index(contact_info_text)
+        return nil unless index
+
+        lines[0...index].reject { |line| line == '·' || line.match?(degree_regex) }
       end
 
       def contact_values(label)

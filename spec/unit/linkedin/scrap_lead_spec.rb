@@ -126,6 +126,8 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
     it do
       expect(subject.to_hash).to eq(
         name: name,
+        headline: 'Founder | Tech Entrepreneur',
+        current_company: 'Strevoo',
         location: location,
         linkedin_url: linkedin_url,
         first_degree: true,
@@ -133,6 +135,18 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
         links: links,
         emails: [email]
       )
+    end
+  end
+
+  describe 'headline and current company' do
+    it { expect(subject.headline).to eq('Founder | Tech Entrepreneur') }
+    it { expect(subject.current_company).to eq('Strevoo') }
+
+    context 'without a location' do
+      let(:top_card_texts) { ['· 2nd', 'Chef', '·', 'Contact info'] }
+      it { expect(subject.headline).to eq('Chef') }
+      it { expect(subject.location).to be_nil }
+      it { expect(subject.current_company).to be_nil }
     end
   end
 end
