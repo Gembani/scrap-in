@@ -138,6 +138,13 @@ RSpec.describe ScrapIn::LinkedIn::ScrapLead do
     end
   end
 
+  describe '.to_hash without contact info' do
+    it 'never opens the contact info popup' do
+      expect(subject.to_hash(contact_info: false)).to include(phones: [], links: [], emails: [], name: name)
+      expect(top_card).not_to have_received(:click_link).with(contact_info_text)
+    end
+  end
+
   describe 'headline and current company' do
     it { expect(subject.headline).to eq('Founder | Tech Entrepreneur') }
     it { expect(subject.current_company).to eq('Strevoo') }

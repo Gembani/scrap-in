@@ -19,7 +19,9 @@ module ScrapIn
         warn '[DEPRECATION] `execute` is deprecated. This call can safely be removed'
       end
 
-      def to_hash
+      # contact_info: false skips the contact info overlay (emails, phones, links): opening it on every profile
+      # reads like a data export to LinkedIn
+      def to_hash(contact_info: true)
         {
           name: name,
           headline: headline,
@@ -27,7 +29,7 @@ module ScrapIn
           location: location,
           linkedin_url: @linkedin_url,
           first_degree: first_degree?
-        }.merge(scrap_datas)
+        }.merge(contact_info ? scrap_datas : { phones: [], links: [], emails: [] })
       end
 
       def scrap_datas
