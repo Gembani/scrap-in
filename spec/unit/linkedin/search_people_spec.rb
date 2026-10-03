@@ -6,19 +6,21 @@ RSpec.describe ScrapIn::LinkedIn::SearchPeople do
   let(:main) { instance_double('Capybara::Node::Element', 'main') }
   let(:subject) { described_class.new(session, 'gérant restaurant paris') }
 
-  def link(href, card_text)
-    card = instance_double('Capybara::Node::Element', text: card_text)
-    node = instance_double('Capybara::Node::Element', text: card_text.lines.first.strip)
+  def link(href, text)
+    node = instance_double('Capybara::Node::Element', text: text)
     allow(node).to receive(:[]).with(:href).and_return(href)
-    allow(node).to receive(:ancestor).with('li').and_return(card)
     node
   end
 
+  # As on live LinkedIn: photo / name / card links per result, and people mentioned inside cards
   let(:page_one) do
     [
-      link('https://www.linkedin.com/in/jane-doe?miniProfileUrn=x', "Jane Doe\n2nd\nGérante, Le Petit Cler\nParis"),
-      link('https://www.linkedin.com/in/jane-doe/', "Jane Doe\n2nd\nGérante, Le Petit Cler\nParis"),
-      link('https://www.linkedin.com/in/john-roe/', "John Roe\n3rd+\nChef\nParis"),
+      link('https://www.linkedin.com/in/jane-doe?miniProfileUrn=x', ''),
+      link('https://www.linkedin.com/in/jane-doe?miniProfileUrn=x', "Jane Doe \n • 2nd\nGérante, Le Petit Cler\nParis\nMessage"),
+      link('https://www.linkedin.com/in/jane-doe/', 'Jane Doe'),
+      link('http://www.linkedin.com/in/john-roe/', 'John Roe • 3rd+'),
+      link('https://www.linkedin.com/in/john-roe/', "John Roe • 3rd+\nChef\nParis"),
+      link('https://www.linkedin.com/in/mutual-friend/', 'Mutual Friend'),
     ]
   end
 
@@ -30,7 +32,7 @@ RSpec.describe ScrapIn::LinkedIn::SearchPeople do
     allow(main).to receive(:all).with(profile_link_css, wait: 0).and_return(page_one, [])
   end
 
-  it 'yields one result per profile with its card lines' do
+  it 'yields each result once, with the lines of its card' do
     results = []
     subject.execute(1) { |url, lines| results << [url, lines] }
     expect(results).to eq([
@@ -39,15 +41,20 @@ RSpec.describe ScrapIn::LinkedIn::SearchPeople do
                           ])
   end
 
-  it 'searches the keywords page by page and stops when a page brings nothing new' do
-    count = subject.execute(3) { nil }
-    expect(count).to eq(2)
+  it 'searches page by page and stops when a page brings nothing new' do
+    expect(subject.execute(3) { nil }).to eq(2)
     expect(session).to have_received(:visit).with(search_url('gérant restaurant paris', 1))
     expect(session).to have_received(:visit).with(search_url('gérant restaurant paris', 2))
     expect(session).not_to have_received(:visit).with(search_url('gérant restaurant paris', 3))
   end
 
-  it 'needs keywords' do
+  it 'searches among the employees of a company' do
+    described_class.new(session, 'chef', current_company: '6964817').execute(1) { nil }
+    expect(session).to have_received(:visit)
+      .with('https://www.linkedin.com/search/results/people/?keywords=chef&page=1&currentCompany=%5B%226964817%22%5D')
+  end
+
+  it 'needs keywords or a company' do
     expect { described_class.new(session, ' ') }.to raise_error(ArgumentError)
   end
 end

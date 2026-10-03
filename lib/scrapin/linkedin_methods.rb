@@ -38,4 +38,12 @@ module LinkedInMethods
   def linkedin_scrap_company(company_url)
     ScrapIn::LinkedIn::ScrapCompany.new(@capybara, company_url)
   end
+
+  def linkedin_search_companies(keywords)
+    ScrapIn::LinkedIn::SearchCompanies.new(@capybara, keywords)
+  end
+
+  def linkedin_company_people(company_url, keywords: nil)
+    ScrapIn::LinkedIn::CompanyPeople.new(@capybara, company_url, keywords: keywords)
+  end
 end

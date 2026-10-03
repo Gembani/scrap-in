@@ -1,8 +1,16 @@
 module CssSelectors
   module LinkedIn
-    # Selectors of ScrapIn::LinkedIn::ScrapCompany.
-    # Not yet checked against live LinkedIn: the about page lists its facts as <dt> label / <dd> value.
+    # Selectors of ScrapIn::LinkedIn::ScrapCompany (checked on live LinkedIn, October 2026):
+    # the about page lists its facts as <dt> label / <dd> value.
     module ScrapCompany
+      def employees_link_css
+        'a[href*="currentCompany"]'
+      end
+
+      def company_id_regex
+        /currentCompany=(?:%5B|\[)(?:%22|")(\d+)/
+      end
+
       def company_name_css
         'h1'
       end
