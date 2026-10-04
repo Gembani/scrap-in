@@ -119,6 +119,14 @@ SeleniumSessionManager.instance.user_session(user.email, user.linkedin_password)
 end
 ```
 
+### LinkedIn video attachments
+
+`linkedin_send_message(confirmed_url, approved_text, video: worker_local_path)` supports
+one optional MP4/MOV attachment. See [API, limitations, Zendin wiring and supervised
+validation](docs/linkedin-video-messages.md). Thread/profile draft uploads and one approved profile-route send have been
+validated under supervision. Native-player confirmation was checked read-only
+after correcting its selector. This change does not enable Zendin end-to-end sending.
+
 ### Sharing sessions
 Linkedin will ban you if you log in too often. Instead of re-logging in on every run, the browser keeps a
 persistent Chrome profile (`CHROME_PROFILE_DIR`), so cookies survive between runs.

@@ -11,8 +11,8 @@ module LinkedInMethods
     ScrapIn::LinkedIn::ScrapSentInvites.new(@capybara)
   end
 
-  def linkedin_send_message(profile, message)
-    ScrapIn::LinkedIn::SendMessage.new(@capybara, profile, message)
+  def linkedin_send_message(profile, message, **options)
+    ScrapIn::LinkedIn::SendMessage.new(@capybara, profile, message, **options)
   end
 
   def linkedin_scrap_threads

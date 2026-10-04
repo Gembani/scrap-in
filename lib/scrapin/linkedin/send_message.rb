@@ -1,38 +1,81 @@
+require 'uri'
+
 module ScrapIn
   module LinkedIn
-    # Send a message to a lead on LinkedIn
+    # One browser action. Queueing, approvals and worker exclusivity belong to the caller.
     class SendMessage
       include Tools
       include CssSelectors::LinkedIn::SendMessage
 
-      # The conversation url once the message is sent, when LinkedIn navigated to it
-      attr_reader :thread_url
+      MAX_VIDEO_BYTES = 20_000_000 # LinkedIn Messaging help: up to 20 MB (conservative decimal MB).
+      class InvalidVideo < ArgumentError; end
 
-      def initialize(session, thread, message)
-        @session = session
-        @thread = thread
-        @message = message
-        @error = 'An error occured when sending the message.'
+      attr_reader :thread_url, :status, :error
+
+      def initialize(session, thread, message, video: nil, upload_timeout: 120, confirmation_timeout: 10)
+        @session, @thread, @message = session, thread, message
+        @video = video
+        @upload_timeout = Integer(upload_timeout)
+        @confirmation_timeout = Integer(confirmation_timeout)
+        raise ArgumentError, 'Timeouts must be positive seconds' unless @upload_timeout.positive? && @confirmation_timeout.positive?
+        @status = :pending
       end
 
-      def execute
-        return false unless visit_profile
+      # false means inspect status/error; :ambiguous must never be automatically retried.
+      # send: false prepares the draft for supervised inspection without clicking Send.
+      def execute(send: true)
+        return false unless @status == :pending
 
+        validate_video! if @video
+        if @video && @message.to_s.strip.empty?
+          raise ArgumentError, 'Video messages require non-empty text; attachment-only messages are not supported'
+        end
+        return fail_with(:authentication_required, 'Login or challenge requires human attention') if authentication_required?
+        unless visit_profile
+          return fail_with(:authentication_required, 'Login or challenge requires human attention') if authentication_required?
+          return fail_with(:unavailable, 'Recipient messaging UI is unavailable')
+        end
+        return fail_with(:authentication_required, 'Login or challenge requires human attention') if authentication_required?
+
+        @composer = @message_scope.find(message_field_css).find(:xpath, 'ancestor::form[1]')
+        @conversation = @composer.find(:xpath, conversation_xpath)
+        return fail_with(:draft_not_empty, 'Existing draft text or attachments require human review') unless draft_empty?
+
+        return false if @video && !attach_video
         write_message
-        send_message
-        sent = message_sent?
-        @thread_url = current_thread_url if sent
-        sent
+        return fail_with(:not_ready, 'Send button is unavailable or disabled') unless ready_to_send?
+        unless send
+          @status = :prepared
+          return true
+        end
+
+        # Snapshot immediately before the sole click, never by matching an old last body.
+        native_send_button = @composer.find(send_button_css).native
+        @before_ids = events.map { |event| event_id(event) }
+        return fail_with(:confirmation_unavailable, 'Existing message events have no stable identity') if @before_ids.any?(&:empty?)
+        return fail_with(:authentication_required, 'Login or challenge requires human attention') if authentication_required?
+        @click_attempted = true
+        # Avoid Capybara's stale-element action retries for this non-idempotent click.
+        native_send_button.click
+        if try_until_true(@confirmation_timeout, 1) { message_sent? }
+          @status = :sent
+          @thread_url = current_thread_url
+          true
+        else
+          fail_with(:ambiguous, 'Send was attempted but a new outgoing message with the requested content was not confirmed; inspect the thread before retrying')
+        end
+      rescue ScrapIn::CssNotFound, Capybara::CapybaraError, Selenium::WebDriver::Error::WebDriverError, IOError, SystemCallError => e
+        fail_with(@click_attempted ? :ambiguous : :failed, "#{e.class}: #{e.message}")
       end
 
-      # Works on an existing thread url, on a compose url (messaging/compose/?recipient=...),
-      # or on a profile url (linkedin.com/in/...) of a connection for a first message
       def visit_profile
-        puts 'Visiting thread...'
-
         @session.visit(@thread)
+        return false if authentication_required?
         open_message_overlay if profile_url?
-        wait_message_field_to_appear
+        try_until_true(10, 1) do
+          @message_scope = find_message_scope
+          !@message_scope.nil?
+        end
       end
 
       def profile_url?
@@ -41,7 +84,19 @@ module ScrapIn
 
       def open_message_overlay
         card = check_and_find(@session, profile_top_card_css, wait: 10)
-        check_and_find(card, profile_message_button_css, wait: 5).click
+        button = check_and_find_first(card, profile_message_button_css, wait: 5)
+        href = button['href']
+        if href && !href.empty?
+          current = URI.parse(@session.current_url)
+          destination = URI.join(current.to_s, href)
+          unless destination.host == current.host && destination.path.start_with?('/messaging/')
+            raise ScrapIn::CssNotFound, 'Expected a same-host LinkedIn messaging destination'
+          end
+          # Following the profile's own link avoids racing React/Ember overlay startup.
+          @session.visit(destination.to_s)
+        else
+          button.click
+        end
       end
 
       def current_thread_url
@@ -49,39 +104,121 @@ module ScrapIn
         url if url.include?(thread_path)
       end
 
-      def wait_message_field_to_appear
-        puts 'waiting message field to appear'
-        try_until_true(3) do
-          @session.has_selector?(message_field_css)
-        end
-      end
-
       def write_message
-        puts 'Writing message...'
-        message_field = check_and_find(@session, message_field_css)
-        message_field.send_keys(@message)
-        puts 'Message has been written.'
-      end
-
-      def send_message
-        puts 'Sending message...'
-        send_button = check_and_find(@session, send_button_css)
-
-        send_button.click
-        puts 'Message has been sent.'
-        # check, for now we suppose the message has been sent correctly
-        true
+        @composer.find(message_field_css).send_keys(@message)
       end
 
       def message_sent?
-        puts 'Checking the message has been sent...'
-        sent = try_until_true(10, 1) { last_message_text == @message }
-        puts(sent ? 'Confirmed' : @error)
-        sent
+        return false unless @before_ids && !authentication_required?
+        events.any? do |event|
+          id = event_id(event)
+          next false if id.empty? || @before_ids.include?(id)
+          next false unless event.has_selector?(outgoing_event_css, wait: 0)
+          bodies = event.all(messages_css, wait: 0)
+          next false unless bodies.any? && bodies.map(&:text).join("\n") == @message
+          bodies.all? { |body| acknowledged?(body) } && (!@video || sent_video?(event))
+        end
       end
 
-      def last_message_text
-        @session.all(messages_css).last&.text
+      private
+
+      def find_message_scope
+        return @session if @session.has_selector?(message_field_css, wait: 0)
+        return nil unless @session.has_selector?(messaging_shadow_host_css, wait: 0)
+
+        root = @session.find(messaging_shadow_host_css).shadow_root
+        root if root && root.has_selector?(message_field_css, wait: 0)
+      end
+
+      def fail_with(status, error)
+        @status, @error = status, error
+        false
+      end
+
+      def validate_video!
+        unless @video.is_a?(String) && File.file?(@video) && File.readable?(@video)
+          raise InvalidVideo, 'Video must be a readable regular file local to the Ruby process'
+        end
+        @video = File.expand_path(@video)
+        unless %w[.mp4 .mov].include?(File.extname(@video).downcase)
+          raise InvalidVideo, 'LinkedIn Messaging video attachments support MP4 and MOV'
+        end
+        size = File.size(@video)
+        raise InvalidVideo, 'Video must be non-empty and at most 20 MB' unless size.positive? && size <= MAX_VIDEO_BYTES
+        # Extension is not codec validation. LinkedIn still decides whether the media is valid.
+        File.open(@video, 'rb') { |file| file.read(1) }
+      end
+
+      def authentication_required?
+        @session.current_url.to_s.match?(%r{/(login|checkpoint|authwall|uas/login)(/|\?|$)})
+      end
+
+      def draft_empty?
+        @composer.find(message_field_css).text.strip.empty? &&
+          !@composer.has_selector?(attachment_preview_css, wait: 0)
+      end
+
+      def attach_video
+        input = @composer.find(video_input_css, visible: :all)
+        # Capybara's file input setter scopes Selenium's file detector and transfers
+        # local bytes through /se/file when the registered driver is remote.
+        input.set(@video)
+        @video_ready = false
+        ready = try_until_true(@upload_timeout, 1) do
+          break false if authentication_required? || upload_rejected?
+          @video_ready = upload_ready?
+        end
+        return fail_with(:authentication_required, 'Login or challenge interrupted upload') if authentication_required?
+        return fail_with(:upload_rejected, 'LinkedIn rejected the attachment; inspect the composer') if upload_rejected?
+        return fail_with(:upload_timeout, 'Video upload/processing did not become ready; no message sent') unless ready
+        true
+      end
+
+      def upload_rejected?
+        @composer.has_selector?(attachment_error_css, wait: 0)
+      end
+
+      def upload_ready?
+        previews = @composer.all(attachment_preview_css, wait: 0)
+        return false unless previews.size == 1
+        name = previews.first.first(attachment_name_css, minimum: 0, wait: 0)
+        name && name.text.strip == File.basename(@video) &&
+          previews.first.has_selector?(attachment_ready_css, wait: 0) &&
+          !@composer.has_selector?(attachment_busy_css, wait: 0)
+      end
+
+      def ready_to_send?
+        return false if authentication_required?
+        return false if @video && (!@video_ready || upload_rejected? || !upload_ready?)
+        button = @composer.first(send_button_css, minimum: 0, wait: 0)
+        button && !button.disabled? && button['aria-disabled'] != 'true'
+      end
+
+      def events
+        @conversation.all(message_events_css, wait: 0)
+      end
+
+      def event_id(event)
+        urn = event['data-event-urn']
+        urn ||= event.first(event_identity_css, minimum: 0, wait: 0)&.[]('data-event-urn')
+        urn.to_s
+      end
+
+      def acknowledged?(node)
+        container = node.first(:xpath, sent_container_xpath, minimum: 0, wait: 0)
+        container && container.has_selector?(sent_indicator_css, wait: 0)
+      end
+
+      def sent_video?(event)
+        file_link = event.all(sent_attachment_css, wait: 0).any? do |attachment|
+          attachment.text.strip == File.basename(@video) && !attachment['href'].to_s.empty? && acknowledged?(attachment)
+        end
+        return true if file_link
+
+        # LinkedIn renders MP4 as a native player without the filename. The sole
+        # requested video must be in the same new outgoing event and acknowledged.
+        videos = event.all(sent_video_css, wait: 0)
+        videos.size == 1 && !videos.first['src'].to_s.empty? && acknowledged?(videos.first)
       end
     end
   end

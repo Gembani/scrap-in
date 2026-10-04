@@ -112,6 +112,14 @@ RSpec.describe ScrapIn::Session do
       end
     end
 
+    it 'forwards optional LinkedIn video keywords to the adapter' do
+      action = instance_double(ScrapIn::LinkedIn::SendMessage)
+      expect(ScrapIn::LinkedIn::SendMessage).to receive(:new)
+        .with(capybara_session, 'confirmed_url', 'approved text', video: '/worker/synthetic.mp4', upload_timeout: 30)
+        .and_return(action)
+      expect(subject.linkedin_send_message('confirmed_url', 'approved text', video: '/worker/synthetic.mp4', upload_timeout: 30)).to be(action)
+    end
+
     describe '.sales_nav_send_inmail' do
       let(:profile_url) { 'profile_url' }
       let(:mail_subject) { 'subject' }
