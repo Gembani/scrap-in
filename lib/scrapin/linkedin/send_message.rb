@@ -205,8 +205,24 @@ module ScrapIn
         button && !button.disabled? && button['aria-disabled'] != 'true'
       end
 
+      # LinkedIn may redraw the whole conversation after a send (seen on a first message in a conversation): the
+      # box found before the click is then gone for good, so look it up again from the composer
       def events
         @conversation.all(message_events_css, wait: 0)
+      rescue Selenium::WebDriver::Error::StaleElementReferenceError
+        raise unless @click_attempted && (redrawn = current_conversation)
+
+        @conversation = redrawn
+        @conversation.all(message_events_css, wait: 0)
+      end
+
+      def current_conversation
+        scope = find_message_scope
+        return nil unless scope
+
+        scope.find(message_field_css).find(:xpath, 'ancestor::form[1]').find(:xpath, conversation_xpath)
+      rescue Capybara::ElementNotFound
+        nil
       end
 
       def event_id(event)

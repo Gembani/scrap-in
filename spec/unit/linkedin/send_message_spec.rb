@@ -124,6 +124,19 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
     expect(button).to have_received(:click).once
   end
 
+  it 'finds the conversation again when LinkedIn redraws it after the click' do
+    redrawn = instance_double(Capybara::Node::Element)
+    allow(button).to receive(:click) do
+      allow(conversation).to receive(:all).with(message_events_css, wait: 0)
+                                          .and_raise(Selenium::WebDriver::Error::StaleElementReferenceError, 'stale element reference')
+      allow(composer).to receive(:find).with(:xpath, conversation_xpath).and_return(redrawn)
+    end
+    allow(redrawn).to receive(:all).with(message_events_css, wait: 0) { history + [new_event] }
+    expect(sender.execute).to be true
+    expect(sender.status).to eq(:sent)
+    expect(button).to have_received(:click).once
+  end
+
   it 'reports a send that stays stale until the timeout as not confirmed' do
     allow(conversation).to receive(:all).with(message_events_css, wait: 0) do
       raise Selenium::WebDriver::Error::StaleElementReferenceError, 'stale element reference' if history.include?(new_event)
