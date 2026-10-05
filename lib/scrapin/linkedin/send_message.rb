@@ -57,7 +57,7 @@ module ScrapIn
         @click_attempted = true
         # Avoid Capybara's stale-element action retries for this non-idempotent click.
         native_send_button.click
-        if try_until_true(@confirmation_timeout, 1) { message_sent? }
+        if try_until_true(@confirmation_timeout, 1) { confirmation_settled? }
           @status = :sent
           @thread_url = current_thread_url
           true
@@ -121,6 +121,15 @@ module ScrapIn
       end
 
       private
+
+      # After the click LinkedIn replaces the optimistic event with the server
+      # copy, and re-renders it again when a link preview card arrives.
+      # A node detached mid-check means "not yet", so keep polling.
+      def confirmation_settled?
+        message_sent?
+      rescue Selenium::WebDriver::Error::StaleElementReferenceError
+        false
+      end
 
       def find_message_scope
         return @session if @session.has_selector?(message_field_css, wait: 0)

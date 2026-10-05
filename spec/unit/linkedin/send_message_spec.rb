@@ -111,6 +111,30 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
     expect(button).to have_received(:click).once
   end
 
+  it 'keeps confirming when LinkedIn replaces the new event mid-check' do
+    stale_reads = 1
+    allow(conversation).to receive(:all).with(message_events_css, wait: 0) do
+      if history.include?(new_event) && (stale_reads -= 1) >= 0
+        raise Selenium::WebDriver::Error::StaleElementReferenceError, 'stale element reference'
+      end
+      history.dup
+    end
+    expect(sender.execute).to be true
+    expect(sender.status).to eq(:sent)
+    expect(button).to have_received(:click).once
+  end
+
+  it 'reports a send that stays stale until the timeout as not confirmed' do
+    allow(conversation).to receive(:all).with(message_events_css, wait: 0) do
+      raise Selenium::WebDriver::Error::StaleElementReferenceError, 'stale element reference' if history.include?(new_event)
+      history.dup
+    end
+    expect(sender.execute).to be false
+    expect(sender.status).to eq(:ambiguous)
+    expect(sender.error).to match(/not confirmed/)
+    expect(button).to have_received(:click).once
+  end
+
   it 'reports unavailable messaging without writing or sending' do
     allow(session).to receive(:has_selector?).with(message_field_css, wait: 0).and_return(false)
     expect(sender.execute).to be false
