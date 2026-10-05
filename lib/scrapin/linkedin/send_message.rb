@@ -12,12 +12,13 @@ module ScrapIn
 
       attr_reader :thread_url, :status, :error
 
-      def initialize(session, thread, message, video: nil, upload_timeout: 120, confirmation_timeout: 10)
+      def initialize(session, thread, message, video: nil, upload_timeout: 120, confirmation_timeout: 10, ready_timeout: 5)
         @session, @thread, @message = session, thread, message
         @video = video
         @upload_timeout = Integer(upload_timeout)
         @confirmation_timeout = Integer(confirmation_timeout)
-        raise ArgumentError, 'Timeouts must be positive seconds' unless @upload_timeout.positive? && @confirmation_timeout.positive?
+        @ready_timeout = Integer(ready_timeout)
+        raise ArgumentError, 'Timeouts must be positive seconds' unless [@upload_timeout, @confirmation_timeout, @ready_timeout].all?(&:positive?)
         @status = :pending
       end
 
@@ -43,7 +44,8 @@ module ScrapIn
 
         return false if @video && !attach_video
         write_message
-        return fail_with(:not_ready, 'Send button is unavailable or disabled') unless ready_to_send?
+        # LinkedIn enables Send a moment after it has taken in the typed text
+        return fail_with(:not_ready, 'Send button is unavailable or disabled') unless try_until_true(@ready_timeout * 4, 0.25) { ready_to_send? }
         unless send
           @status = :prepared
           return true

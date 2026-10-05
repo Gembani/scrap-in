@@ -14,7 +14,7 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
   let(:message) { 'A reviewed message' }
   let(:video) { nil }
   let(:filename) { video ? File.basename(video) : 'sample.mp4' }
-  let(:sender) { described_class.new(session, url, message, video: video, upload_timeout: 3, confirmation_timeout: 3) }
+  let(:sender) { described_class.new(session, url, message, video: video, upload_timeout: 3, confirmation_timeout: 3, ready_timeout: 1) }
   let(:history) { [event('old', message)] }
   let(:new_event) { event('new', message, video: !!video) }
   let(:preview) do
@@ -148,6 +148,14 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
     expect(sender.execute).to be false
     expect(sender.status).to eq(:not_ready)
     expect(button).not_to have_received(:click)
+  end
+
+  it 'waits for LinkedIn to enable Send after the text is typed' do
+    checks = 0
+    allow(button).to receive(:disabled?) { (checks += 1) < 3 }
+    expect(sender.execute).to be true
+    expect(sender.status).to eq(:sent)
+    expect(button).to have_received(:click).once
   end
 
   it 'does not send with a disabled button' do
