@@ -1,24 +1,28 @@
 module ScrapIn
   module LinkedIn
-    # Ordinary LinkedIn people search (no Sales Navigator), optionally among a company's employees.
+    # Ordinary LinkedIn people search (no Sales Navigator), optionally among a company's employees, with the filters
+    # free accounts have (title, place, industry, 1st/2nd/3rd+, current or past company, profile language...).
     # Yields each result's profile url and the visible lines of its card (name, degree, headline, location...),
     # left as text for the caller to interpret.
     class SearchPeople
       include Tools
       include CssSelectors::LinkedIn::SearchPeople
 
-      def initialize(session, keywords, current_company: nil)
-        raise ArgumentError, 'Keywords or a company are required' if keywords.to_s.strip.empty? && current_company.nil?
+      def initialize(session, keywords, current_company: nil, filters: {})
+        if keywords.to_s.strip.empty? && current_company.nil? && filters.empty?
+          raise ArgumentError, 'Keywords, a company or a filter are required'
+        end
 
         @session = session
         @keywords = keywords.to_s.strip.empty? ? nil : keywords
         @current_company = current_company
+        @filters = filters
       end
 
       def execute(pages = 1)
         seen = {}
         (1..pages).each do |page|
-          @session.visit(search_url(@keywords, page, current_company: @current_company))
+          @session.visit(search_url(@keywords, page, current_company: @current_company, filters: @filters))
           break unless results_appear?
 
           new_results = 0

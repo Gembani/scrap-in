@@ -54,6 +54,19 @@ RSpec.describe ScrapIn::LinkedIn::SearchPeople do
       .with('https://www.linkedin.com/search/results/people/?keywords=chef&page=1&currentCompany=%5B%226964817%22%5D')
   end
 
+  it 'searches with the filters of ordinary LinkedIn' do
+    described_class.new(session, nil, filters: { title: 'gérant', geo: %w[106383538], industry: [32, 34], network: %w[S],
+                                                 profile_language: ['fr'] }).execute(1) { nil }
+    expect(session).to have_received(:visit).with(
+      'https://www.linkedin.com/search/results/people/?page=1&titleFreeText=g%C3%A9rant&geoUrn=%5B%22106383538%22%5D' \
+      '&industry=%5B%2232%22%2C%2234%22%5D&network=%5B%22S%22%5D&profileLanguage=%5B%22fr%22%5D&origin=FACETED_SEARCH'
+    )
+  end
+
+  it 'refuses a filter LinkedIn does not have' do
+    expect { described_class.new(session, 'chef', filters: { seniority: 'senior' }).execute(1) { nil } }.to raise_error(ArgumentError, /seniority/)
+  end
+
   it 'needs keywords or a company' do
     expect { described_class.new(session, ' ') }.to raise_error(ArgumentError)
   end

@@ -31,8 +31,12 @@ module LinkedInMethods
     ScrapIn::LinkedIn::ScrapFriends.new(@capybara)
   end
 
-  def linkedin_search_people(keywords)
-    ScrapIn::LinkedIn::SearchPeople.new(@capybara, keywords)
+  def linkedin_search_people(keywords, filters: {})
+    ScrapIn::LinkedIn::SearchPeople.new(@capybara, keywords, filters: filters)
+  end
+
+  def linkedin_geo_lookup(query)
+    ScrapIn::LinkedIn::GeoLookup.new(@capybara, query)
   end
 
   def linkedin_scrap_company(company_url)
