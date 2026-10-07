@@ -46,6 +46,7 @@ module ScrapIn
         write_message
         # LinkedIn enables Send a moment after it has taken in the typed text
         return fail_with(:not_ready, 'Send button is unavailable or disabled') unless try_until_true(@ready_timeout * 4, 0.25) { ready_to_send? }
+        return fail_with(:draft_mismatch, 'Composer text differs from the requested message; no Send click attempted, inspect the draft') unless draft_matches?
         unless send
           @status = :prepared
           return true
@@ -56,6 +57,7 @@ module ScrapIn
         @before_ids = events.map { |event| event_id(event) }
         return fail_with(:confirmation_unavailable, 'Existing message events have no stable identity') if @before_ids.any?(&:empty?)
         return fail_with(:authentication_required, 'Login or challenge requires human attention') if authentication_required?
+        return fail_with(:draft_mismatch, 'Composer text changed before Send; no Send click attempted, inspect the draft') unless draft_matches?
         @click_attempted = true
         # Avoid Capybara's stale-element action retries for this non-idempotent click.
         native_send_button.click
@@ -167,6 +169,15 @@ module ScrapIn
       def draft_empty?
         @composer.find(message_field_css).text.strip.empty? &&
           !@composer.has_selector?(attachment_preview_css, wait: 0)
+      end
+
+      # An enabled Send button only proves some text arrived. Contenteditable
+      # input can lose text during a UI redraw; never send a truncated draft.
+      # innerText preserves paragraph breaks and repeated spaces that Capybara's
+      # text extraction may normalize away. Do not repair/retype automatically.
+      def draft_matches?
+        actual = @composer.find(message_field_css).evaluate_script('this.innerText')
+        actual.to_s.gsub(/\r\n?/, "\n") == @message.to_s.gsub(/\r\n?/, "\n")
       end
 
       def attach_video

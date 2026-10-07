@@ -49,6 +49,7 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
     allow(composer).to receive(:has_selector?).with(attachment_busy_css, wait: 0).and_return(false)
     allow(composer).to receive(:all).with(attachment_preview_css, wait: 0).and_return([preview])
     allow(field).to receive(:send_keys)
+    allow(field).to receive(:evaluate_script).with('this.innerText').and_return(message)
     allow(button).to receive(:native).and_return(button)
     allow(button).to receive(:[]).with('aria-disabled').and_return(nil)
     allow(conversation).to receive(:all).with(message_events_css, wait: 0) { history.dup }
@@ -69,6 +70,49 @@ RSpec.describe ScrapIn::LinkedIn::SendMessage do
     expect(sender.execute).to be true
     expect(sender.execute).to be false
     expect(button).to have_received(:click).once
+  end
+
+  it 'leaves a truncated draft unsent even when Send is enabled' do
+    allow(field).to receive(:evaluate_script).with('this.innerText').and_return(message[0, 5])
+    expect(sender.execute).to be false
+    expect(sender.status).to eq(:draft_mismatch)
+    expect(button).not_to have_received(:click)
+    expect(field).to have_received(:send_keys).once
+  end
+
+  it 'refuses a draft missing its first character' do
+    allow(field).to receive(:evaluate_script).with('this.innerText').and_return(message[1..])
+    expect(sender.execute).to be false
+    expect(sender.status).to eq(:draft_mismatch)
+    expect(button).not_to have_received(:click)
+  end
+
+  it 'refuses a changed draft immediately before clicking Send' do
+    allow(field).to receive(:evaluate_script).with('this.innerText').and_return(message, 'changed')
+    expect(sender.execute).to be false
+    expect(sender.status).to eq(:draft_mismatch)
+    expect(button).not_to have_received(:click)
+  end
+
+  it 'does not report an incomplete supervised draft as prepared' do
+    allow(field).to receive(:evaluate_script).with('this.innerText').and_return('')
+    expect(sender.execute(send: false)).to be false
+    expect(sender.status).to eq(:draft_mismatch)
+  end
+
+  context 'with paragraphs and repeated spaces' do
+    let(:message) { "Hello  Melissa,\n\nHere is the rest." }
+
+    it 'accepts the exact full draft' do
+      expect(sender.execute(send: false)).to be true
+    end
+
+    it 'refuses collapsed whitespace' do
+      allow(field).to receive(:evaluate_script).with('this.innerText').and_return(message.gsub(/\s+/, ' '))
+      expect(sender.execute).to be false
+      expect(sender.status).to eq(:draft_mismatch)
+      expect(button).not_to have_received(:click)
+    end
   end
 
   it 'does not confirm an old identical message' do
