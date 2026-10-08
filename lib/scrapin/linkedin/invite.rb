@@ -46,11 +46,13 @@ module ScrapIn
       end
 
       def pending?
-        top_card.has_selector?(pending_css, wait: 1)
+        read_top_card { |card| card.has_selector?(pending_css, wait: 1) }
       end
 
       def connected?
-        top_card.all('p').any? { |paragraph| paragraph.text.strip.match(degree_regex)&.captures&.first == '1st' }
+        # A live predicate re-queries within Capybara's wait instead of retaining
+        # paragraph elements that LinkedIn replaces during profile hydration.
+        read_top_card { |card| card.has_selector?('p', text: connected_degree_regex, wait: 1) }
       end
 
       def click_connect_button
@@ -98,6 +100,19 @@ module ScrapIn
       end
 
       private
+
+      # Retry only reads, always reacquiring the card. Never replay invitation
+      # clicks: a failure after Send may already have delivered the invitation.
+      def read_top_card
+        attempts = 0
+        begin
+          attempts += 1
+          yield top_card
+        rescue Selenium::WebDriver::Error::StaleElementReferenceError
+          retry if attempts < 3
+          raise
+        end
+      end
 
       def finish(status, result)
         @status = status

@@ -55,8 +55,8 @@ module CssSelectors
       end
 
       # The connection degree line of the top card, "· 1st" means we are already connected
-      def degree_regex
-        /\A·\s*(1st|2nd|3rd)/
+      def connected_degree_regex
+        /\A\s*·\s*1st\b/
       end
 
       # Shown in the invitation modal instead of the send buttons once the weekly quota is used

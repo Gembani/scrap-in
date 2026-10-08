@@ -40,11 +40,34 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
     has_selector(modal, note_area_css, wait: 2)
     find(modal, note_area, note_area_css)
     allow(modal).to receive(:text).and_return('Add a note to your invitation?')
-    all(top_card, [paragraph('Jane Doe'), paragraph('· 2nd')], 'p')
+    allow(top_card).to receive(:has_selector?).with('p', text: connected_degree_regex, wait: 1).and_return(false)
   end
 
-  def paragraph(text)
-    instance_double('Capybara::Node::Element', text, text: text)
+  it 'reacquires the card when LinkedIn replaces it during a connection check' do
+    fresh_card = instance_double('Capybara::Node::Element')
+    allow(session).to receive(:find).with(top_card_css, wait: 10).and_return(top_card, fresh_card)
+    allow(top_card).to receive(:has_selector?).with('p', text: connected_degree_regex, wait: 1)
+      .and_raise(Selenium::WebDriver::Error::StaleElementReferenceError)
+    allow(fresh_card).to receive(:has_selector?).with('p', text: connected_degree_regex, wait: 1).and_return(true)
+    expect(subject.connected?).to be(true)
+    expect(connect_button).not_to have_received(:click)
+  end
+
+  it 'stops before connecting when the profile keeps replacing its elements' do
+    allow(top_card).to receive(:has_selector?).with('p', text: connected_degree_regex, wait: 1)
+      .and_raise(Selenium::WebDriver::Error::StaleElementReferenceError)
+    expect { subject.execute(lead_url) }.to raise_error(Selenium::WebDriver::Error::StaleElementReferenceError)
+    expect(top_card).to have_received(:has_selector?).with('p', text: connected_degree_regex, wait: 1).exactly(3).times
+    expect(connect_button).not_to have_received(:click)
+    expect(modal_buttons[send_without_note_button_css]).not_to have_received(:click)
+  end
+
+  it 'reacquires the card when a pending-invitation check becomes stale' do
+    allow(top_card).to receive(:has_selector?).with(pending_css, wait: 1)
+      .and_invoke(->(*) { raise Selenium::WebDriver::Error::StaleElementReferenceError }, ->(*) { true })
+    expect(subject.execute(lead_url)).to be(true)
+    expect(subject.status).to eq(:already_pending)
+    expect(connect_button).not_to have_received(:click)
   end
 
   context 'when the invitation is already pending' do
@@ -57,7 +80,7 @@ RSpec.describe ScrapIn::LinkedIn::Invite do
   end
 
   context 'when the lead is already a connection' do
-    before { all(top_card, [paragraph('Jane Doe'), paragraph('· 1st')], 'p') }
+    before { allow(top_card).to receive(:has_selector?).with('p', text: connected_degree_regex, wait: 1).and_return(true) }
     it 'does not invite' do
       expect(subject.execute(lead_url)).to be(false)
       expect(connect_button).not_to have_received(:click)
